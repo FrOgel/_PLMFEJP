@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Contract {
 	
 	//Attribute declaration
+	private int contractID;
 	private int clientID;
 	private int principalID;
 	private ContractState contractState;
@@ -24,7 +25,10 @@ public class Contract {
 	//---------------------
 	
 	
-	//Constructor to build a contract object	
+	//Constructor to build a contract object
+	public Contract() {
+		super();
+	}
 	public Contract(int clientID, int principalID, ContractState contractState, Calendar creationDate,
 			Calendar startDate, Calendar endDate, int estimatedWorkload, TaskDescription taskDescription,
 			RequirementProfile requirementsProfile, ConditionOffer contractConditions, List<Rank> ranking) {
@@ -53,6 +57,12 @@ public class Contract {
 		this.clientID = clientID;
 	}
 	
+	public int getContractID() {
+		return contractID;
+	}
+	public void setContractID(int contractID) {
+		this.contractID = contractID;
+	}
 	@XmlElement
 	public int getPrincipalID() {
 		return principalID;
