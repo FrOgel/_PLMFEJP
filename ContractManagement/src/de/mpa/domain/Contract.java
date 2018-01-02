@@ -3,16 +3,25 @@ package de.mpa.domain;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Entity
 @XmlRootElement
 public class Contract {
 	
 	//Attribute declaration
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int contractID;
 	private int clientID;
 	private int principalID;
+	@OneToOne
 	private ContractState contractState;
 	private Calendar creationDate;
 	private Calendar startDate;
@@ -21,6 +30,7 @@ public class Contract {
 	private TaskDescription taskDescription;
 	private RequirementProfile requirementsProfile;
 	private ConditionOffer contractConditions;
+	@OneToMany
 	private List<Rank>ranking;
 	//---------------------
 	
