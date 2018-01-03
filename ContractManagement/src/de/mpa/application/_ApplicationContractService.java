@@ -18,7 +18,7 @@ public interface _ApplicationContractService {
 			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
 			List<SpecialCondition> specialConditions, List<Rank> ranking);
 	
-	public Contract deleteContract(int contractID);
+	public boolean deleteContract(int contractID);
 	
 	
 }

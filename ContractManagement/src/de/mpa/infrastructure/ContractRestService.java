@@ -28,14 +28,13 @@ public class ContractRestService implements _ApplicationContractService{
 	public Contract createContract(int clientID, int principalID, ContractState contractState,
 			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
 			List<SpecialCondition> specialConditions, List<Rank> ranking) {
-		// TODO Auto-generated method stub
-		return null;
+		return ac.createContract(clientID, principalID, contractState, taskDescription, requirementsProfile, basicConditions, specialConditions, ranking);
 	}
 
 	@Override
-	public Contract deleteContract(int contractID) {
+	public boolean deleteContract(int contractID) {
 		// TODO Auto-generated method stub
-		return null;
+		return ac.deleteContract(contractID);
 	}
 	
 	

@@ -1,6 +1,7 @@
 package de.mpa.infrastructure;
 
 import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -52,6 +53,7 @@ public class UserRestService implements _ApplicationUserService{
 			return as.registerPrivateUser(mail, pw, phoneNumber, country, state, zipCode, city, street, houseNumber, firstName, surName, birthday);
 		
 	}
+	
 
 	/*TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/login/frankvogel2@web.de/test
@@ -78,6 +80,14 @@ public class UserRestService implements _ApplicationUserService{
 	@Path("verify/{id}/{creationTime}")
 	public boolean verifyAccount(@PathParam("id") String id, @PathParam("creationTime") String creationTime) {
 		return as.verifyAccount(id, creationTime);
+	}
+
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("registerPU")
+	public PrivateUser registerPrivateUsser(PrivateUser privateUser) {
+		return as.registerPrivateUsser(privateUser);
 	}
 	
 }

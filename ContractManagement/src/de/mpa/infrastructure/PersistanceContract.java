@@ -5,9 +5,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import de.mpa.domain.Contract;
+
 @Stateless
 public class PersistanceContract {
-	
 	
 	private Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
@@ -30,4 +31,8 @@ public class PersistanceContract {
 		return o;
 	}
 
+	public Contract persistContract(Contract c) {
+		return (Contract) this.addObjectToPersistance(c);
+	}
+	
 }

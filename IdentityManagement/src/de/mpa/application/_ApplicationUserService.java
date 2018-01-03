@@ -25,4 +25,5 @@ public interface _ApplicationUserService {
 	
 	public boolean authenticateViaToken(String token);
 	
+	public PrivateUser registerPrivateUsser(PrivateUser privateUser);
 }

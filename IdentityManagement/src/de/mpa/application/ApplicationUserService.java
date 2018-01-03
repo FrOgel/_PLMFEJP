@@ -66,6 +66,17 @@ public class ApplicationUserService implements _ApplicationUserService{
 		return user;
 	}
 
+	@Override
+	public PrivateUser registerPrivateUsser(PrivateUser privateUser) {
+		privateUser.setPassword(ss.getSecurePw(privateUser.getPassword(), "Masse"));
+		
+		privateUser = (PrivateUser) pu.persistUser(privateUser);
+		
+		this.createAccountVerification(privateUser.getUserID(), privateUser.getMailAddress());
+		
+		return privateUser;
+	}
+	
 	/*Handles the mail and password based user authentication
 	 *After successful authentication a token for state transfer purposes is returned to the client as a HTTP only cookie to prevent XSS
 	 *If Authentication fails because of wrong credentials a HTTP status code 403 is returned
@@ -163,4 +174,6 @@ public class ApplicationUserService implements _ApplicationUserService{
 		this.callVerificationMailService(mail, id, this.encryptUUID(uuid));
 		pu.persistAccountVerification(av);
 	}
+
+	
 }
