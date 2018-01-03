@@ -16,7 +16,7 @@ import de.mpa.domain.PrivateUser;
 
 //This rest service provides the functionality for managing user registration and authentication
 @Path("/user")
-@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+@Produces(MediaType.APPLICATION_JSON)
 public class UserRestService implements _ApplicationUserService{
 	
 	
