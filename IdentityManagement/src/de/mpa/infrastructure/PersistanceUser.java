@@ -2,6 +2,7 @@ package de.mpa.infrastructure;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -9,7 +10,7 @@ import javax.persistence.Query;
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.User;
 
-
+@Stateless
 public class PersistanceUser {
 	private Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
@@ -23,7 +24,6 @@ public class PersistanceUser {
 	    emfactory.close();
 	    return o;
 	}
-	
 	private Object getObjectFromPersistanceById(Class<?> c, String id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager();

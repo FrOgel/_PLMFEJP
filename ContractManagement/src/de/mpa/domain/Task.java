@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Task {
+	
 	//Attribute declaration
 	private int taskID;
 	private String description;

@@ -3,6 +3,7 @@ package de.mpa.domain;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,17 +22,14 @@ public class Contract {
 	private int contractID;
 	private int clientID;
 	private int principalID;
-	@OneToOne
-	private ContractState contractState;
 	private Calendar creationDate;
-	private Calendar startDate;
-	private Calendar endDate;
-	private int estimatedWorkload;
-	private TaskDescription taskDescription;
-	private RequirementProfile requirementsProfile;
-	private ConditionOffer contractConditions;
-	@OneToMany
-	private List<Rank>ranking;
+	private ContractState contractState;
+	private List<Task> taskDescription;
+	private List<Requirement>requirementsProfile;
+	//The condition offer consists of the basicConditions and the specialConditions
+	private BasicCondition basicConditions;
+	private List<SpecialCondition> specialConditions;
+	private List<Rank> ranking;
 	//---------------------
 	
 	
@@ -39,24 +37,24 @@ public class Contract {
 	public Contract() {
 		super();
 	}
-	public Contract(int clientID, int principalID, ContractState contractState, Calendar creationDate,
-			Calendar startDate, Calendar endDate, int estimatedWorkload, TaskDescription taskDescription,
-			RequirementProfile requirementsProfile, ConditionOffer contractConditions, List<Rank> ranking) {
+	public Contract(int clientID, int principalID, ContractState contractState,
+			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
+			List<SpecialCondition> specialConditions, List<Rank> ranking) {
+		super();
 		this.clientID = clientID;
 		this.principalID = principalID;
+		this.creationDate = Calendar.getInstance();
 		this.contractState = contractState;
-		this.creationDate = creationDate;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.estimatedWorkload = estimatedWorkload;
-		this.taskDescription = taskDescription;
+		this.setTaskDescription(taskDescription);
 		this.requirementsProfile = requirementsProfile;
-		this.contractConditions = contractConditions;
+		this.basicConditions = basicConditions;
+		this.specialConditions = specialConditions;
 		this.ranking = ranking;
 	}
 	//--------------------------------------
 	
-		
+	
+	
 	//Setter and getter	
 	@XmlElement
 	public int getClientID() {
@@ -70,9 +68,11 @@ public class Contract {
 	public int getContractID() {
 		return contractID;
 	}
+	
 	public void setContractID(int contractID) {
 		this.contractID = contractID;
 	}
+	
 	@XmlElement
 	public int getPrincipalID() {
 		return principalID;
@@ -101,57 +101,39 @@ public class Contract {
 	}
 	
 	@XmlElement
-	public Calendar getStartDate() {
-		return startDate;
-	}
-	
-	public void setStartDate(Calendar startDate) {
-		this.startDate = startDate;
-	}
-	
-	@XmlElement
-	public Calendar getEndDate() {
-		return endDate;
-	}
-	
-	public void setEndDate(Calendar endDate) {
-		this.endDate = endDate;
-	}
-	
-	@XmlElement
-	public int getEstimatedWorkload() {
-		return estimatedWorkload;
-	}
-	
-	public void setEstimatedWorkload(int estimatedWorkload) {
-		this.estimatedWorkload = estimatedWorkload;
-	}
-	
-	@XmlElement
-	public TaskDescription getTaskDescription() {
+	public List<Task> getTaskDescription() {
 		return taskDescription;
 	}
 	
-	public void setTaskDescription(TaskDescription taskDescription) {
+	public void setTaskDescription(List<Task> taskDescription) {
 		this.taskDescription = taskDescription;
 	}
 	
 	@XmlElement
-	public RequirementProfile getRequirementsProfile() {
+	public List<Requirement> getRequirementsProfile() {
 		return requirementsProfile;
 	}
 	
-	public void setRequirementsProfile(RequirementProfile requirementsProfile) {
+	public void setRequirementsProfile(List<Requirement> requirementsProfile) {
 		this.requirementsProfile = requirementsProfile;
 	}
 	
 	@XmlElement
-	public ConditionOffer getContractConditions() {
-		return contractConditions;
+	public BasicCondition getBasicConditions() {
+		return basicConditions;
 	}
 	
-	public void setContractConditions(ConditionOffer contractConditions) {
-		this.contractConditions = contractConditions;
+	public void setBasicConditions(BasicCondition basicConditions) {
+		this.basicConditions = basicConditions;
+	}
+	
+	@XmlElement
+	public List<SpecialCondition> getSpecialConditions() {
+		return specialConditions;
+	}
+	
+	public void setSpecialConditions(List<SpecialCondition> specialConditions) {
+		this.specialConditions = specialConditions;
 	}
 	
 	@XmlElement

@@ -22,7 +22,7 @@ import de.mpa.infrastructure.SecurityService;
 //This class will receive the rest service calls and invokes the appropriate domain layer methods
 @Stateless
 public class ApplicationUserService implements _ApplicationUserService{
-
+	
 	private PersistanceUser pu = new PersistanceUser();
 	private SecurityService ss = new SecurityService();
 		

@@ -1,11 +1,19 @@
 package de.mpa.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Entity
 @XmlRootElement
 public class Rank {
+	
 	//Attribute declaration
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int rankID;
 	private int UserID;
 	private float percentage;
@@ -13,6 +21,9 @@ public class Rank {
 	
 	
 	//Constructor to build a term
+	public Rank() {
+		super();
+	}
 	public Rank(int rankID, int userID, float percentage) {
 		this.rankID = rankID;
 		UserID = userID;

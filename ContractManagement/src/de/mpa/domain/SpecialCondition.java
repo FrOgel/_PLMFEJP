@@ -4,7 +4,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class SpecialCondition {
+public class SpecialCondition { 
+	
 	//Attribute declaration
 	private int specialConditionID;
 	private String description;
