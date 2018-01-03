@@ -3,10 +3,13 @@ package de.mpa.domain;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+@Entity
 @XmlRootElement
 public class SpecialCondition { 
 	
 	//Attribute declaration
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int specialConditionID;
 	private String description;
 	//---------------------

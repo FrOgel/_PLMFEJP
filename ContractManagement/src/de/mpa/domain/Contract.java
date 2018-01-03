@@ -22,13 +22,20 @@ public class Contract {
 	private int contractID;
 	private int clientID;
 	private int principalID;
+	@OneToOne(cascade = CascadeType.ALL)
 	private Calendar creationDate;
+	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Task> taskDescription;
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Requirement>requirementsProfile;
 	//The condition offer consists of the basicConditions and the specialConditions
+	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition basicConditions;
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<SpecialCondition> specialConditions;
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Rank> ranking;
 	//---------------------
 	

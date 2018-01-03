@@ -23,7 +23,9 @@ public class BasicCondition {
 	private int BasicConditionID;
 	private String location;
 	private String radius;
+	@OneToOne(cascade = CascadeType.ALL)
 	private Calendar startDate;
+	@OneToOne(cascade = CascadeType.ALL)
 	private Calendar endDate;
 	private int estimatedWorkload;
 	//---------------------
