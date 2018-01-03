@@ -14,6 +14,11 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -89,6 +94,7 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 	@XmlElement
+	@JsonIgnore
 	public Address getUserAddress() {
 		return userAddress;
 	}

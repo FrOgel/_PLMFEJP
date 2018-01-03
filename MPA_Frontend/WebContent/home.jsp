@@ -7,14 +7,28 @@
 <title>Insert title here</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-function userLogin2(){
+function getFormData(data) {
+	   var unindexed_array = data;
+	   var indexed_array = {};
+
+	   $.map(unindexed_array, function(n, i) {
+	    indexed_array[n['name']] = n['value'];
+	   });
+
+	   return indexed_array;
+	}
+function userLogin2(){	
+	//var formData = JSON.stringify($("#userData").serializeArray());
+	var formData = $('#userData').serializeArray();
 	$.ajax({
-		type: 'GET',
-		url: 'http://localhost:8080/IdentityManagement/rest/user/login/frankvogel2@web.de/test',
-		datatype: 'text',
+		type: 'POST',
+		dataType : 'json', 
+		data: JSON.stringify(getFormData(formData)),
+		url: 'https://localhost:8443/IdentityManagement/rest/user/registerPU',
+	    contentType: 'application/json',
 		success: function(){
-				window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
-				document.getElementById("test").innerHTML = "Successfully logged in";
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
 				}
 		});
 	
@@ -24,20 +38,20 @@ function userLogin2(){
 <body>
 
 <p id="test">Hello World</p>
-	<form>
-		<p>Mail: <input type="text" name="mail">
-		<p>Password: <input type="password" name="pw">
-		<p>Phone: <input type="text" name="phoneNumber">
-		<p>Country: <input type="text" name="country">
-		<p>State: <input type="text" name="state">
-		<p>ZipCode: <input type="text" name="zip">
-		<p>City: <input type="text" name="city">
-		<p>Street: <input type="text" name="street">
-		<p>House number: <input type="text" name="housenumber">
-		<p>First name: <input type="text" name="firstName">
-		<p>Surname: <input type="text" name="surName">
-		<p>Birthday: <input type="text" name="birthday">	
-		<button onclick="userLogin2(); return false;">Login</button>
+	<form name="userData" id="userData">
+		<p>Mail: <input type="text" name="mailAddress" id="mailAddress" value="frankvogel2@web.de">
+		<p>Password: <input type="password" name="password" id="password" value="testPW">
+		<p>Phone: <input type="text" name="phoneNumber" id="phoneNumber" value="1234567">
+		<p>Country: <input type="text" name="country" id="country" value="Germany">
+		<p>State: <input type="text" name="state" id="state" value="Baden-Wuerttemberg">
+		<p>ZipCode: <input type="text" name="zipCode" id="zipCode" value="74172">
+		<p>City: <input type="text" name="city" id="city" value="Neckarsulm">
+		<p>Street: <input type="text" name="street" id="street" value="BP 1">
+		<p>House number: <input type="text" name="houseNumber" id="houseNumber" value="1">
+		<p>First name: <input type="text" name="firstName" id="firstName" value="Frank">
+		<p>Surname: <input type="text" name="surName" id="surName" value="Vogel">
+		<p>Birthday: <input type="text" name="birthday" id="birthday" value="01.01.1992">	
+		<button onclick="userLogin2(); return false;">Register</button>
 	</form>
 	
 	

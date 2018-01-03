@@ -3,6 +3,7 @@ package de.mpa.application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
@@ -67,14 +68,9 @@ public class ApplicationUserService implements _ApplicationUserService{
 	}
 
 	@Override
-	public PrivateUser registerPrivateUsser(PrivateUser privateUser) {
-		privateUser.setPassword(ss.getSecurePw(privateUser.getPassword(), "Masse"));
+	public PrivateUser registerPrivateUsser(PrivateUser pu) {
 		
-		privateUser = (PrivateUser) pu.persistUser(privateUser);
-		
-		this.createAccountVerification(privateUser.getUserID(), privateUser.getMailAddress());
-		
-		return privateUser;
+		return null;
 	}
 	
 	/*Handles the mail and password based user authentication

@@ -8,6 +8,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table
 @XmlRootElement
@@ -19,7 +21,6 @@ public class Address {
 		private int addressId;
 		private String zipCode; 
 		private String country, state, city, street, houseNumber;
-
 		
 		//Constructor
 		public Address() {

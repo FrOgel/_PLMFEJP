@@ -1,5 +1,7 @@
 package de.mpa.application;
 
+import java.util.Map;
+
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
@@ -25,5 +27,5 @@ public interface _ApplicationUserService {
 	
 	public boolean authenticateViaToken(String token);
 	
-	public PrivateUser registerPrivateUsser(PrivateUser privateUser);
+	public PrivateUser registerPrivateUsser(PrivateUser map);
 }

@@ -5,6 +5,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName="userID")
 @XmlRootElement
@@ -36,24 +38,24 @@ public class PrivateUser extends User{
 	
 	//Setter and getter	
 	@XmlElement
-	protected String getSurName() {
+	public String getSurName() {
 		return surName;
 	}
-	protected void setSurName(String surName) {
+	public void setSurName(String surName) {
 		this.surName = surName;
 	}
 	@XmlElement
-	protected String getBirthday() {
+	public String getBirthday() {
 		return birthday;
 	}
-	protected void setBirthday(String birthday) {
+	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
 	@XmlElement
-	protected String getFirstName() {
+	public String getFirstName() {
 		return firstName;
 	}
-	protected void setFirstName(String firstName) {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 	//---------------------
