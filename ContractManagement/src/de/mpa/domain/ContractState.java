@@ -1,6 +1,5 @@
 package de.mpa.domain;
 
-import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
