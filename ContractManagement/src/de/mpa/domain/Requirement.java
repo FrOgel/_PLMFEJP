@@ -1,5 +1,9 @@
 package de.mpa.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -15,6 +19,9 @@ public class Requirement {
 	
 	//Constructor to build a requirement
 	//---------------------
+	public Requirement() {
+		super();
+	}
 	public Requirement(int requirementID, String description) {
 		this.requirementID = requirementID;
 		this.description = description;

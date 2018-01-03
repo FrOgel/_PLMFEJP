@@ -1,9 +1,13 @@
 package de.mpa.domain;
 
+import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,8 +26,8 @@ public class Contract {
 	private int contractID;
 	private int clientID;
 	private int principalID;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Calendar creationDate;
+	private String designation;
+	private Date creationDate;
 	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
 	@OneToMany(cascade = CascadeType.ALL)
@@ -50,7 +54,7 @@ public class Contract {
 		super();
 		this.clientID = clientID;
 		this.principalID = principalID;
-		this.creationDate = Calendar.getInstance();
+		this.creationDate = new Date(System.currentTimeMillis());
 		this.contractState = contractState;
 		this.setTaskDescription(taskDescription);
 		this.requirementsProfile = requirementsProfile;
@@ -72,6 +76,14 @@ public class Contract {
 		this.clientID = clientID;
 	}
 	
+	@XmlElement
+	public String getDesignation() {
+		return designation;
+	}
+
+	public void setDesignation(String designation) {
+		this.designation = designation;
+	}
 	public int getContractID() {
 		return contractID;
 	}
@@ -99,11 +111,11 @@ public class Contract {
 	}
 	
 	@XmlElement
-	public Calendar getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 	
-	public void setCreationDate(Calendar creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 	

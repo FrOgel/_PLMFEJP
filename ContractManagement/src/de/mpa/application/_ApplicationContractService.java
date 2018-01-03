@@ -1,5 +1,6 @@
 package de.mpa.application;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.Local;
@@ -14,9 +15,15 @@ import de.mpa.domain.Task;
 
 @Local
 public interface _ApplicationContractService {
-	public Contract createContract(int clientID, int principalID, ContractState contractState,
-			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
-			List<SpecialCondition> specialConditions, List<Rank> ranking);
+	public Contract createContract(String token, String designation);
+	
+	public Task createTask(String token, String description);
+	
+	public BasicCondition createBasicCondition(String location, String radius, Date startDate, Date endDate, int estimatedWorkload);
+	
+	public Requirement createRequirement(String description);
+	
+	public SpecialCondition createSpecialCondition (String description);
 	
 	public boolean deleteContract(int contractID);
 	

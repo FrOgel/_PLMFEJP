@@ -1,5 +1,6 @@
 package de.mpa.domain;
 
+import java.sql.Date;
 import java.util.Calendar;
 
 import javax.persistence.Entity;
@@ -23,10 +24,8 @@ public class BasicCondition {
 	private int BasicConditionID;
 	private String location;
 	private String radius;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Calendar startDate;
-	@OneToOne(cascade = CascadeType.ALL)
-	private Calendar endDate;
+	private Date startDate;
+	private Date endDate;
 	private int estimatedWorkload;
 	//---------------------
 	
@@ -34,7 +33,7 @@ public class BasicCondition {
 	public BasicCondition() {
 		super();
 	}
-	public BasicCondition(String location, String radius, Calendar startDate, Calendar endDate, int estimatedWorkload) {
+	public BasicCondition(String location, String radius, Date startDate, Date endDate, int estimatedWorkload) {
 		super();
 		this.location = location;
 		this.radius = radius;
@@ -60,17 +59,17 @@ public class BasicCondition {
 		this.radius = radius;
 	}
 	@XmlElement
-	public Calendar getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Calendar startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 	@XmlElement
-	public Calendar getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Calendar endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 	@XmlElement

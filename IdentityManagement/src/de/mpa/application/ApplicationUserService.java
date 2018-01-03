@@ -104,7 +104,7 @@ public class ApplicationUserService implements _ApplicationUserService{
 		String token = ss.getToken(id);
 		NewCookie c = new NewCookie("token", token);
 		System.out.println(c.toString());
-		return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure").build();	
+		return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/").build();	
 	}
 	
 	//Calls the token authentication method from the security service

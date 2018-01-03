@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function createContract(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#credentials').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/create',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully created in";
+				}
+		});
+	
+}
+</script>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<form name="credentials" id="credentials">
+		<p>Designation: <input type="text" name="designation" id="designation"/>
+		<button onclick="createContract(); return false;">Login</button>
+	</form>
+	<p id="authorized"></p>
+
+</body>
+
+
+</html>

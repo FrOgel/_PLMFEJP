@@ -1,8 +1,13 @@
 package de.mpa.infrastructure;
 
+import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -23,19 +28,50 @@ public class ContractRestService implements _ApplicationContractService{
 	//Inject ApplicationContractService
 	@EJB
 	_ApplicationContractService ac;
+	
+	/* Testring
+	 * https://localhost:8443/ContractManagement/rest/contract/create
+	 */
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("create")
+	public Contract createContract(@CookieParam("token") String token, @FormParam("designation") String designation) {
+		return ac.createContract(token, designation);
+	}
 
 	@Override
-	public Contract createContract(int clientID, int principalID, ContractState contractState,
-			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
-			List<SpecialCondition> specialConditions, List<Rank> ranking) {
-		return ac.createContract(clientID, principalID, contractState, taskDescription, requirementsProfile, basicConditions, specialConditions, ranking);
+	public Task createTask(String description) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BasicCondition createBasicCondition(String location, String radius, Date startDate, Date endDate,
+			int estimatedWorkload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Requirement createRequirement(String description) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SpecialCondition createSpecialCondition(String description) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
 	public boolean deleteContract(int contractID) {
 		// TODO Auto-generated method stub
-		return ac.deleteContract(contractID);
+		return false;
 	}
+
+	
 	
 	
 }

@@ -12,6 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Rank {
 	
 	//Attribute declaration
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int rankID;
 	private int UserID;
 	private float percentage;
