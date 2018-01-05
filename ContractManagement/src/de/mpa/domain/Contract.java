@@ -1,6 +1,7 @@
 package de.mpa.domain;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,7 +28,10 @@ public class Contract {
 	private int clientID;
 	private int principalID;
 	private String designation;
-	private Date creationDate;
+	@Enumerated(EnumType.STRING)
+	private ContractType type;
+	private String subject;
+	private LocalDate creationDate;
 	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
 	@OneToMany(cascade = CascadeType.ALL)
@@ -47,20 +51,6 @@ public class Contract {
 	//Constructor to build a contract object
 	public Contract() {
 		super();
-	}
-	public Contract(int clientID, int principalID, ContractState contractState,
-			List<Task> taskDescription, List<Requirement> requirementsProfile, BasicCondition basicConditions,
-			List<SpecialCondition> specialConditions, List<Rank> ranking) {
-		super();
-		this.clientID = clientID;
-		this.principalID = principalID;
-		this.creationDate = new Date(System.currentTimeMillis());
-		this.contractState = contractState;
-		this.setTaskDescription(taskDescription);
-		this.requirementsProfile = requirementsProfile;
-		this.basicConditions = basicConditions;
-		this.specialConditions = specialConditions;
-		this.ranking = ranking;
 	}
 	//--------------------------------------
 	
@@ -84,6 +74,26 @@ public class Contract {
 	public void setDesignation(String designation) {
 		this.designation = designation;
 	}
+	
+	@XmlElement
+	public ContractType getType() {
+		return type;
+	}
+
+	public void setType(ContractType type) {
+		this.type = type;
+	}
+
+	@XmlElement
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	@XmlElement
 	public int getContractID() {
 		return contractID;
 	}
@@ -111,12 +121,8 @@ public class Contract {
 	}
 	
 	@XmlElement
-	public Date getCreationDate() {
+	public LocalDate getCreationDate() {
 		return creationDate;
-	}
-	
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
 	}
 	
 	@XmlElement

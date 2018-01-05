@@ -36,8 +36,9 @@ public class ContractRestService implements _ApplicationContractService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createContract")
-	public Contract createContract(@CookieParam("token") String token, @FormParam("designation") String designation) {
-		return ac.createContract(token, designation);
+	public Contract createContract(@CookieParam("token") String token, @FormParam("designation") String designation, 
+			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject) {
+		return ac.createContract(token, designation, contractType, contractSubject);
 	}
 
 	@Override

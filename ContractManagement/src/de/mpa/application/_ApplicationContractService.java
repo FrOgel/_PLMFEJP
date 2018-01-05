@@ -11,7 +11,7 @@ import de.mpa.domain.Task;
 
 @Local
 public interface _ApplicationContractService {
-	public Contract createContract(String token, String designation);
+	public Contract createContract(String token, String designation, String contractType, String contractSubject);
 	
 	public Task createTask(String token, int contractId, String description);
 	

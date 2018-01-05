@@ -1,16 +1,11 @@
 package de.mpa.application;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import javax.ejb.Stateless;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
-import de.mpa.domain.Rank;
+import de.mpa.domain.ContractType;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -24,11 +19,14 @@ public class ApplicationContractService implements _ApplicationContractService{
 	private SecurityService ss = new SecurityService();
 	
 	@Override
-	public Contract createContract(String token, String designation) {
+	public Contract createContract(String token, String designation, String contractType, String contractSubject) {
 		
 		Contract c = new Contract();
 		c.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
 		c.setDesignation(designation);
+		c.setType(ContractType.valueOf(contractType.toUpperCase()));
+		c.setSubject(contractSubject);
+		
 		pc.persistContract(c);
 		
 		return c;
@@ -36,8 +34,15 @@ public class ApplicationContractService implements _ApplicationContractService{
 
 	@Override
 	public Task createTask(String token, int contractId, String description) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Contract c = pc.findContract(contractId);
+		
+		Task t = new Task();
+		
+		t.setDescription(description);
+		
+		
+		return pc.persistTask(c, t);
 	}
 
 	@Override
@@ -79,6 +84,12 @@ public class ApplicationContractService implements _ApplicationContractService{
 
 	@Override
 	public boolean deleteRequirement(String token, int contractId, int requirementId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
