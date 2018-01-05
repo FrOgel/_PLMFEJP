@@ -1,14 +1,10 @@
 package de.mpa.application;
 
 import java.sql.Date;
-import java.util.List;
-
 import javax.ejb.Local;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
-import de.mpa.domain.Rank;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -17,15 +13,21 @@ import de.mpa.domain.Task;
 public interface _ApplicationContractService {
 	public Contract createContract(String token, String designation);
 	
-	public Task createTask(String token, String description);
+	public Task createTask(String token, int contractId, String description);
 	
-	public BasicCondition createBasicCondition(String location, String radius, Date startDate, Date endDate, int estimatedWorkload);
+	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, Date startDate, Date endDate, int estimatedWorkload);
 	
-	public Requirement createRequirement(String description);
+	public Requirement createRequirement(String token, String description, int contractId);
 	
-	public SpecialCondition createSpecialCondition (String description);
+	public SpecialCondition createSpecialCondition (String token, String description, int contractId);
 	
-	public boolean deleteContract(int contractID);
+	public boolean deleteContract(String token, int contractId);
 	
+	public boolean deleteTask(String token, int contractId, int taskId);
 	
+	public boolean deleteBasicCondition(String token, int contractId);
+	
+	public boolean deleteRequirement(String token, int contractId, int requirementId);
+
+	public boolean deleteSpecialCondition(String token, int contractId, int conditionId);
 }

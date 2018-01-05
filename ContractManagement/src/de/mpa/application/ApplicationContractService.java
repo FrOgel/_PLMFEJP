@@ -35,36 +35,52 @@ public class ApplicationContractService implements _ApplicationContractService{
 	}
 
 	@Override
-	public Task createTask(String description) {
+	public Task createTask(String token, int contractId, String description) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public BasicCondition createBasicCondition(String location, String radius, Date startDate, Date endDate,
-			int estimatedWorkload) {
+	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius,
+			Date startDate, Date endDate, int estimatedWorkload) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Requirement createRequirement(String description) {
+	public Requirement createRequirement(String token, String description, int contractId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public SpecialCondition createSpecialCondition(String description) {
+	public SpecialCondition createSpecialCondition(String token, String description, int contractId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public boolean deleteContract(int contractID) {
+	public boolean deleteContract(String token, int contractId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-	
+
+	@Override
+	public boolean deleteTask(String token, int contractId, int taskId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteBasicCondition(String token, int contractId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteRequirement(String token, int contractId, int requirementId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

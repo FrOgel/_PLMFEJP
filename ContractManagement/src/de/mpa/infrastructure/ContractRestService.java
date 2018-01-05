@@ -35,43 +35,88 @@ public class ContractRestService implements _ApplicationContractService{
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("create")
+	@Path("createContract")
 	public Contract createContract(@CookieParam("token") String token, @FormParam("designation") String designation) {
 		return ac.createContract(token, designation);
 	}
 
 	@Override
-	public Task createTask(String description) {
-		// TODO Auto-generated method stub
-		return null;
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("createTask")
+	public Task createTask(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("description") String description) {
+		return ac.createTask(token, contractId, description);
 	}
 
 	@Override
-	public BasicCondition createBasicCondition(String location, String radius, Date startDate, Date endDate,
-			int estimatedWorkload) {
-		// TODO Auto-generated method stub
-		return null;
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("createBasicCondition")
+	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("location") String location, @FormParam("radius") String radius, Date startDate,
+			Date endDate, int estimatedWorkload) {
+		return ac.createBasicCondition(token, contractId, location, radius, startDate, endDate, estimatedWorkload);
 	}
 
 	@Override
-	public Requirement createRequirement(String description) {
-		// TODO Auto-generated method stub
-		return null;
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("createRequirement")
+	public Requirement createRequirement(@CookieParam("token") String token, @FormParam("description") String description, 
+			@FormParam("contractId") int contractId) {
+		return ac.createRequirement(token, description, contractId);
 	}
 
 	@Override
-	public SpecialCondition createSpecialCondition(String description) {
-		// TODO Auto-generated method stub
-		return null;
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("createContract")
+	public SpecialCondition createSpecialCondition(@CookieParam("token") String token, @FormParam("description") String description, 
+			@FormParam("contractId") int contractId) {
+		return ac.createSpecialCondition(token, description, contractId);
 	}
 
 	@Override
-	public boolean deleteContract(int contractID) {
-		// TODO Auto-generated method stub
-		return false;
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("deleteContract")
+	public boolean deleteContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+		return ac.deleteContract(token, contractId);
 	}
 
-	
-	
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("deleteTask")
+	public boolean deleteTask(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("taskId") int taskId) {
+		return ac.deleteTask(token, contractId, taskId);
+	}
+
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("deleteBasicCondition")
+	public boolean deleteBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+		return ac.deleteBasicCondition(token, contractId);
+	}
+
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("deleteRequirement")
+	public boolean deleteRequirement(@CookieParam("token") String token, int contractId, @FormParam("requirementId") int requirementId) {
+		return ac.deleteRequirement(token, contractId, requirementId);
+	}
+
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("deleteSpecialCondition")
+	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
+		return ac.deleteSpecialCondition(token, contractId, conditionId);
+	}
+
 	
 }
