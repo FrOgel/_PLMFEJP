@@ -12,9 +12,9 @@ import de.mpa.domain.Task;
 public interface _ApplicationContractService {
 	public Contract createContract(String token, String designation, String contractType, String contractSubject);
 	
-	public Task createTask(String token, int contractId, String description);
+	public Task createTask(String token, int contractId, String description, String type, String subType);
 	
-	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
+	public BasicCondition createBasicCondition(String token, String contractId, String location, String radius, String startDate, String endDate, String estimatedWorkload);
 	
 	public Requirement createRequirement(String token, String description, int contractId);
 	

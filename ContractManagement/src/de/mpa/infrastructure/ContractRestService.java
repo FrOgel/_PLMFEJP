@@ -46,17 +46,18 @@ public class ContractRestService implements _ApplicationContractService{
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createTask")
 	public Task createTask(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
-			@FormParam("description") String description) {
-		return ac.createTask(token, contractId, description);
+			@FormParam("description") String description, @FormParam("taskType") String type, @FormParam("taskSubType") String subType) {
+		return ac.createTask(token, contractId, description, type, subType);
 	}
 
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createBasicCondition")
-	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") String contractId, 
 			@FormParam("location") String location, @FormParam("radius") String radius, String startDate,
-			String endDate, int estimatedWorkload) {
+			String endDate, String estimatedWorkload) {
+		
 		return ac.createBasicCondition(token, contractId, location, radius, startDate, endDate, estimatedWorkload);
 	}
 

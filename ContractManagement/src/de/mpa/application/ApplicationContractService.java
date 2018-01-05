@@ -10,6 +10,8 @@ import de.mpa.domain.ContractType;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
+import de.mpa.domain.TaskSubType;
+import de.mpa.domain.TaskType;
 import de.mpa.infrastructure.PersistanceContract;
 import de.mpa.infrastructure.SecurityService;
 
@@ -34,27 +36,28 @@ public class ApplicationContractService implements _ApplicationContractService{
 	}
 
 	@Override
-	public Task createTask(String token, int contractId, String description) {
+	public Task createTask(String token, int contractId, String description, String type, String subType) {
 		
 		Contract c = pc.findContract(contractId);
 		
 		Task t = new Task();
 		t.setDescription(description);
-		
+		t.setType(TaskType.valueOf(type.toUpperCase()));
+		t.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
 		
 		return pc.persistTaskInContract(c, t);
 	}
 
 	@Override
-	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius,
-			String startDate, String endDate, int estimatedWorkload) {
+	public BasicCondition createBasicCondition(String token, String contractId, String location, String radius,
+			String startDate, String endDate, String estimatedWorkload) {
 		
-		Contract c = pc.findContract(contractId);
+		Contract c = pc.findContract(Integer.parseInt(contractId));
 		
 		BasicCondition b = new BasicCondition();
 		b.setEndDate(LocalDate.parse(endDate));
 		b.setStartDate(LocalDate.parse(startDate));
-		b.setEstimatedWorkload(estimatedWorkload);
+		b.setEstimatedWorkload(Integer.parseInt(estimatedWorkload));
 		b.setLocation(location);
 		b.setRadius(radius);
 		

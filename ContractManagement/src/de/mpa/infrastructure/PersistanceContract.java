@@ -49,12 +49,12 @@ public class PersistanceContract {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager( );
 	    entitymanager.getTransaction( ).begin( );
-	    entitymanager.merge(c);
+	    c = entitymanager.merge(c);
 	    
 		List<Task> list = (List<Task>)c.getTaskDescription();
 		list.add(t);
 		c.setTaskDescription(list);
-	    entitymanager.persist(t);
+	    
 	    entitymanager.getTransaction().commit();
 	    entitymanager.close();
 	    emfactory.close();
@@ -65,11 +65,10 @@ public class PersistanceContract {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager( );
 	    entitymanager.getTransaction( ).begin( );
-	    entitymanager.merge(c);
+	    c = entitymanager.merge(c);
 	    
 	    c.setBasicConditions(b);
 	    
-	    //entitymanager.persist(b);
 	    entitymanager.getTransaction().commit();
 	    entitymanager.close();
 	    emfactory.close();
