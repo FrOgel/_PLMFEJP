@@ -1,6 +1,7 @@
 package de.mpa.application;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.ejb.Stateless;
 
@@ -114,6 +115,11 @@ public class ApplicationContractService implements _ApplicationContractService{
 	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<Contract> getAllContractsFromUser(String token) {
+		return pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
 	}
 
 }

@@ -6,6 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
@@ -111,5 +112,18 @@ public class PersistanceContract {
 	    return s;
 	}
 
-
+	public List<Contract> findUserContracts(int principalId){
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );  
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	   
+	    Query q = entitymanager.createNamedQuery("find user contracts");
+	    q.setParameter("principalID", principalId);
+	    @SuppressWarnings("unchecked")
+		List<Contract> list = (List<Contract>) q.getResultList();
+	    
+	    entitymanager.close();
+	    emfactory.close();
+	    
+	    return list;
+	}
 }

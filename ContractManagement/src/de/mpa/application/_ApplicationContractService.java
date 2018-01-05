@@ -1,5 +1,7 @@
 package de.mpa.application;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import de.mpa.domain.BasicCondition;
@@ -30,4 +32,6 @@ public interface _ApplicationContractService {
 
 	public boolean deleteSpecialCondition(String token, int contractId, int conditionId);
 
+	public List<Contract> getAllContractsFromUser(String token);
+	
 }

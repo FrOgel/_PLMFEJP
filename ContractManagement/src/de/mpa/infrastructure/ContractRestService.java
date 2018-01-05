@@ -1,5 +1,7 @@
 package de.mpa.infrastructure;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -114,6 +116,13 @@ public class ContractRestService implements _ApplicationContractService{
 	@Path("deleteSpecialCondition")
 	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
 		return ac.deleteSpecialCondition(token, contractId, conditionId);
+	}
+
+	@Override
+	@POST
+	@Path("getUserContracts")
+	public List<Contract> getAllContractsFromUser(@CookieParam("token") String token) {
+		return ac.getAllContractsFromUser(token);
 	}
 
 	
