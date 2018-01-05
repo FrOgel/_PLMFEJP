@@ -16,16 +16,14 @@ public class Task {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int taskID;
 	private String description;
+	private TaskType type;
+	private TaskSubType subType;
 	//---------------------
 	
 	
 	//Constructor to build a task
 	public Task() {
 		super();
-	}
-	public Task(int taskID, String description) {
-		this.taskID = taskID;
-		this.description = description;
 	}
 	//---------------------------
 
@@ -48,5 +46,24 @@ public class Task {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	//-----------------
+
+	@XmlElement
+	public TaskType getType() {
+		return type;
+	}
+
+
+	public void setType(TaskType type) {
+		this.type = type;
+	}
+
+	@XmlElement
+	public TaskSubType getSubType() {
+		return subType;
+	}
+
+
+	public void setSubType(TaskSubType subType) {
+		this.subType = subType;
+	}
 }

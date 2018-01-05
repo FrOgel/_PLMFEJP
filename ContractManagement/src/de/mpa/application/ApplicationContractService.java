@@ -1,6 +1,7 @@
 package de.mpa.application;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
 import javax.ejb.Stateless;
 
 import de.mpa.domain.BasicCondition;
@@ -21,15 +22,15 @@ public class ApplicationContractService implements _ApplicationContractService{
 	@Override
 	public Contract createContract(String token, String designation, String contractType, String contractSubject) {
 		
+		System.out.println(token);
+		
 		Contract c = new Contract();
 		c.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
 		c.setDesignation(designation);
 		c.setType(ContractType.valueOf(contractType.toUpperCase()));
 		c.setSubject(contractSubject);
 		
-		pc.persistContract(c);
-		
-		return c;
+		return pc.persistContract(c);
 	}
 
 	@Override
@@ -38,18 +39,26 @@ public class ApplicationContractService implements _ApplicationContractService{
 		Contract c = pc.findContract(contractId);
 		
 		Task t = new Task();
-		
 		t.setDescription(description);
 		
 		
-		return pc.persistTask(c, t);
+		return pc.persistTaskInContract(c, t);
 	}
 
 	@Override
 	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius,
-			Date startDate, Date endDate, int estimatedWorkload) {
-		// TODO Auto-generated method stub
-		return null;
+			String startDate, String endDate, int estimatedWorkload) {
+		
+		Contract c = pc.findContract(contractId);
+		
+		BasicCondition b = new BasicCondition();
+		b.setEndDate(LocalDate.parse(endDate));
+		b.setStartDate(LocalDate.parse(startDate));
+		b.setEstimatedWorkload(estimatedWorkload);
+		b.setLocation(location);
+		b.setRadius(radius);
+		
+		return pc.persistBasicCondition(c, b);
 	}
 
 	@Override

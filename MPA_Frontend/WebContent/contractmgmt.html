@@ -5,7 +5,7 @@
 <script>
 function createContract(){
 	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#credentials').serializeArray();
+	var formData = $('#contract').serializeArray();
 	$.ajax({
 		type: 'POST',
 		data: formData,
@@ -163,14 +163,14 @@ function deleteSC(){
 	<form name="contractId">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>
-	<form name="credentials" id="credentials">
+	<form name="contract" id="contract">
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
 			<datalist id="contractTypeList">
    		 		<option value="Consulting">
     			<option value="Development">
 			</datalist>
 		<p>Designation: <input type="text" name="designation" id="designation"/>
-		<p>Designation: <input type="text" name="contractSubject" id="contractSubject"/>
+		<p>Subject: <input type="text" name="contractSubject" id="contractSubject"/>
 		<button onclick="createContract(); return false;">Create contract</button>
 		<button onclick="deleteContract(); return false;">Delete contract</button>
 	</form>

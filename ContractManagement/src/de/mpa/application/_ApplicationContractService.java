@@ -1,6 +1,5 @@
 package de.mpa.application;
 
-import java.sql.Date;
 import javax.ejb.Local;
 
 import de.mpa.domain.BasicCondition;
@@ -15,7 +14,7 @@ public interface _ApplicationContractService {
 	
 	public Task createTask(String token, int contractId, String description);
 	
-	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, Date startDate, Date endDate, int estimatedWorkload);
+	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
 	
 	public Requirement createRequirement(String token, String description, int contractId);
 	
@@ -30,4 +29,5 @@ public interface _ApplicationContractService {
 	public boolean deleteRequirement(String token, int contractId, int requirementId);
 
 	public boolean deleteSpecialCondition(String token, int contractId, int conditionId);
+
 }

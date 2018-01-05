@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
+import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 import de.mpa.domain.Task;
 
@@ -26,6 +27,7 @@ public class PersistanceContract {
 	    emfactory.close();
 	    return o;
 	}
+	
 	private Object getObjectFromPersistanceById(Class<?> c, int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager();
@@ -43,7 +45,7 @@ public class PersistanceContract {
 		return (Contract) this.getObjectFromPersistanceById(Contract.class, contractId);
 	}
 	
-	public Task persistTask(Contract c, Task t) {
+	public Task persistTaskInContract(Contract c, Task t) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager( );
 	    entitymanager.getTransaction( ).begin( );
@@ -59,4 +61,18 @@ public class PersistanceContract {
 	    return t;
 	}
 	
+	public BasicCondition persistBasicCondition(Contract c, BasicCondition b) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+	    entitymanager.merge(c);
+	    
+	    c.setBasicConditions(b);
+	    
+	    //entitymanager.persist(b);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return b;
+	}
 }

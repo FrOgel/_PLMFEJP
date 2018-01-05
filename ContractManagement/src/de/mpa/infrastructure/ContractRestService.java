@@ -1,6 +1,5 @@
 package de.mpa.infrastructure;
 
-import java.sql.Date;
 import java.util.List;
 
 import javax.ejb.EJB;
@@ -35,6 +34,7 @@ public class ContractRestService implements _ApplicationContractService{
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("createContract")
 	public Contract createContract(@CookieParam("token") String token, @FormParam("designation") String designation, 
 			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject) {
@@ -55,8 +55,8 @@ public class ContractRestService implements _ApplicationContractService{
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createBasicCondition")
 	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
-			@FormParam("location") String location, @FormParam("radius") String radius, Date startDate,
-			Date endDate, int estimatedWorkload) {
+			@FormParam("location") String location, @FormParam("radius") String radius, String startDate,
+			String endDate, int estimatedWorkload) {
 		return ac.createBasicCondition(token, contractId, location, radius, startDate, endDate, estimatedWorkload);
 	}
 
@@ -72,7 +72,7 @@ public class ContractRestService implements _ApplicationContractService{
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("createContract")
+	@Path("createSpecialCondition")
 	public SpecialCondition createSpecialCondition(@CookieParam("token") String token, @FormParam("description") String description, 
 			@FormParam("contractId") int contractId) {
 		return ac.createSpecialCondition(token, description, contractId);

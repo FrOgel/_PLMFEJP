@@ -1,6 +1,7 @@
 package de.mpa.domain;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import javax.persistence.Entity;
@@ -24,22 +25,14 @@ public class BasicCondition {
 	private int BasicConditionID;
 	private String location;
 	private String radius;
-	private Date startDate;
-	private Date endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private int estimatedWorkload;
 	//---------------------
 	
 	//Constructor to build a basic condition
 	public BasicCondition() {
 		super();
-	}
-	public BasicCondition(String location, String radius, Date startDate, Date endDate, int estimatedWorkload) {
-		super();
-		this.location = location;
-		this.radius = radius;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.estimatedWorkload = estimatedWorkload;
 	}
 	//--------------------------------------
 	
@@ -59,18 +52,18 @@ public class BasicCondition {
 		this.radius = radius;
 	}
 	@XmlElement
-	public Date getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(Date startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 	@XmlElement
-	public Date getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public void setEndDate(LocalDate localDate) {
+		this.endDate = localDate;
 	}
 	@XmlElement
 	public int getEstimatedWorkload() {

@@ -51,6 +51,8 @@ public class Contract {
 	//Constructor to build a contract object
 	public Contract() {
 		super();
+		this.creationDate = LocalDate.now();
+		this.contractState = ContractState.NOT_PUBLISHED;
 	}
 	//--------------------------------------
 	
