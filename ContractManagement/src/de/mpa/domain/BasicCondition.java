@@ -1,9 +1,6 @@
 package de.mpa.domain;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Calendar;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

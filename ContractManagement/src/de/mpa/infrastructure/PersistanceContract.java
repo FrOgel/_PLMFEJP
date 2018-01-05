@@ -9,6 +9,8 @@ import javax.persistence.Persistence;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
+import de.mpa.domain.Requirement;
+import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
 
 
@@ -54,7 +56,7 @@ public class PersistanceContract {
 		List<Task> list = (List<Task>)c.getTaskDescription();
 		list.add(t);
 		c.setTaskDescription(list);
-	    
+		
 	    entitymanager.getTransaction().commit();
 	    entitymanager.close();
 	    emfactory.close();
@@ -69,9 +71,45 @@ public class PersistanceContract {
 	    
 	    c.setBasicConditions(b);
 	    
+	    //b = entitymanager.merge(b);
+	    
 	    entitymanager.getTransaction().commit();
 	    entitymanager.close();
 	    emfactory.close();
 	    return b;
 	}
+	
+	public Requirement persistRequirementInContract(Contract c, Requirement r) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+	    c = entitymanager.merge(c);
+	    
+		List<Requirement> list = (List<Requirement>)c.getRequirementsProfile();
+		list.add(r);
+		c.setRequirementsProfile(list);
+	
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return r;
+	}
+	
+	public SpecialCondition persistSpecialConditionInContract(Contract c, SpecialCondition s) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+	    c = entitymanager.merge(c);
+	    
+		List<SpecialCondition> list = (List<SpecialCondition>)c.getSpecialConditions();
+		list.add(s);
+		c.setSpecialConditions(list);
+		
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return s;
+	}
+
+
 }

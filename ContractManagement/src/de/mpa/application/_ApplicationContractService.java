@@ -14,7 +14,7 @@ public interface _ApplicationContractService {
 	
 	public Task createTask(String token, int contractId, String description, String type, String subType);
 	
-	public BasicCondition createBasicCondition(String token, String contractId, String location, String radius, String startDate, String endDate, String estimatedWorkload);
+	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
 	
 	public Requirement createRequirement(String token, String description, int contractId);
 	

@@ -49,15 +49,15 @@ public class ApplicationContractService implements _ApplicationContractService{
 	}
 
 	@Override
-	public BasicCondition createBasicCondition(String token, String contractId, String location, String radius,
-			String startDate, String endDate, String estimatedWorkload) {
+	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius,
+			String startDate, String endDate, int estimatedWorkload) {
 		
-		Contract c = pc.findContract(Integer.parseInt(contractId));
+		Contract c = pc.findContract(contractId);
 		
 		BasicCondition b = new BasicCondition();
 		b.setEndDate(LocalDate.parse(endDate));
 		b.setStartDate(LocalDate.parse(startDate));
-		b.setEstimatedWorkload(Integer.parseInt(estimatedWorkload));
+		b.setEstimatedWorkload(estimatedWorkload);
 		b.setLocation(location);
 		b.setRadius(radius);
 		
@@ -66,14 +66,24 @@ public class ApplicationContractService implements _ApplicationContractService{
 
 	@Override
 	public Requirement createRequirement(String token, String description, int contractId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Contract c = pc.findContract(contractId);
+		
+		Requirement r = new Requirement();
+		r.setDescription(description);
+		
+		return pc.persistRequirementInContract(c, r);
 	}
 
 	@Override
 	public SpecialCondition createSpecialCondition(String token, String description, int contractId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Contract c = pc.findContract(contractId);
+		
+		SpecialCondition s = new SpecialCondition();
+		s.setDescription(description);
+		
+		return pc.persistSpecialConditionInContract(c, s);
 	}
 
 	@Override

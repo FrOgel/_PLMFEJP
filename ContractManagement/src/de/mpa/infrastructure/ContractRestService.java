@@ -1,7 +1,5 @@
 package de.mpa.infrastructure;
 
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -14,8 +12,6 @@ import javax.ws.rs.core.MediaType;
 import de.mpa.application._ApplicationContractService;
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
-import de.mpa.domain.Rank;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -54,9 +50,9 @@ public class ContractRestService implements _ApplicationContractService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createBasicCondition")
-	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") String contractId, 
-			@FormParam("location") String location, @FormParam("radius") String radius, String startDate,
-			String endDate, String estimatedWorkload) {
+	public BasicCondition createBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("location") String location, @FormParam("radius") String radius, @FormParam("startDate") String startDate,
+			@FormParam("endDate") String endDate,@FormParam("workload") int estimatedWorkload) {
 		
 		return ac.createBasicCondition(token, contractId, location, radius, startDate, endDate, estimatedWorkload);
 	}
