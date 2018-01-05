@@ -1,0 +1,56 @@
+.header-img-container {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.body{
+  font-family: 'Roboto', sans-serif;
+}
+.footer{
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+.footer-position{
+  margin-top: 2%;
+  position:sticky;
+}
+/* USED FOR MID AND LARGE SCREENS (TABLET AND DESKTOP) */
+@media only screen and (min-width: 576px){
+
+.header-login-scaling{
+  width: 500px;
+}
+
+.header-login-loginbutton{
+  margin-left: -61%;
+  }
+
+.header-login-position {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+  }
+
+}
+
+/* USED FOR SMALL SCREENS (SMARTPHONE) */
+.header-login-position-mobile {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+  }
+
+.header-login-scaling-mobile{
+    width: 100%;
+  }
+
+.header-login-username{
+    margin-left: 10%;
+    margin-top: 30%;
+    }
+
+.header-login-password{
+      margin-left: 10%;
+      margin-top: 5%;
+      }

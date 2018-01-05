@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Vladislav Lepichin & Jonas Heffner">
+
+    <title>JOBEX</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/selfmade.css" rel="stylesheet">
+
+    <!-- Bootstrap JS, AJAX and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.min.js"></script>
+
+    <script>
+
+    function userlogin(){
+    	var formData = $('#loginData').serializeArray();
+    	$.ajax({
+    		type: 'POST',
+    		data: formData,
+    		url: 'https://localhost:8443/IdentityManagement/rest/user/login',
+    		contentType: 'application/x-www-form-urlencoded',
+    		success: function(){
+    				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+    				document.getElementById("authorized").innerHTML = "Successfully logged in";
+    				}
+    		});
+    	
+    }
+    
+<!-- Used for hiding everything except initial content (after all HTML has been loaded)  -->
+$(document).ready(function(){
+  $('#registerGroup').hide();
+  $('#businessOrPrivate').hide();
+  $('#impressum').hide();
+})
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+
+  window.addEventListener('load', function() {
+    var form = document.getElementById('loginData');
+    form.addEventListener('submit', function(event) {
+      if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  }, false);
+})();
+
+<!-- used to hide whole content and show impressum-->
+function hideContentShowImpressum() {
+  $('#contentWrapper').hide();
+  $('#impressum').show();
+}
+
+
+<!-- used to hide everything except navbar and footer-->
+function hideEveryContent() {
+  $('#contentWrapper').hide();
+}
+
+<!-- used for display of the business form group (register)-->
+function businessGo() {
+  $('#businessOrPrivate').hide();
+  $('#registerGroup').show();
+  $('#registerGroupPrivate').hide();
+}
+
+<!-- used for display of the private form group (register) -->
+function privateGo() {
+  $('#businessOrPrivate').hide();
+  $('#registerGroup').show();
+  $('#registerGroupBusiness').hide();
+}
+
+<!-- used for display of the private form group (register) -->
+function registerButtonClick() {
+  $('#registerGroup').hide();
+
+}
+        <!-- Used for switching between login and register button group (only oneway)  -->
+        function registerDisplay() {
+          $('#loginGroup').hide();
+          $('#logInButton').hide();
+          $('#businessOrPrivate').show();
+        }
+    </script>
+
+    <!-- Additional fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+  </head>
+
+
+  <body style="background-color:SlateGrey;">
+
+    <!-- Navigation -->
+    <nav class="navbar bg-dark navbar-dark">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/jobex.png" width="120" height="50" max-width="100%" class="d-inline-block align-top" alt="">
+      </a>
+      <form class="form-inline">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" style="display: none;">
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit" style="display: none;">Search</button>
+      </form>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+              <button type="button" class="btn btn-outline-primary btn-lg" onClick="registerDisplay() ">Registrieren</button>
+        </li>
+      </ul>
+    </nav>
+<!-- //Navigation -->
+
+
+<!-- Content Wrapper -->
+<div id="contentWrapper">
+
+<!-- Log-In & Registration wrapper -->
+<div id="contentWrapper1">
+
+
+<!-- Header -->
+<!-- Picture Background -->
+<div class="header-img-container">
+  <img src="img/header.jpg" width="100%" height="100%" alt="girl in front of a computer">
+<!-- //Header -->
+
+
+<!-- Log-In Group -->
+<div class="header-login-position header-login-position-mobile" style="display: block">
+  <div id="loginGroup" class="form-group">
+    <form id="loginData" method="post">
+      <input id="email" type="email" class="form-control form-control-lg header-login-username header-login-scaling" placeholder="E-Mail" aria-label="E-Mail" aria-describedby="sizing-addon1"/>
+      <input id="password" type="password" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Password" aria-label="Password" aria-describedby="sizing-addon1"/>
+    </form>
+  </div>
+  <input id="logInButton" type="submit" value="Log-In" class="btn btn-success btn-lg header-login-loginbutton" onclick="userlogin()"/>
+<!-- //Log-In Group -->
+
+
+<!-- Register: Business or Private -->
+<div class="header-login-position header-login-position-mobile">
+    <div id="businessOrPrivate">
+<button id="businessRegister" class="btn btn-default btn-lg header-login-username header-login-scaling" onclick="businessGo() ">Company</button>
+<button id="privateRegister" class="btn btn-defaultt btn-lg header-login-username header-login-scaling" onclick="privateGo() ">Private</button>
+    </div>
+</div>
+<!-- //Register: Business or Private -->
+
+
+<!-- Register Group -->
+  <div id="registerGroup">
+
+  <!-- For Business registration-->
+  <div id="registerGroupBusiness" class="form-group row">
+  <div class=".col-xs-6">
+  <form id="registerDataBusiness" method="post">
+   <input type="text" class="form-control form-control-lg header-login-username header-login-scaling" placeholder="Username" aria-label="Username" aria-describedby="sizing-addon1">
+   <input id="username-register" type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Username again" aria-label="Username" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Password" aria-label="Password" aria-describedby="sizing-addon1">
+   <input id="password-register" type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Password again" aria-label="Password" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Company name" aria-label="Company name" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Country" aria-label="Country" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="State" aria-label="State" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="ZIP code" aria-label="ZIP code" aria-describedby="sizing-addon1">
+   <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="City" aria-label="City" aria-describedby="sizing-addon1">
+  </div>
+  <div class="col-xs-6">
+    <input type="text" class="form-control form-control-lg header-login-username header-login-scaling" placeholder="Street" aria-label="Street" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="House number" aria-label="House number" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="First name" aria-label="First name" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Last name" aria-label="Last name" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Company Phone" aria-label="Company Phone" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Company mail" aria-label="Company mail" aria-describedby="sizing-addon1">
+    <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Department" aria-label="Department" aria-describedby="sizing-addon1">
+     </form>
+    <button id="registerButton" type="submit" class="btn btn-primary btn-lg header-login-password header-login-scaling" style="margin-left:10%;" onclick="registerButtonClick() " data-toggle="modal" data-target="#registerModal">Register</button>
+
+  </div>
+  </div>
+  <!-- //For Business registration-->
+
+<!-- For Private registration-->
+<div id="registerGroupPrivate" class="form-group row">
+<div class=".col-xs-6">
+<form id="registerDataPrivate" method="post">
+ <input type="text" class="form-control form-control-lg header-login-username header-login-scaling" placeholder="Username" aria-label="Username" aria-describedby="sizing-addon1">
+ <input id="username-register" type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Username again" aria-label="Username" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Password" aria-label="Password" aria-describedby="sizing-addon1">
+ <input id="password-register" type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Password again" aria-label="Password" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Phone number" aria-label="Phone number" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Country" aria-label="Country" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="State" aria-label="State" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="ZIP code" aria-label="ZIP code" aria-describedby="sizing-addon1">
+ <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="City" aria-label="City" aria-describedby="sizing-addon1">
+</div>
+<div class="col-xs-6">
+  <input type="text" class="form-control form-control-lg header-login-username header-login-scaling" placeholder="Street" aria-label="Street" aria-describedby="sizing-addon1">
+  <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="House number" aria-label="House number" aria-describedby="sizing-addon1">
+  <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="First name" aria-label="First name" aria-describedby="sizing-addon1">
+  <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Last name" aria-label="Last name" aria-describedby="sizing-addon1">
+  <input type="text" class="form-control form-control-lg header-login-password header-login-scaling" placeholder="Birthday" aria-label="Birthday" aria-describedby="sizing-addon1">
+  </form>
+  <button id="registerButton" type="submit" class="btn btn-primary btn-lg header-login-password header-login-scaling" style="margin-left:10%;" onclick="registerButtonClick() " data-toggle="modal" data-target="#registerModal">Register</button>
+
+</div>
+</div>
+<!-- //For Private registration-->
+</div>
+</div>
+<!-- //Register Group -->
+
+<!-- Modal (Registration successfull)-->
+<div id="registerModal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="background-color: SlateGrey;">
+      <div class="modal-header">
+        <h3 class="modal-title">Registration successfull</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Your registration was successfull. Please verify your e-mail adress.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+<!-- //Modal (Registration successfull)-->
+
+</div>
+<!-- //Log-In & Registration wrapper -->
+
+
+</div>
+<!-- //Content Wrapper -->
+
+<!-- Impressum -->
+<div  id="impressum" class="jumbotron jumbotron-fluid" style="background-color:SlateGrey;">
+  <div class="container" style="font-color: white;">
+    <h1 class="display-4">Impressum</h1>
+    <p class="lead">JOBEX GmbH</p>
+    <p class="lead">Lohrtalweg 10</p>
+    <p class="lead">12345 Mosbach</p>
+  </div>
+</div>
+<!-- //Impressum -->
+
+
+<!-- Footer -->
+<div class="footer">
+<div class="container">
+  <div class="border footer-position"></div>
+  <div class="footer-position">
+    <p>© 2017 JOBEX | <a onclick="hideContentShowImpressum() ">Impressum</a></p>
+  </div>
+</div>
+</div>
+<!-- //Footer -->
+
+  </body>
+  </html>
