@@ -9,6 +9,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Superclass for the necessary attributes for the account verification and password reset
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="VALIDATION_TYPE")

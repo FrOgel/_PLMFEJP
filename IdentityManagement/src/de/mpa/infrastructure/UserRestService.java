@@ -1,7 +1,5 @@
 package de.mpa.infrastructure;
 
-import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -20,6 +18,11 @@ import de.mpa.domain.PrivateUser;
 
 
 //This rest service provides the functionality for managing user registration and authentication
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Encapsulates the rest endpoint from the business logic
+ */
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
 public class UserRestService implements _ApplicationUserService{

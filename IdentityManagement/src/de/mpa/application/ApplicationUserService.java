@@ -17,8 +17,11 @@ import de.mpa.infrastructure.PersistanceUser;
 import de.mpa.infrastructure.SecurityService;
 
 
-//Class for abstracting the domain layer from the rest service
-//This class will receive the rest service calls and invokes the appropriate domain layer methods
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Class for dealing with user related logic (login, registration, different models)
+ */
 @Stateless
 public class ApplicationUserService implements _ApplicationUserService{
 	

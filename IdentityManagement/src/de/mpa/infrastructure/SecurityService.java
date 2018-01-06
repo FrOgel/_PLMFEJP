@@ -11,7 +11,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 
-//Provides the service to hash user passwords
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Provides services for securing the password and generating / validating the verification token (JSON Web Token)
+ */
 public class SecurityService {
 		
 	//Hashes the password with a 512 bit sha encryption

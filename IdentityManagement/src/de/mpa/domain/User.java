@@ -19,6 +19,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Superclass for the general user attributes and methods
+ */
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)

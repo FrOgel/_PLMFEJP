@@ -10,6 +10,11 @@ import javax.persistence.Query;
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.User;
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Class for persisting, deleting, updating and retrieving user related details
+ */
 @Stateless
 public class PersistanceUser {
 	private Object addObjectToPersistance(Object o) {

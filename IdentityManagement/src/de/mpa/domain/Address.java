@@ -8,8 +8,6 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 /**
  * @author 		frank.vogel
  * created on: 	06.01.2018

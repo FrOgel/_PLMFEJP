@@ -6,8 +6,11 @@ import javax.ws.rs.core.Response;
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.PrivateUser;
 
-
-//This interface builds the contract for the ApplicationUserService and the RestService to ensure the consistency between the external and the internal services
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Interface for guarantee the method consistency between the application and the rest endpoint
+ */
 @Local
 public interface _ApplicationUserService {
 	
