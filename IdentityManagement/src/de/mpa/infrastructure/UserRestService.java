@@ -76,7 +76,7 @@ public class UserRestService implements _ApplicationUserService{
 
 	//Token authentication
 	@Override
-	public boolean authenticateViaToken(@CookieParam("token") String token) {
+	public String authenticateViaToken(@CookieParam("token") String token) {
 		return as.authenticateViaToken(token);
 	}
 

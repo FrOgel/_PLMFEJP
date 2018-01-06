@@ -101,7 +101,7 @@ public class ApplicationUserService implements _ApplicationUserService{
 	
 	//Calls the token authentication method from the security service
 	@Override
-	public boolean authenticateViaToken(String token) {
+	public String authenticateViaToken(String token) {
 		return ss.authenticateToken(token);
 	}
 

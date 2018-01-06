@@ -23,6 +23,6 @@ public interface _ApplicationUserService {
 	
 	public Response userLogin(String mail, String pw);
 	
-	public boolean authenticateViaToken(String token);
+	public String authenticateViaToken(String token);
 	
 }
