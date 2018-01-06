@@ -16,11 +16,11 @@ public interface _ApplicationContractService {
 	
 	public Task saveTask(String token, int contractId, int taskId, String description, String type, String subType);
 	
-	public BasicCondition saveBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
+	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
 	
-	public Requirement saveRequirement(String token, String description, int contractId);
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description);
 	
-	public SpecialCondition saveSpecialCondition (String token, String description, int contractId);
+	public SpecialCondition saveSpecialCondition (String token, int contractId, int specialConditionId, String description);
 	
 	public boolean deleteContract(String token, int contractId);
 	

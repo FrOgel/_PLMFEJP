@@ -45,7 +45,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createTask")
 	public Task saveTask(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			int taskId, @FormParam("description") String description,
+			@FormParam("taskId") int taskId, @FormParam("description") String description,
 			@FormParam("taskType") String type, @FormParam("taskSubType") String subType) {
 		return ac.saveTask(token, contractId, taskId, description, type, subType);
 	}
@@ -55,11 +55,11 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createBasicCondition")
 	public BasicCondition saveBasicCondition(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, @FormParam("location") String location,
-			@FormParam("radius") String radius, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload) {
+			@FormParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
+			@FormParam("location") String location, @FormParam("radius") String radius,
+			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload) {
 
-		return ac.saveBasicCondition(token, contractId, location, radius, startDate, endDate, estimatedWorkload);
+		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate, estimatedWorkload);
 	}
 
 	@Override
@@ -67,8 +67,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createRequirement")
 	public Requirement saveRequirement(@CookieParam("token") String token,
-			@FormParam("description") String description, @FormParam("contractId") int contractId) {
-		return ac.saveRequirement(token, description, contractId);
+			@FormParam("contractId") int contractId, int requirementId, @FormParam("description") String description) {
+		return ac.saveRequirement(token, contractId, requirementId, description);
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createSpecialCondition")
 	public SpecialCondition saveSpecialCondition(@CookieParam("token") String token,
-			@FormParam("description") String description, @FormParam("contractId") int contractId) {
-		return ac.saveSpecialCondition(token, description, contractId);
+			@FormParam("contractId") int contractId, int specialConditionId, @FormParam("description") String description) {
+		return ac.saveSpecialCondition(token, contractId, specialConditionId, description);
 	}
 
 	@Override

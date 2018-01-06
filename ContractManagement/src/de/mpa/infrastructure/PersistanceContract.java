@@ -14,6 +14,7 @@ import de.mpa.domain.ContractState;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
+import de.mpa.domain.TaskType;
 
 @Stateless
 public class PersistanceContract {
@@ -56,8 +57,6 @@ public class PersistanceContract {
 	public Contract persistContract(Contract c) {
 		return (Contract) this.addObjectToPersistance(c);
 	}
-
-	
 
 	public Task persistTaskInContract(Contract c, Task t) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
@@ -220,48 +219,80 @@ public class PersistanceContract {
 		entitymanager.getTransaction().begin();
 		c_old = entitymanager.merge(c_old);
 
-		
-		if((c_new.getDesignation()!=null) && (!(c_old.getDesignation().equals(c_new.getDesignation())))) {
+		if ((c_new.getDesignation() != null) && (!(c_old.getDesignation().equals(c_new.getDesignation())))) {
 			c_old.setDesignation(c_new.getDesignation());
 		}
-			
-		if((c_new.getType()!=null) && (!(c_old.getType().equals(c_new.getType())))) {
+
+		if ((c_new.getType() != null) && (!(c_old.getType().equals(c_new.getType())))) {
 			c_old.setType(c_new.getType());
 		}
-			
-		if((c_new.getSubject()!=null) && (!(c_old.getSubject().equals(c_new.getSubject())))) {
+
+		if ((c_new.getSubject() != null) && (!(c_old.getSubject().equals(c_new.getSubject())))) {
 			c_old.setSubject(c_new.getSubject());
 		}
-			
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 		return c_old;
 	}
-	
+
 	public Task updateTask(Task t_old, Task t_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		t_old = entitymanager.merge(t_old);
-		
-		if((t_new.getDescription()!=null) && (!(t_old.getDescription().equals(t_new.getDescription())))) {
+
+		if ((t_new.getDescription() != null) && (!(t_old.getDescription().equals(t_new.getDescription())))) {
 			t_old.setDescription(t_new.getDescription());
 		}
-		
-		if((t_new.getType()!=null) && (!(t_old.getType().equals(t_new.getType())))) {
+
+		if ((t_new.getType() != null) && (!(t_old.getType().equals(t_new.getType())))) {
 			t_old.setType(t_new.getType());
 		}
-		
-		if((t_new.getSubType()!=null) && (!(t_old.getSubType().equals(t_new.getSubType())))) {
-			t_old.setSubType(t_new.getSubType());
+
+		if (t_new.getType().equals(TaskType.FUNCTIONAL)) {
+			t_old.setSubType(null);
+		} else {
+			if ((t_new.getSubType() != null) && (!(t_old.getSubType().equals(t_new.getSubType())))) {
+				t_old.setSubType(t_new.getSubType());
+			}
 		}
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 		return t_old;
 	}
-	
+
+	public BasicCondition updateBasicCondition(BasicCondition b_old, BasicCondition b_new) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		b_old = entitymanager.merge(b_old);
+		
+		if(!(b_new.getLocation().equals("")) && (!(b_old.getLocation().equals(b_new.getLocation())))) {
+			b_old.setLocation(b_new.getLocation());
+		}
+		if((b_new.getEndDate()!=null) && (!(b_old.getEndDate().equals(b_new.getEndDate())))) {
+			b_old.setEndDate(b_new.getEndDate());
+		}
+		if((b_new.getStartDate()!=null) && (!(b_old.getStartDate().equals(b_new.getStartDate())))) {
+			b_old.setStartDate(b_new.getStartDate());
+		}
+		if(!(b_new.getRadius().equals("")) && (!(b_old.getRadius().equals(b_new.getRadius())))) {
+			b_old.setRadius(b_new.getRadius());
+		}
+		if((!(b_old.getLocation().equals(b_new.getLocation())))) {
+			b_old.setLocation(b_new.getLocation());
+		}
+		
+		
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return b_old;
+	}
+
 }

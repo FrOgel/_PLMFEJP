@@ -56,12 +56,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 			Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
 			Task t_new = new Task();
 
-			if (!(description.equals("")))
+			if (!(description.equals(""))) {
 				t_new.setDescription(description);
-			if (!(type.equals("")))
+			}
+			if (!(type.equals(""))) {
 				t_new.setType(TaskType.valueOf(type.toUpperCase()));
-			if (!(subType.equals("")))
+			}
+			if (!(subType.equals(""))) {
 				t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			}
 
 			return pc.updateTask(t_old, t_new);
 		} else {
@@ -76,23 +79,28 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public BasicCondition saveBasicCondition(String token, int contractId, String location, String radius,
-			String startDate, String endDate, int estimatedWorkload) {
-
+	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
+			String radius, String startDate, String endDate, int estimatedWorkload) {
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		BasicCondition b_new = new BasicCondition();
+		if(!(endDate.equals(""))) b_new.setEndDate(LocalDate.parse(endDate));
+		if(!(startDate.equals(""))) b_new.setStartDate(LocalDate.parse(startDate));
+		b_new.setEstimatedWorkload(estimatedWorkload);
+		b_new.setLocation(location);
+		b_new.setRadius(radius);
 
-		BasicCondition b = new BasicCondition();
-		b.setEndDate(LocalDate.parse(endDate));
-		b.setStartDate(LocalDate.parse(startDate));
-		b.setEstimatedWorkload(estimatedWorkload);
-		b.setLocation(location);
-		b.setRadius(radius);
+		if (contractId != 0) {
+			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
+					basicConditionId);
+			return pc.updateBasicCondition(b_old, b_new);
+		} else {
+			return pc.persistBasicCondition(c, b_new);
+		}
 
-		return pc.persistBasicCondition(c, b);
 	}
 
 	@Override
-	public Requirement saveRequirement(String token, String description, int contractId) {
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description) {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
@@ -103,7 +111,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public SpecialCondition saveSpecialCondition(String token, String description, int contractId) {
+	public SpecialCondition saveSpecialCondition(String token, int contractId, int specialConditionId,
+			String description) {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
