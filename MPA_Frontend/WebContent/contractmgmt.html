@@ -165,10 +165,10 @@ function getContracts(){
 <body>
 	<button onclick="getContracts(); return false;">Get all contracts</button>"
 	<form name="contractId">
-		<input type="hidden" name="contractId" id="contractId" value=""/>
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>
 	<form name="contract" id="contract">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<input type="hidden" name="contractId" id="contractId" value="0"/>
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
 			<datalist id="contractTypeList">
    		 		<option value="Consulting">
@@ -181,7 +181,7 @@ function getContracts(){
 	</form>
 	<p id="authorized"></p>
 	<form name="task" id="task">
-		<input type="hidden" name="taskId" id="taskId" value="2"/>
+		<input type="hidden" name="taskId" id="taskId" value="1"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Task description: <input type="text" name="description" id="description"/>
 		<p>Type <input type="text" name="taskType" id="taskType" list="typeList">
@@ -208,7 +208,7 @@ function getContracts(){
 	<p>Add your basic conditions</p>
 	<form name="basicCondition" id="basicCondition">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="basicConditionId" id="basicConditionId" value=""/>
+		<input type="hidden" name="basicConditionId" id="basicConditionId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>location <input type="text" name="location" id="location"/>

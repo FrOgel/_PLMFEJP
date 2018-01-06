@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class Task {
-	
-	//Attribute declaration
+
+	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int taskID;
@@ -22,17 +22,15 @@ public class Task {
 	private TaskType type;
 	@Enumerated(EnumType.STRING)
 	private TaskSubType subType;
-	//---------------------
-	
-	
-	//Constructor to build a task
+	// ---------------------
+
+	// Constructor to build a task
 	public Task() {
 		super();
 	}
-	//---------------------------
+	// ---------------------------
 
-
-	//Setter and getter
+	// Setter and getter
 	@XmlElement
 	public int getTaskID() {
 		return taskID;
@@ -56,7 +54,6 @@ public class Task {
 		return type;
 	}
 
-
 	public void setType(TaskType type) {
 		this.type = type;
 	}
@@ -65,7 +62,6 @@ public class Task {
 	public TaskSubType getSubType() {
 		return subType;
 	}
-
 
 	public void setSubType(TaskSubType subType) {
 		this.subType = subType;

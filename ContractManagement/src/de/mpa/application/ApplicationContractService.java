@@ -26,100 +26,110 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Contract saveContract(String token, int contractId, String designation, String contractType,
 			String contractSubject) {
+
+		Contract c_new = new Contract();
+		if (!(designation.equals(""))) {
+			c_new.setDesignation(designation);
+		}
+
+		if (!(contractType.equals(""))) {
+			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		}
+
+		if (!(contractSubject.equals(""))) {
+			c_new.setSubject(contractSubject);
+		}
+
 		if (contractId != 0) {
 			Contract c_old = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			Contract c_new = new Contract();
-			if (!(designation.equals("")))
-				c_new.setDesignation(designation);
-			if (!(contractType.equals("")))
-				c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-			if (!(contractSubject.equals("")))
-				c_new.setSubject(contractSubject);
 			return pc.updateContract(c_old, c_new);
 		} else {
-			Contract c = new Contract();
-			c.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
-			c.setDesignation(designation);
-			c.setType(ContractType.valueOf(contractType.toUpperCase()));
-			c.setSubject(contractSubject);
-
-			return pc.persistContract(c);
+			c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
+			return pc.persistContract(c_new);
 		}
 
 	}
 
 	@Override
 	public Task saveTask(String token, int contractId, int taskId, String description, String type, String subType) {
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+
+		Task t_new = new Task();
+
+		if (!(description.equals(""))) {
+			t_new.setDescription(description);
+		}
+		if (!(type.equals(""))) {
+			t_new.setType(TaskType.valueOf(type.toUpperCase()));
+		}
+		if (!(subType.equals(""))) {
+			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+		}
 
 		if (taskId != 0) {
 			Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
-			Task t_new = new Task();
-
-			if (!(description.equals(""))) {
-				t_new.setDescription(description);
-			}
-			if (!(type.equals(""))) {
-				t_new.setType(TaskType.valueOf(type.toUpperCase()));
-			}
-			if (!(subType.equals(""))) {
-				t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
-			}
-
 			return pc.updateTask(t_old, t_new);
 		} else {
-			Task t = new Task();
-			t.setDescription(description);
-			t.setType(TaskType.valueOf(type.toUpperCase()));
-			t.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
-
-			return pc.persistTaskInContract(c, t);
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			return pc.persistTaskInContract(c, t_new);
 		}
 
 	}
 
 	@Override
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
-			String radius, String startDate, String endDate, int estimatedWorkload) {
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			int radius, String startDate, String endDate, int estimatedWorkload) {
+
 		BasicCondition b_new = new BasicCondition();
-		if(!(endDate.equals(""))) b_new.setEndDate(LocalDate.parse(endDate));
-		if(!(startDate.equals(""))) b_new.setStartDate(LocalDate.parse(startDate));
+		if (!(endDate.equals("")))
+			b_new.setEndDate(LocalDate.parse(endDate));
+		if (!(startDate.equals("")))
+			b_new.setStartDate(LocalDate.parse(startDate));
 		b_new.setEstimatedWorkload(estimatedWorkload);
 		b_new.setLocation(location);
 		b_new.setRadius(radius);
 
-		if (contractId != 0) {
+		if (basicConditionId != 0) {
 			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
 					basicConditionId);
 			return pc.updateBasicCondition(b_old, b_new);
 		} else {
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 			return pc.persistBasicCondition(c, b_new);
 		}
-
 	}
 
 	@Override
 	public Requirement saveRequirement(String token, int contractId, int requirementId, String description) {
 
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		Requirement r_new = new Requirement();
+		r_new.setDescription(description);
 
-		Requirement r = new Requirement();
-		r.setDescription(description);
+		if (requirementId != 0) {
+			Requirement r_old = (Requirement) pc.getObjectFromPersistanceById(Requirement.class, requirementId);
+			return pc.updateRequirement(r_old, r_new);
+		} else {
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			return pc.persistRequirementInContract(c, r_new);
+		}
 
-		return pc.persistRequirementInContract(c, r);
 	}
 
 	@Override
 	public SpecialCondition saveSpecialCondition(String token, int contractId, int specialConditionId,
 			String description) {
 
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		SpecialCondition s_new = new SpecialCondition();
+		s_new.setDescription(description);
 
-		SpecialCondition s = new SpecialCondition();
-		s.setDescription(description);
+		if (specialConditionId != 0) {
+			SpecialCondition s_old = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
+					specialConditionId);
+			return pc.updateSpecialCondition(s_old, s_new);
+		} else {
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			return pc.persistSpecialConditionInContract(c, s_new);
+		}
 
-		return pc.persistSpecialConditionInContract(c, s);
 	}
 
 	@Override

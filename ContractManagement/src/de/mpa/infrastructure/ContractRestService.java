@@ -35,7 +35,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("createContract")
 	public Contract saveContract(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("designation") String designation, @FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject) {
+			@FormParam("designation") String designation, @FormParam("contractType") String contractType,
+			@FormParam("contractSubject") String contractSubject) {
 		System.out.println(contractType);
 		return ac.saveContract(token, contractId, designation, contractType, contractSubject);
 	}
@@ -56,18 +57,20 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("createBasicCondition")
 	public BasicCondition saveBasicCondition(@CookieParam("token") String token,
 			@FormParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
-			@FormParam("location") String location, @FormParam("radius") String radius,
-			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload) {
+			@FormParam("location") String location, @FormParam("radius") int radius,
+			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
+			@FormParam("workload") int estimatedWorkload) {
 
-		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate, estimatedWorkload);
+		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate,
+				estimatedWorkload);
 	}
 
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createRequirement")
-	public Requirement saveRequirement(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, int requirementId, @FormParam("description") String description) {
+	public Requirement saveRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+			@FormParam("requirementId") int requirementId, @FormParam("description") String description) {
 		return ac.saveRequirement(token, contractId, requirementId, description);
 	}
 
@@ -76,7 +79,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createSpecialCondition")
 	public SpecialCondition saveSpecialCondition(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, int specialConditionId, @FormParam("description") String description) {
+			@FormParam("contractId") int contractId, @FormParam("conditionId") int specialConditionId,
+			@FormParam("description") String description) {
 		return ac.saveSpecialCondition(token, contractId, specialConditionId, description);
 	}
 

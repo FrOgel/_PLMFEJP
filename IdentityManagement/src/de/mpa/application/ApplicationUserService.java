@@ -3,8 +3,6 @@ package de.mpa.application;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.Map;
-
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.NewCookie;
@@ -65,12 +63,6 @@ public class ApplicationUserService implements _ApplicationUserService{
 		this.createAccountVerification(user.getUserID(), mail);
 		
 		return user;
-	}
-
-	@Override
-	public PrivateUser registerPrivateUsser(PrivateUser pu) {
-		
-		return null;
 	}
 	
 	/*Handles the mail and password based user authentication

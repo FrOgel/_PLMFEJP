@@ -10,29 +10,28 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class Rank {
-	
-	//Attribute declaration
+
+	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int rankID;
 	private int UserID;
 	private float percentage;
-	//---------------------
-	
-	
-	//Constructor to build a term
+	// ---------------------
+
+	// Constructor to build a term
 	public Rank() {
 		super();
 	}
+
 	public Rank(int rankID, int userID, float percentage) {
 		this.rankID = rankID;
 		UserID = userID;
 		this.percentage = percentage;
 	}
-	//---------------------------
+	// ---------------------------
 
-	
-	//Setter and getter
+	// Setter and getter
 	@XmlElement
 	public int getRankID() {
 		return rankID;
@@ -59,5 +58,5 @@ public class Rank {
 	public void setPercentage(float percentage) {
 		this.percentage = percentage;
 	}
-	//-----------------
+	// -----------------
 }

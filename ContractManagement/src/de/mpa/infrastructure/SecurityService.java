@@ -10,22 +10,19 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class SecurityService {
 
-public String authenticateToken(String token) {
-		
+	public String authenticateToken(String token) {
+
 		try {
-		Algorithm algorithm = Algorithm.HMAC256("ThisIsOurOwn");
-		JWTVerifier verifier = JWT.require(algorithm)
-				.withIssuer("mpa")
-				.build();
-		DecodedJWT jwt = verifier.verify(token);
+			Algorithm algorithm = Algorithm.HMAC256("ThisIsOurOwn");
+			JWTVerifier verifier = JWT.require(algorithm).withIssuer("mpa").build();
+			DecodedJWT jwt = verifier.verify(token);
 			return jwt.getSubject();
-		} catch(UnsupportedEncodingException exception) {
+		} catch (UnsupportedEncodingException exception) {
 			return "n/a";
-		} catch(JWTVerificationException exception) {
+		} catch (JWTVerificationException exception) {
 			return "Not verified";
 		}
-		
+
 	}
-	
-	
+
 }

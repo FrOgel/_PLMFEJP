@@ -10,26 +10,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @XmlRootElement
 public class Requirement {
-	//Attribute declaration
+	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int requirementID;
 	private String description;
-	
-	
-	//Constructor to build a requirement
-	//---------------------
+
+	// Constructor to build a requirement
+	// ---------------------
 	public Requirement() {
 		super();
 	}
+
 	public Requirement(int requirementID, String description) {
 		this.requirementID = requirementID;
 		this.description = description;
 	}
-	//----------------------------------
+	// ----------------------------------
 
-	
-	//Setter and getter
+	// Setter and getter
 	@XmlElement
 	public int getRequirementID() {
 		return requirementID;
@@ -47,5 +46,5 @@ public class Requirement {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	//-----------------
+	// -----------------
 }

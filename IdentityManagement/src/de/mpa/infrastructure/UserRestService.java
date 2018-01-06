@@ -62,7 +62,6 @@ public class UserRestService implements _ApplicationUserService{
 		
 	}
 	
-
 	/*TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/login/frankvogel2@web.de/test
 	 */
@@ -88,19 +87,6 @@ public class UserRestService implements _ApplicationUserService{
 	@Path("verify/{id}/{creationTime}")
 	public boolean verifyAccount(@PathParam("id") String id, @PathParam("creationTime") String creationTime) {
 		return as.verifyAccount(id, creationTime);
-	}
-	
-	/*TestString for registering of a private user
-	 * https://localhost:8443/IdentityManagement/rest/user/registerPU
-	 */
-	@Override
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("registerPU")
-	public PrivateUser registerPrivateUsser(PrivateUser pu) {
-		System.out.println(pu.getFirstName());
-		return null;
 	}
 	
 }

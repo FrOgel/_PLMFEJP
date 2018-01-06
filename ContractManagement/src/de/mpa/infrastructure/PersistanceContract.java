@@ -251,7 +251,7 @@ public class PersistanceContract {
 			t_old.setType(t_new.getType());
 		}
 
-		if (t_new.getType().equals(TaskType.FUNCTIONAL)) {
+		if ((t_new.getType() != null) && (t_new.getType().equals(TaskType.FUNCTIONAL))) {
 			t_old.setSubType(null);
 		} else {
 			if ((t_new.getSubType() != null) && (!(t_old.getSubType().equals(t_new.getSubType())))) {
@@ -270,29 +270,62 @@ public class PersistanceContract {
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		b_old = entitymanager.merge(b_old);
-		
-		if(!(b_new.getLocation().equals("")) && (!(b_old.getLocation().equals(b_new.getLocation())))) {
+
+		if (!(b_new.getLocation().equals("")) && (!(b_old.getLocation().equals(b_new.getLocation())))) {
 			b_old.setLocation(b_new.getLocation());
 		}
-		if((b_new.getEndDate()!=null) && (!(b_old.getEndDate().equals(b_new.getEndDate())))) {
+		if ((b_new.getEndDate() != null) && (!(b_old.getEndDate().equals(b_new.getEndDate())))) {
 			b_old.setEndDate(b_new.getEndDate());
 		}
-		if((b_new.getStartDate()!=null) && (!(b_old.getStartDate().equals(b_new.getStartDate())))) {
+		if ((b_new.getStartDate() != null) && (!(b_old.getStartDate().equals(b_new.getStartDate())))) {
 			b_old.setStartDate(b_new.getStartDate());
 		}
-		if(!(b_new.getRadius().equals("")) && (!(b_old.getRadius().equals(b_new.getRadius())))) {
+		if ((!(b_old.getRadius() == b_new.getRadius()))) {
 			b_old.setRadius(b_new.getRadius());
 		}
-		if((!(b_old.getLocation().equals(b_new.getLocation())))) {
-			b_old.setLocation(b_new.getLocation());
+		if ((!(b_old.getEstimatedWorkload() == b_new.getEstimatedWorkload()))) {
+			b_old.setEstimatedWorkload(b_new.getEstimatedWorkload());
 		}
-		
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 
 		return b_old;
+	}
+
+	public Requirement updateRequirement(Requirement r_old, Requirement r_new) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		r_old = entitymanager.merge(r_old);
+
+		if (!(r_new.getDescription().equals("")) && (!(r_old.getDescription().equals(r_new.getDescription())))) {
+			r_old.setDescription(r_new.getDescription());
+		}
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return r_old;
+	}
+
+	public SpecialCondition updateSpecialCondition(SpecialCondition s_old, SpecialCondition s_new) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		s_old = entitymanager.merge(s_old);
+
+		if (!(s_new.getDescription().equals("")) && (!(s_old.getDescription().equals(s_new.getDescription())))) {
+			s_old.setDescription(s_new.getDescription());
+		}
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return s_old;
 	}
 
 }
