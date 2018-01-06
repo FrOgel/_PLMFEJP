@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import de.mpa.domain.AccountVerification;
+import de.mpa.domain.Qualification;
 import de.mpa.domain.User;
 
 /**
@@ -17,7 +18,7 @@ import de.mpa.domain.User;
  */
 @Stateless
 public class PersistanceUser {
-	private Object addObjectToPersistance(Object o) {
+	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
 	      
 	    EntityManager entitymanager = emfactory.createEntityManager( );
@@ -29,29 +30,15 @@ public class PersistanceUser {
 	    emfactory.close();
 	    return o;
 	}
-	private Object getObjectFromPersistanceById(Class<?> c, String id) {
+	public Object getObjectFromPersistanceById(Class<?> c, int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager();
-	    Object o = entitymanager.find( c, Integer.parseInt(id) );
+	    Object o = entitymanager.find( c, id);
 	    entitymanager.close();
 	    emfactory.close();
 		return o;
 	}
 	
-	public User persistUser(User user) {
-		return (User) addObjectToPersistance(user);
-	}
-	public AccountVerification persistAccountVerification(AccountVerification av) {
-		return (AccountVerification) addObjectToPersistance(av);
-	}
-	
-	public AccountVerification getAccountVerification(String id) {
-		return (AccountVerification) getObjectFromPersistanceById(AccountVerification.class, id);
-	}
-	public User getUser(String id) {
-		return (User) getObjectFromPersistanceById(User.class, id);
-	}
-
 	public void persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
 	    EntityManager entitymanager = emfactory.createEntityManager();
@@ -84,4 +71,22 @@ public class PersistanceUser {
 	    	return null;
 	    }
 	}
+
+	public Qualification updateQualification(Qualification q_old, Qualification q_new) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		q_old = entitymanager.merge(q_old);
+
+		if (!(q_old.getDescription().equals("")) && (!(q_old.getDescription().equals(q_new.getDescription())))) {
+			q_old.setDescription(q_new.getDescription());
+		}
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return q_old;
+	}
+	
 }

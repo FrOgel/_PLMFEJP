@@ -11,15 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 /**
  * @author frank.vogel created on: 06.01.2018 purpose: Superclass for the
@@ -39,6 +36,8 @@ public class User {
 	private String mailAddress;
 	private String password;
 	private String phoneNumber;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Qualification> qualificationProfile;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
 	private boolean verified;
@@ -118,6 +117,14 @@ public class User {
 
 	public void setUserAddress(Address userAddress) {
 		this.userAddress = userAddress;
+	}
+
+	public List<Qualification> getQualificationProfile() {
+		return qualificationProfile;
+	}
+
+	public void setQualificationProfile(List<Qualification> qualificationProfile) {
+		this.qualificationProfile = qualificationProfile;
 	}
 
 }

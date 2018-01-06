@@ -5,6 +5,7 @@ import javax.ws.rs.core.Response;
 
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.PrivateUser;
+import de.mpa.domain.Qualification;
 
 /**
  * @author 		frank.vogel
@@ -22,10 +23,11 @@ public interface _ApplicationUserService {
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
 	
-	public boolean verifyAccount(String id, String creationTime);
+	public boolean verifyAccount(int id, String creationTime);
 	
 	public Response userLogin(String mail, String pw);
 	
 	public String authenticateViaToken(String token);
 	
+	public Qualification saveQualificaation(String token, int qualificationId, String designation);
 }

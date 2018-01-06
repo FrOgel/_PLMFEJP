@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import de.mpa.application._ApplicationUserService;
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.PrivateUser;
+import de.mpa.domain.Qualification;
 
 
 //This rest service provides the functionality for managing user registration and authentication
@@ -88,8 +89,17 @@ public class UserRestService implements _ApplicationUserService{
 	@Override
 	@GET
 	@Path("verify/{id}/{creationTime}")
-	public boolean verifyAccount(@PathParam("id") String id, @PathParam("creationTime") String creationTime) {
+	public boolean verifyAccount(@PathParam("id") int id, @PathParam("creationTime") String creationTime) {
 		return as.verifyAccount(id, creationTime);
+	}
+
+	
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("saveQualification")
+	public Qualification saveQualificaation(String token, int qualificationId, String designation) {
+		return as.saveQualificaation(token, qualificationId, designation);
 	}
 	
 }

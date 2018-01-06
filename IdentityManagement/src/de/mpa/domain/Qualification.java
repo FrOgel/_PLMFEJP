@@ -18,7 +18,7 @@ public class Qualification {
 	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int requirementID;
+	private int qualificationId;
 	private String description;
 
 	// Constructor to build a requirement
@@ -30,11 +30,11 @@ public class Qualification {
 	// Setter and getter
 	@XmlElement
 	public int getRequirementID() {
-		return requirementID;
+		return qualificationId;
 	}
 
-	public void setRequirementID(int requirementID) {
-		this.requirementID = requirementID;
+	public void setRequirementID(int qualificationId) {
+		this.qualificationId = qualificationId;
 	}
 
 	@XmlElement
