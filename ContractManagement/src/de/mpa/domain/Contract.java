@@ -56,8 +56,6 @@ public class Contract {
 	}
 	//--------------------------------------
 	
-	
-	
 	//Setter and getter	
 	@XmlElement
 	public int getClientID() {

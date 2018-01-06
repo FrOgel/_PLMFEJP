@@ -1,5 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -167,9 +165,10 @@ function getContracts(){
 <body>
 	<button onclick="getContracts(); return false;">Get all contracts</button>"
 	<form name="contractId">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<input type="hidden" name="contractId" id="contractId" value=""/>
 	</form>
 	<form name="contract" id="contract">
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
 			<datalist id="contractTypeList">
    		 		<option value="Consulting">
@@ -177,12 +176,12 @@ function getContracts(){
 			</datalist>
 		<p>Designation: <input type="text" name="designation" id="designation"/>
 		<p>Subject: <input type="text" name="contractSubject" id="contractSubject"/>
-		<button onclick="createContract(); return false;">Create contract</button>
+		<button onclick="createContract(); return false;">Save contract</button>
 		<button onclick="deleteContract(); return false;">Delete contract</button>
 	</form>
 	<p id="authorized"></p>
 	<form name="task" id="task">
-		<input type="hidden" name="taskId" id="taskId" value="1"/>
+		<input type="hidden" name="taskId" id="taskId" value="2"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Task description: <input type="text" name="description" id="description"/>
 		<p>Type <input type="text" name="taskType" id="taskType" list="typeList">
@@ -230,7 +229,7 @@ function getContracts(){
 	<p>Add your special condition</p>
 	<form name="special" id="special">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="specialConId" id="specialConId" value="1"/>
+		<input type="hidden" name="conditionId" id="conditionId" value="1"/>
 		<p>Description: <input type="text" name="description" id="description"/>
 		<button onclick="createSC(); return false;">Add condition</button>
 		<button onclick="deleteSC(); return false;">Delete condition</button>

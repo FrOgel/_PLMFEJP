@@ -12,15 +12,15 @@ import de.mpa.domain.Task;
 
 @Local
 public interface _ApplicationContractService {
-	public Contract createContract(String token, String designation, String contractType, String contractSubject);
+	public Contract saveContract(String token, int contractId, String designation, String contractType, String contractSubject);
 	
-	public Task createTask(String token, int contractId, String description, String type, String subType);
+	public Task saveTask(String token, int contractId, int taskId, String description, String type, String subType);
 	
-	public BasicCondition createBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
+	public BasicCondition saveBasicCondition(String token, int contractId, String location, String radius, String startDate, String endDate, int estimatedWorkload);
 	
-	public Requirement createRequirement(String token, String description, int contractId);
+	public Requirement saveRequirement(String token, String description, int contractId);
 	
-	public SpecialCondition createSpecialCondition (String token, String description, int contractId);
+	public SpecialCondition saveSpecialCondition (String token, String description, int contractId);
 	
 	public boolean deleteContract(String token, int contractId);
 	
@@ -34,4 +34,6 @@ public interface _ApplicationContractService {
 
 	public List<Contract> getAllContractsFromUser(String token);
 	
+	public boolean changeContractState(String token, int contractId, String state);
+
 }
