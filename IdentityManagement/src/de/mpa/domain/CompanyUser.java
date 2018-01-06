@@ -11,6 +11,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Model from superclass user to model the company specific details
+ */
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName="userID")
 @XmlRootElement
