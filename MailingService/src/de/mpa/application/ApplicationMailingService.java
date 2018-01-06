@@ -17,7 +17,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.net.ssl.HttpsURLConnection;
 
-
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Class for mail sending logic
+ */
 @Stateless
 public class ApplicationMailingService implements _ApplicationMailingService{
 	

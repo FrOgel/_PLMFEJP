@@ -7,6 +7,11 @@ import javax.ws.rs.PathParam;
 
 import de.mpa.application._ApplicationMailingService;
 
+/**
+ * @author 	frank.vogel
+ * Date:	06.01.2018
+ * Purpose:	Encapsulate the rest endpoint from the application layer
+ */
 @Path("/mailing")
 public class MailingRestService implements _ApplicationMailingService{
 

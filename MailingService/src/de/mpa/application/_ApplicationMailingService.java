@@ -2,7 +2,12 @@ package de.mpa.application;
 
 import javax.ejb.Local;
 
-//This interface builds the contract for the ApplicationMailingService and the RestService to ensure the consistency between the external and the internal services
+
+/**
+ * @author 	frank.vogel
+ * Date:	06.01.2018
+ * Purpose:	Interface for method consistency between the application and the rest endpoint
+ */
 @Local
 public interface _ApplicationMailingService {
 	public void sendVerificationMail(String to, String id, String hash);

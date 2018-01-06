@@ -4,7 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -14,7 +13,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * purpose:		Model for handling user addresses
  */
 @Entity
-@Table
 @XmlRootElement
 public class Address {
 		

@@ -39,7 +39,7 @@ public class UserRestService implements _ApplicationUserService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/registerCompanyUser")
-	public CompanyUser registerCompanyUser(@FormParam("mail") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
+	public CompanyUser registerCompanyUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
 			@FormParam("companyName") String companyName, @FormParam("country") String country, @FormParam("state") String state, @FormParam("zipCode") String zipCode, 
 			@FormParam("city") String city, @FormParam("street") String street, @FormParam("houseNumber") String houseNumber, @FormParam("firstName") String firstName, 
 			@FormParam("surName") String surName, @FormParam("cpPhone") String cpPhone, @FormParam("cpMail") String mailAddress, @FormParam("department") String department) {
