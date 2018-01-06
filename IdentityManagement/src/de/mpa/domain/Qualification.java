@@ -29,11 +29,11 @@ public class Qualification {
 
 	// Setter and getter
 	@XmlElement
-	public int getRequirementID() {
+	public int getQualificationId() {
 		return qualificationId;
 	}
 
-	public void setRequirementID(int qualificationId) {
+	public void setQualificationId(int qualificationId) {
 		this.qualificationId = qualificationId;
 	}
 

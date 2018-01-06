@@ -97,8 +97,10 @@ public class UserRestService implements _ApplicationUserService{
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
 	@Path("saveQualification")
-	public Qualification saveQualificaation(String token, int qualificationId, String designation) {
+	public Qualification saveQualificaation(@CookieParam("token") String token, @FormParam("qualificationId") int qualificationId, 
+			@FormParam("designation") String designation) {
 		return as.saveQualificaation(token, qualificationId, designation);
 	}
 	

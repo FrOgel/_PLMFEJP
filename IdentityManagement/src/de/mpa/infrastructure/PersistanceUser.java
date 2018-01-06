@@ -73,7 +73,7 @@ public class PersistanceUser {
 	}
 
 	public Qualification updateQualification(Qualification q_old, Qualification q_new) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		q_old = entitymanager.merge(q_old);

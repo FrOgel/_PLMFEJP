@@ -185,10 +185,8 @@ public class ApplicationUserService implements _ApplicationUserService {
 			Qualification q_old = (Qualification) pu.getObjectFromPersistanceById(Qualification.class, qualificationId);
 			return pu.updateQualification(q_old, q_new);
 		}else {
-			
+			return (Qualification) pu.addObjectToPersistance(q_new);
 		}
-		
-		return null;
 	}
 
 }
