@@ -89,32 +89,32 @@ public class ApplicationContractService implements _ApplicationContractService{
 
 	@Override
 	public boolean deleteContract(String token, int contractId) {
-		// TODO Auto-generated method stub
-		return false;
+		ss.authenticateToken(token);
+		return pc.deleteContract(contractId);
 	}
 
 	@Override
 	public boolean deleteTask(String token, int contractId, int taskId) {
-		// TODO Auto-generated method stub
-		return false;
+		ss.authenticateToken(token);
+		return pc.deleteTaskFromContracT(contractId, taskId);
 	}
 
 	@Override
 	public boolean deleteBasicCondition(String token, int contractId) {
-		// TODO Auto-generated method stub
-		return false;
+		ss.authenticateToken(token);
+		return pc.deleteBasicCondition(contractId);
 	}
 
 	@Override
 	public boolean deleteRequirement(String token, int contractId, int requirementId) {
-		// TODO Auto-generated method stub
-		return false;
+		ss.authenticateToken(token);
+		return pc.deleteRequirementFromContract(contractId, requirementId);
 	}
 
 	@Override
 	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
-		// TODO Auto-generated method stub
-		return false;
+		ss.authenticateToken(token);
+		return pc.deleteSpecialConditionFromContract(contractId, conditionId);
 	}
 
 	@Override

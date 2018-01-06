@@ -40,6 +40,19 @@ public class PersistanceContract {
 		return o;
 	}
 
+	private boolean deleteObjectFromPersistance(Class<?> c, int id) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );
+	      
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+		Object o = entitymanager.find(c, id);
+	    entitymanager.remove(o);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return true;
+	}
+	
 	public Contract persistContract(Contract c) {
 		return (Contract) this.addObjectToPersistance(c);
 	}
@@ -126,4 +139,69 @@ public class PersistanceContract {
 	    
 	    return list;
 	}
+
+	public boolean deleteContract(int contractId) {
+		return this.deleteObjectFromPersistance(Contract.class, contractId);
+	}
+	
+	public boolean deleteTaskFromContracT(int contractId, int taskId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );  
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+		Contract c = entitymanager.find(Contract.class, contractId);
+		Task t = entitymanager.find(Task.class, taskId);
+	    List<Task> list = (List<Task>)c.getTaskDescription();
+	    list.remove(t);
+	    entitymanager.remove(t);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return true;
+	}
+	
+	public boolean deleteBasicCondition(int contractId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );  
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+		Contract c = entitymanager.find(Contract.class, contractId);
+		BasicCondition b = c.getBasicConditions();
+	    entitymanager.remove(b);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+		
+		return true;
+	}
+	
+	public boolean deleteRequirementFromContract(int contractId, int requirementId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );  
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+		Contract c = entitymanager.find(Contract.class, contractId);
+		Requirement r = entitymanager.find(Requirement.class, requirementId);
+	    List<Requirement> list = (List<Requirement>)c.getRequirementsProfile();
+	    list.remove(r);
+	    entitymanager.remove(r);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return true;
+	}
+	
+	public boolean deleteSpecialConditionFromContract(int contractId, int conditionId) {
+		
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "ContractManagement" );  
+	    EntityManager entitymanager = emfactory.createEntityManager( );
+	    entitymanager.getTransaction( ).begin( );
+		Contract c = entitymanager.find(Contract.class, contractId);
+		SpecialCondition s = entitymanager.find(SpecialCondition.class, conditionId);
+	    List<SpecialCondition> list = (List<SpecialCondition>)c.getSpecialConditions();
+	    list.remove(s);
+	    entitymanager.remove(s);
+	    entitymanager.getTransaction().commit();
+	    entitymanager.close();
+	    emfactory.close();
+	    return true;
+	}
+	
 }

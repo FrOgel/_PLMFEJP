@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -155,11 +157,15 @@ function deleteSC(){
 		});
 	
 }
+function getContracts(){
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
+	<button onclick="getContracts(); return false;">Get all contracts</button>"
 	<form name="contractId">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>

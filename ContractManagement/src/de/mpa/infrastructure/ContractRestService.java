@@ -106,7 +106,7 @@ public class ContractRestService implements _ApplicationContractService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("deleteRequirement")
-	public boolean deleteRequirement(@CookieParam("token") String token, int contractId, @FormParam("requirementId") int requirementId) {
+	public boolean deleteRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId, @FormParam("requirementId") int requirementId) {
 		return ac.deleteRequirement(token, contractId, requirementId);
 	}
 
@@ -114,7 +114,8 @@ public class ContractRestService implements _ApplicationContractService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("deleteSpecialCondition")
-	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
+	public boolean deleteSpecialCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("conditionId") int conditionId) {
 		return ac.deleteSpecialCondition(token, contractId, conditionId);
 	}
 
