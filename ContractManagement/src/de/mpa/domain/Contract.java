@@ -1,6 +1,7 @@
 package de.mpa.domain;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -31,22 +32,22 @@ public class Contract {
 	@Enumerated(EnumType.STRING)
 	private ContractType type;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Candidate> candidates;
+	private List<Candidate> candidates = new ArrayList<Candidate>();
 	private String subject;
 	private LocalDate creationDate;
 	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Task> taskDescription;
+	private List<Task> taskDescription = new ArrayList<Task>();
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Requirement> requirementsProfile;
+	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
 	// The condition offer consists of the basicConditions and the specialConditions
 	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<SpecialCondition> specialConditions;
+	private List<SpecialCondition> specialConditions = new ArrayList<SpecialCondition>();
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Rank> ranking;
+	private List<Rank> ranking = new ArrayList<Rank>();
 	// ---------------------
 
 	// Constructor to build a contract object

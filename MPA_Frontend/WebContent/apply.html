@@ -3,7 +3,7 @@
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
-function createContract(){
+function applyForContract(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#apply').serializeArray();
 	$.ajax({
@@ -13,7 +13,22 @@ function createContract(){
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
-				document.getElementById("authorized").innerHTML = "Successfully created in";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});
+	
+}
+function pickCandidate(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#accept').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/pickCandidate',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("accepted").innerHTML = "Successfully applied ";
 				}
 		});
 	
@@ -23,9 +38,20 @@ function createContract(){
 <title>Insert title here</title>
 </head>
 <body>
+	<p id="authorized"></p>
 	<button onclick="applyForContract(); return false;">Apply for contract</button>"
-	<form name="apply">
+	<form name="apply" id="apply">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
+	</form>
+	
+	
+	Accept candidate for contract
+	<p id="accepted"></p>
+	<button onclick="pickCandidate(); return false;">Apply for contract</button>"
+	<form name="accept" id="accept">
+		<input type="text" name="contractId" id="contractId" value="1"/>
+		<input type="text" name="candidateId" id="candidateId" value="1"/>
+		<input type="text" name="acceptance" id="acceptance" value="Accept"/>
 	</form>
 </body>
 

@@ -156,7 +156,15 @@ function deleteSC(){
 	
 }
 function getContracts(){
-	
+	document.getElementById("authorized").innerHTML = "";
+	$.ajax({
+		type: 'POST',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/getUserContracts',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
 }
 </script>
 <meta charset="ISO-8859-1">

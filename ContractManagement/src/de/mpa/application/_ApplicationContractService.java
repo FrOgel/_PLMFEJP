@@ -43,4 +43,5 @@ public interface _ApplicationContractService {
 
 	public boolean changeContractState(String token, int contractId, String state);
 
+	public boolean pickCandidate(String token, int contractId, int candidateId, String acceptance);
 }

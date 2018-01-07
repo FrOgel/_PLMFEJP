@@ -141,18 +141,27 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("changeContractState")
-	public boolean changeContractState(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+	public boolean changeContractState(@CookieParam("token") String token, @FormParam("contractId") int contractId,
 			@FormParam("contractState") String state) {
 		return ac.changeContractState(token, contractId, state);
 	}
 
-	
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("applyForContract")
 	public Candidate applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
 		return ac.applyForContract(token, contractId);
+	}
+
+	
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("pickCandidate")
+	public boolean pickCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId, @FormParam("candidateId") int candidateId, 
+			@FormParam("acceptance") String acceptance) {
+		return ac.pickCandidate(token, contractId, candidateId, acceptance);
 	}
 
 }

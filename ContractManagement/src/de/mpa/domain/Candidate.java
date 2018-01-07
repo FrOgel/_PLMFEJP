@@ -1,5 +1,6 @@
 package de.mpa.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -22,7 +23,7 @@ public class Candidate {
 	@EmbeddedId private CandidateId candidateId;
 	private boolean accepted;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<BasicCondition> negotiatedConditions;
+	private List<BasicCondition> negotiatedConditions = new ArrayList<BasicCondition>();
 
 	public Candidate() {
 		super();

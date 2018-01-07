@@ -103,11 +103,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Requirement saveRequirement(String token, int contractId, int requirementId, String description, String criteriaType) {
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description,
+			String criteriaType) {
 
 		Requirement r_new = new Requirement();
 		r_new.setDescription(description);
-		if(!(criteriaType.equals("")))
+		if (!(criteriaType.equals("")))
 			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
 
 		if (requirementId != 0) {
@@ -179,32 +180,43 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()));
 	}
 
-
 	@Override
 	public Candidate applyForContract(String token, int contractId) {
-		
+
 		String tokenSubject = ss.authenticateToken(token);
-		int userId = Integer.parseInt(tokenSubject);
-		
-		CandidateId candidateId = new CandidateId(contractId, userId);
-		
-		Candidate can = pc.getCandidateByObjectId(candidateId);
-		
-		if(can == null) {
+		int principalId = Integer.parseInt(tokenSubject);
+
+		CandidateId candidateId = new CandidateId(contractId, principalId);
+
+		Candidate can = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateId);
+
+		if (can == null) {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 			can = new Candidate();
 			can.setAccepted(false);
 			can.setCandidateId(candidateId);
-			List<BasicCondition> list = can.getNegotiatedConditions();
-			list.add(c.getBasicConditions());
-			can.setNegotiatedConditions(list);
 			can = pc.persistCandidateInContract(c, can);
 			return can;
-		}else {
+		} else {
 			return null;
+		}
+
+	}
+
+	@Override
+	public boolean pickCandidate(String token, int contractId, int candidateId, String acceptance) {
+		
+		ss.authenticateToken(token);
+		
+		switch(acceptance.toUpperCase()) {
+			case "ACCEPT":
+				return pc.acceptCandidateInContract(new CandidateId(contractId, candidateId));
+			case "DECLINE":
+				return pc.deleteCandidateFromContract(new CandidateId(contractId, candidateId));
+			default:
+				return false;
 		}
 		
 	}
-	
 
 }
