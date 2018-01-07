@@ -103,7 +103,7 @@
                       <table class="buttonwrapper" bgcolor="#e05443" border="0" cellspacing="0" cellpadding="0">
                         <tr>
                           <td class="button" height="45">
-                            <a href="https://localhost:8443/IdentityManagement/rest/user/changePassword/<%= request.getParameter("hash") %>">ChangePassword!</a>
+                            <a href="https://localhost:8443/IdentityManagement/rest/user/passwordResetAuthentication/<%= request.getParameter("hash") %>">ChangePassword!</a>
                           </td>
                         </tr>
                       </table>

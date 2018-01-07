@@ -115,9 +115,17 @@ public class UserRestService implements _ApplicationUserService{
 
 	@Override
 	@GET
-	@Path("changePassword/{uuid}")
-	public Response changePassword(@PathParam("uuid") String uuid) {
-		return as.changePassword(uuid);
+	@Path("passwordResetAuthentication/{uuid}")
+	public Response passwordResetAuthentication(@PathParam("uuid") String uuid) {
+		return as.passwordResetAuthentication(uuid);
+	}
+
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("changePassword")
+	public boolean changePassword(@FormParam("uuid") String uuid, @FormParam("newPassword") String newPassword) {
+		return as.changePassword(uuid, newPassword);
 	}
 	
 }

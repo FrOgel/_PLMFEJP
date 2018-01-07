@@ -18,9 +18,25 @@ import com.auth0.jwt.interfaces.DecodedJWT;
  */
 public class SecurityService {
 		
-	//Hashes the password with a 512 bit sha encryption
-	public String getSecurePw(String pw, String salt) {
+	//Hashes the password with a SHA-512 encryption
+	public String getEncryptedKey(String pw, ToBeEncrypted type) {
 		String hashedPW = null;
+		String salt;
+		
+		switch(type) {
+			case PASSWORD:
+				salt = "12341234qwefqwdfj123$!";
+				break;
+			case VERIFICATION:
+				salt = "A12324jkldsfj12%!§4234";
+				break;
+			case PASSWORD_RESET:
+				salt = "189§48!§$djsaflkASDf";
+				break;
+			default:
+				salt = "JustTheDefaultCase";
+				break;
+		}
 		
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-512");

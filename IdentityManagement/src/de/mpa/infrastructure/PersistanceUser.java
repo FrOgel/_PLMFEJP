@@ -149,4 +149,14 @@ public class PersistanceUser {
 		emfactory.close();
 	}
 
+	public boolean changePassword(User u, String newPassword) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		entitymanager.merge(u).setPassword(newPassword);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return true;
+	}
 }

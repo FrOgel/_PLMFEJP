@@ -19,6 +19,7 @@ import de.mpa.domain.Qualification;
 import de.mpa.domain.User;
 import de.mpa.infrastructure.PersistanceUser;
 import de.mpa.infrastructure.SecurityService;
+import de.mpa.infrastructure.ToBeEncrypted;
 
 /**
  * @author frank.vogel created on: 06.01.2018 purpose: Class for dealing with
@@ -36,7 +37,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department) {
 
-		pw = ss.getSecurePw(pw, "Masse");
+		pw = ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD);
 
 		Address uAddress = new Address(country, state, zipCode, city, street, houseNumber);
 		ContactPerson cp = new ContactPerson(firstName, surName, cpPhone, mailAddress, department);
@@ -58,7 +59,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 			String zipCode, String city, String street, String houseNumber, String firstName, String surName,
 			String birthday) {
 
-		pw = ss.getSecurePw(pw, "Masse");
+		pw = ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD);
 
 		Address uAddress = new Address(country, state, zipCode, city, street, houseNumber);
 		PrivateUser user = new PrivateUser(mail, pw, phoneNumber, uAddress, firstName, surName, birthday);
@@ -88,7 +89,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		// Authenticate the user with his credentials. If they are wrong null will be
 		// returend
-		User user = pu.checkUserCredentials(mail, ss.getSecurePw(pw, "Masse"));
+		User user = pu.checkUserCredentials(mail, ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD));
 		if (user != null) {
 			id = user.getUserID();
 			verified = user.getVerified();
@@ -133,7 +134,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		if (user.getVerified())
 			return false;
 
-		if ((this.encryptUUID(av.getCheckSum()).equals(checkSum))
+		if ((ss.getEncryptedKey(av.getCheckSum(), ToBeEncrypted.VERIFICATION).equals(checkSum))
 				&& (Long.parseLong(av.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
 			pu.persistVerifiedUser(user, av);
 			return true;
@@ -144,8 +145,8 @@ public class ApplicationUserService implements _ApplicationUserService {
 	}
 
 	@Override
-	public Response changePassword(String uuid) {
-		PasswordChange pc = pu.findPasswordChange(this.encryptUUID(uuid));
+	public Response passwordResetAuthentication(String uuid) {
+		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
 		System.out.println("Verification in process...");
 
 		if (pc == null) {
@@ -188,19 +189,13 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	// Encryption of the uuid time of the link parameter for verifying the
-	// account
-	private String encryptUUID(String time) {
-		return ss.getSecurePw(time, "verification");
-	}
-
 	// Creation of the account verification during the registration process
 	// including email
 	private void createAccountVerification(int id, String mail) {
 		AccountVerification av = new AccountVerification(id);
 		String uuid = av.generateCheckSum();
 
-		this.callVerificationMailService(mail, id, this.encryptUUID(uuid));
+		this.callVerificationMailService(mail, id, ss.getEncryptedKey(uuid, ToBeEncrypted.VERIFICATION));
 		pu.addObjectToPersistance(av);
 	}
 
@@ -240,12 +235,29 @@ public class ApplicationUserService implements _ApplicationUserService {
 		System.out.println(userId);
 		pc.setUserID(userId);
 		String uuid = pc.generateCheckSum();
-		pc.setCheckSum(this.encryptUUID(uuid));
+		pc.setCheckSum(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
 		
 		this.callPasswordChangeMailService(mail, uuid);
 		pu.addObjectToPersistance(pc);
 
 		return true;
+	}
+
+	@Override
+	public boolean changePassword(String uuid, String newPassword) {
+		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
+		System.out.println("Verification in process...");
+
+		if (pc == null) {
+			System.out.println("Not valid");
+			return false;
+		}else {
+			User user = (User) pu.getObjectFromPersistanceById(User.class, pc.getUserID());
+			pu.changePassword(user, ss.getEncryptedKey(newPassword, ToBeEncrypted.PASSWORD));
+			pu.removePasswordChange(pc.getUserID());
+			System.out.println("Password successfully changed");
+			return true;
+		}
 	}
 
 }
