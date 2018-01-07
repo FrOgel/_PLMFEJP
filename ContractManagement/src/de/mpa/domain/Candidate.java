@@ -1,9 +1,11 @@
 package de.mpa.domain;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -12,35 +14,27 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Date:	07.01.2018
  * Purpose:	Represents a applicant for a specific contract
  */
+
 @Entity
-@IdClass(CandidateId.class)
 @XmlRootElement
 public class Candidate {
 
-	@EmbeddedId
-	private CandidateId candidateId;
+	@EmbeddedId private CandidateId candidateId;
 	private boolean accepted;
-	private BasicCondition negotiatedConditions;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<BasicCondition> negotiatedConditions;
 
 	public Candidate() {
 		super();
+		this.accepted = false;
 	}
 	
 	@XmlElement
-	public int getContractId() {
-		return contractId;
-	}
-
-	public void setContractId(int contractId) {
-		this.contractId = contractId;
-	}
-
-	@XmlElement
-	public int getCandidateId() {
+	public CandidateId getCandidateId() {
 		return candidateId;
 	}
 
-	public void setCandidateId(int candidateId) {
+	public void setCandidateId(CandidateId candidateId) {
 		this.candidateId = candidateId;
 	}
 
@@ -54,12 +48,14 @@ public class Candidate {
 	}
 
 	@XmlElement
-	public BasicCondition getNegotiatedConditions() {
+	public List<BasicCondition> getNegotiatedConditions() {
 		return negotiatedConditions;
 	}
 
-	public void setNegotiatedConditions(BasicCondition negotiatedConditions) {
+	public void setNegotiatedConditions(List<BasicCondition> negotiatedConditions) {
 		this.negotiatedConditions = negotiatedConditions;
 	}
+
+	
 
 }

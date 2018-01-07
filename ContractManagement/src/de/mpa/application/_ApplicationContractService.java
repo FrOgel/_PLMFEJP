@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import de.mpa.domain.BasicCondition;
+import de.mpa.domain.Candidate;
 import de.mpa.domain.Contract;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
@@ -20,10 +21,13 @@ public interface _ApplicationContractService {
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee);
 
-	public Requirement saveRequirement(String token, int contractId, int requirementId, String description, String criteriaType);
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description,
+			String criteriaType);
 
 	public SpecialCondition saveSpecialCondition(String token, int contractId, int specialConditionId,
 			String description);
+
+	public Candidate applyForContract(String token, int contractId);
 
 	public boolean deleteContract(String token, int contractId);
 
@@ -39,5 +43,4 @@ public interface _ApplicationContractService {
 
 	public boolean changeContractState(String token, int contractId, String state);
 
-	public String applyForContract(String token, int contractId);
 }

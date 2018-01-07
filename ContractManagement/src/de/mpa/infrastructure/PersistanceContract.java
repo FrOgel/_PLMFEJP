@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
+import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.Requirement;
@@ -41,7 +42,7 @@ public class PersistanceContract {
 		emfactory.close();
 		return o;
 	}
-
+	
 	private boolean deleteObjectFromPersistance(Class<?> c, int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 
@@ -83,7 +84,6 @@ public class PersistanceContract {
 
 		c.setBasicConditions(b);
 
-		// b = entitymanager.merge(b);
 
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
@@ -123,6 +123,22 @@ public class PersistanceContract {
 		return s;
 	}
 
+	public Candidate persistCandidateInContract(Contract c, Candidate can) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		c = entitymanager.merge(c);
+
+		List<Candidate> list = (List<Candidate>) c.getCandidates();
+		list.add(can);
+		c.setCandidates(list);
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return can;
+	}
+	
 	public List<Contract> findUserContracts(int principalId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -335,7 +351,7 @@ public class PersistanceContract {
 
 		return s_old;
 	}
-
+	
 	public boolean addCandidateToContract(Contract c, Candidate candidate) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -351,5 +367,14 @@ public class PersistanceContract {
 		emfactory.close();
 		
 		return true;
+	}
+
+	public Candidate getCandidateByObjectId(CandidateId candidateId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		Candidate c = (Candidate) entitymanager.find(Candidate.class, candidateId);
+		entitymanager.close();
+		emfactory.close();
+		return c;
 	}
 }

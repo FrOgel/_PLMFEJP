@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import de.mpa.application._ApplicationContractService;
 import de.mpa.domain.BasicCondition;
+import de.mpa.domain.Candidate;
 import de.mpa.domain.Contract;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
@@ -147,7 +148,7 @@ public class ContractRestService implements _ApplicationContractService {
 
 	
 	@Override
-	public String applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+	public Candidate applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
 		return ac.applyForContract(token, contractId);
 	}
 

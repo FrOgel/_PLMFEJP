@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
-import com.mysql.jdbc.StringUtils;
-
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
@@ -183,14 +181,29 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 
 	@Override
-	public String applyForContract(String token, int contractId) {
+	public Candidate applyForContract(String token, int contractId) {
 		
 		String tokenSubject = ss.authenticateToken(token);
 		int userId = Integer.parseInt(tokenSubject);
 		
-		Candidate c = pc.getObjectFromPersistanceById(Candidate.class, new CandidateId(contractId, userId));
+		CandidateId candidateId = new CandidateId(contractId, userId);
 		
-		return null;
+		Candidate can = pc.getCandidateByObjectId(candidateId);
+		
+		if(can == null) {
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			can = new Candidate();
+			can.setAccepted(false);
+			can.setCandidateId(candidateId);
+			List<BasicCondition> list = can.getNegotiatedConditions();
+			list.add(c.getBasicConditions());
+			can.setNegotiatedConditions(list);
+			can = pc.persistCandidateInContract(c, can);
+			return can;
+		}else {
+			return null;
+		}
+		
 	}
 	
 

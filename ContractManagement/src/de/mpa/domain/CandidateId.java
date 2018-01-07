@@ -3,13 +3,17 @@ package de.mpa.domain;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author frank.vogel Date: 07.01.2018 Purpose: ID Class for the candidate
  *         class
  */
 
+@SuppressWarnings("serial")
 @Embeddable
+@XmlRootElement
 public class CandidateId implements Serializable {
 
 	private int contractId;
@@ -24,10 +28,12 @@ public class CandidateId implements Serializable {
 		this.candidateId = candidateId;
 	}
 
+	@XmlElement
 	public int getContractId() {
 		return contractId;
 	}
 
+	@XmlElement
 	public int getCandidateId() {
 		return candidateId;
 	}
