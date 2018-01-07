@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"de.mpa.application"},{"l":"de.mpa.domain"},{"l":"de.mpa.infrastructure"}]

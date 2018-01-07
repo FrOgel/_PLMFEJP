@@ -5,7 +5,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 
+import com.mysql.jdbc.StringUtils;
+
 import de.mpa.domain.BasicCondition;
+import de.mpa.domain.Candidate;
+import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
@@ -176,5 +180,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 		ss.authenticateToken(token);
 		return pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()));
 	}
+
+
+	@Override
+	public String applyForContract(String token, int contractId) {
+		
+		String tokenSubject = ss.authenticateToken(token);
+		int userId = Integer.parseInt(tokenSubject);
+		
+		Candidate c = pc.getObjectFromPersistanceById(Candidate.class, new CandidateId(contractId, userId));
+		
+		return null;
+	}
+	
 
 }

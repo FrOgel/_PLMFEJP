@@ -39,4 +39,5 @@ public interface _ApplicationContractService {
 
 	public boolean changeContractState(String token, int contractId, String state);
 
+	public String applyForContract(String token, int contractId);
 }

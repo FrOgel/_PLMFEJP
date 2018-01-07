@@ -140,8 +140,15 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("changeContractState")
-	public boolean changeContractState(String token, int contractId, String state) {
+	public boolean changeContractState(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+			@FormParam("contractState") String state) {
 		return ac.changeContractState(token, contractId, state);
+	}
+
+	
+	@Override
+	public String applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+		return ac.applyForContract(token, contractId);
 	}
 
 }

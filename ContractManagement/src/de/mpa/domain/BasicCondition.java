@@ -78,7 +78,6 @@ public class BasicCondition {
 	public void setEstimatedWorkload(int estimatedWorkload) {
 		this.estimatedWorkload = estimatedWorkload;
 	}
-	// -----------------
 
 	@XmlElement
 	public double getFee() {

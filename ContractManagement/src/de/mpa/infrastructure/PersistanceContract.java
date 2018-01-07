@@ -9,6 +9,7 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import de.mpa.domain.BasicCondition;
+import de.mpa.domain.Candidate;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.Requirement;
@@ -335,4 +336,20 @@ public class PersistanceContract {
 		return s_old;
 	}
 
+	public boolean addCandidateToContract(Contract c, Candidate candidate) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		c = entitymanager.merge(c);
+
+		List<Candidate> list = (List<Candidate>) c.getCandidates();
+		list.add(candidate);
+		c.setCandidates(list);
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		
+		return true;
+	}
 }
