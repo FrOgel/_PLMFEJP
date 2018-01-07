@@ -30,6 +30,8 @@ public class Contract {
 	private String designation;
 	@Enumerated(EnumType.STRING)
 	private ContractType type;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Candidate> candidates;
 	private String subject;
 	private LocalDate creationDate;
 	@Enumerated(EnumType.STRING)
@@ -169,5 +171,13 @@ public class Contract {
 		this.ranking = ranking;
 	}
 	// -----------------
+
+	public List<Candidate> getCandidates() {
+		return candidates;
+	}
+
+	public void setCandidates(List<Candidate> candidates) {
+		this.candidates = candidates;
+	}
 
 }
