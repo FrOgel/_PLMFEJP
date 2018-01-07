@@ -11,8 +11,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.mysql.jdbc.StringUtils;
-
 import de.mpa.application._ApplicationContractService;
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;

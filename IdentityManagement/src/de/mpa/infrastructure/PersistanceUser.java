@@ -97,6 +97,29 @@ public class PersistanceUser {
 			return 0;
 		}
 	}
+	
+	public PasswordChange findPasswordChange(String uuid) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+
+		Query q = entitymanager.createNamedQuery("find pChange by uuid");
+		q.setParameter("uuid", uuid);
+		@SuppressWarnings("unchecked")
+		List<PasswordChange> list = (List<PasswordChange>) q.getResultList();
+		
+		entitymanager.close();
+		emfactory.close();
+
+		if ((list != null) && (list.size() > 0)) {
+			for (PasswordChange pc : list) {
+				return pc;
+			}
+			;
+			return null;
+		} else {
+			return null;
+		}
+	}
 
 	public Qualification updateQualification(Qualification q_old, Qualification q_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");

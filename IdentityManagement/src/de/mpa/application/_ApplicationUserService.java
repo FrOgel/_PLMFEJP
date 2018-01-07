@@ -33,5 +33,5 @@ public interface _ApplicationUserService {
 
 	public boolean requestPasswordReset(String mail);
 
-	public Response changePassword(int id, String uuid);
+	public Response changePassword(String uuid);
 }

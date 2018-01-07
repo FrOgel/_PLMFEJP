@@ -32,9 +32,9 @@ public class MailingRestService implements _ApplicationMailingService{
 	
 	@Override
 	@GET
-	@Path("passwordChangeMail/{to}/{id}/{hash}")
-	public void sendPasswordChangeMail(@PathParam("to") String to, @PathParam("id") String id, @PathParam("hash") String hash) {
-		am.sendPasswordChangeMail(to, id, hash);
+	@Path("passwordChangeMail/{to}/{hash}")
+	public void sendPasswordChangeMail(@PathParam("to") String to, @PathParam("hash") String hash) {
+		am.sendPasswordChangeMail(to, hash);
 	}
 
 }

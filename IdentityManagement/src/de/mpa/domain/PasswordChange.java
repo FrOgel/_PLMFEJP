@@ -3,6 +3,7 @@ package de.mpa.domain;
 import java.util.Calendar;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.PrimaryKeyJoinColumn;
 
 /**
@@ -12,6 +13,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
  */
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName="userID")
+@NamedQuery(query = "SELECT p FROM PasswordChange p WHERE p.checkSum = :uuid", name = "find pChange by uuid")
 public class PasswordChange extends SecurityValidation{
 
 	public PasswordChange() {

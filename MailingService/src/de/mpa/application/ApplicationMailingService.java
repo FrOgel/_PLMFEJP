@@ -101,10 +101,10 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 
 	}
 
-	private String getPasswordChangeMailTemplate(String id, String hash) {
+	private String getPasswordChangeMailTemplate(String hash) {
 		URL url;
 		try {
-			url = new URL("https://localhost:8443/MailingService/PasswordChangeMail.jsp?id=" + id + "&" + "hash=" + hash);
+			url = new URL("https://localhost:8443/MailingService/PasswordChangeMail.jsp?hash=" + hash);
 			System.out.println(url);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
@@ -134,8 +134,8 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 	}
 
 	@Override
-	public void sendPasswordChangeMail(String to, String id, String hash) {
-		this.sendMail(to, "Reset your password.", this.getPasswordChangeMailTemplate(id, hash));
+	public void sendPasswordChangeMail(String to, String hash) {
+		this.sendMail(to, "Reset your password.", this.getPasswordChangeMailTemplate(hash));
 	}
 
 }

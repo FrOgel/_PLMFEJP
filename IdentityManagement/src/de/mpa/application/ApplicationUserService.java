@@ -2,16 +2,13 @@ package de.mpa.application;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
-import org.jboss.resteasy.specimpl.ResponseBuilderImpl;
-
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
 import de.mpa.domain.CompanyUser;
@@ -145,30 +142,34 @@ public class ApplicationUserService implements _ApplicationUserService {
 			return false;
 		}
 	}
-	
+
 	@Override
-	public Response changePassword(int id, String uuid) {
-		PasswordChange pc = (PasswordChange) pu.getObjectFromPersistanceById(PasswordChange.class, id);
+	public Response changePassword(String uuid) {
+		PasswordChange pc = pu.findPasswordChange(this.encryptUUID(uuid));
 		System.out.println("Verification in process...");
-		
+
 		if (pc == null) {
 			System.out.println("no pc");
 			return Response.status(403).build();
 		}
 
-		if ((this.encryptUUID(pc.getCheckSum()).equals(uuid))
-				&& (Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
-			String token = ss.getToken(id);
+		if ((Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
+			String token = ss.getToken(pc.getUserID());
 			NewCookie c = new NewCookie("token", token);
-			pu.removePasswordChange(pc.getUserID());
-			return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/").build();
-			
+			try {
+				return Response.seeOther(new URI("https://localhost:8443/MPA_Frontend/passwordReset.html?id=" + uuid)).build();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return Response.status(500).build();
+			}
+
 		} else {
 			System.out.println("It's false");
 			pu.removePasswordChange(pc.getUserID());
 			return Response.status(403).build();
 		}
 	}
+
 	// Sends the verification mail to the user mail address during the registration
 	// process
 	private void callVerificationMailService(String mail, int i, String hash) {
@@ -217,10 +218,9 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	private void callPasswordChangeMailService(String mail, int id, String hash) {
+	private void callPasswordChangeMailService(String mail, String hash) {
 		try {
-			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail + "/" + id + "/"
-					+ hash;
+			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail +"/" + hash;
 			System.out.println(link);
 			URL url = new URL(link);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
@@ -240,14 +240,12 @@ public class ApplicationUserService implements _ApplicationUserService {
 		System.out.println(userId);
 		pc.setUserID(userId);
 		String uuid = pc.generateCheckSum();
-
-		this.callPasswordChangeMailService(mail, userId, this.encryptUUID(uuid));
-		System.out.println(mail);
+		pc.setCheckSum(this.encryptUUID(uuid));
+		
+		this.callPasswordChangeMailService(mail, uuid);
 		pu.addObjectToPersistance(pc);
 
 		return true;
 	}
-
-	
 
 }

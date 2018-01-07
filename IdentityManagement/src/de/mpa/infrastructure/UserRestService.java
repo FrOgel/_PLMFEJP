@@ -115,9 +115,9 @@ public class UserRestService implements _ApplicationUserService{
 
 	@Override
 	@GET
-	@Path("changePassword/{id}/{uuid}")
-	public Response changePassword(@PathParam("id") int id, @PathParam("uuid") String uuid) {
-		return as.changePassword(id, uuid);
+	@Path("changePassword/{uuid}")
+	public Response changePassword(@PathParam("uuid") String uuid) {
+		return as.changePassword(uuid);
 	}
 	
 }
