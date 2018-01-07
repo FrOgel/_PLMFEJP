@@ -25,11 +25,13 @@ public class BasicCondition {
 	private LocalDate endDate;
 	private int estimatedWorkload;
 	private double fee;
+	private LocalDate timestamp;
 	// ---------------------
 
 	// Constructor to build a basic condition
 	public BasicCondition() {
 		super();
+		this.timestamp = LocalDate.now();
 	}
 	// --------------------------------------
 
@@ -87,4 +89,12 @@ public class BasicCondition {
 	public void setFee(double fee) {
 		this.fee = fee;
 	}
+
+	
+	@XmlElement
+	public LocalDate getTimestamp() {
+		return timestamp;
+	}
+
+
 }

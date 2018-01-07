@@ -205,18 +205,40 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public boolean pickCandidate(String token, int contractId, int candidateId, String acceptance) {
-		
+
 		ss.authenticateToken(token);
-		
-		switch(acceptance.toUpperCase()) {
-			case "ACCEPT":
-				return pc.acceptCandidateInContract(new CandidateId(contractId, candidateId));
-			case "DECLINE":
-				return pc.deleteCandidateFromContract(new CandidateId(contractId, candidateId));
-			default:
-				return false;
+
+		switch (acceptance.toUpperCase()) {
+		case "ACCEPT":
+			return pc.acceptCandidateInContract(new CandidateId(contractId, candidateId));
+		case "DECLINE":
+			return pc.deleteCandidateFromContract(new CandidateId(contractId, candidateId));
+		default:
+			return false;
 		}
-		
+
 	}
 
+	
+	@Override
+	public boolean makeOffer(String token, int contractId, int candidateId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	@Override
+	public boolean cancelNegotiation(String token, int contractId, int candidateId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	@Override
+	public boolean acceptOffer(String token, int contractId, int candidateId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
 }
