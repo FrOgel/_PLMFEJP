@@ -16,6 +16,9 @@ public class PasswordChange extends SecurityValidation{
 
 	public PasswordChange() {
 		super();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, 4);
+		this.setExpirationDate(String.valueOf(cal.getTimeInMillis()));
 	}
 	public PasswordChange(int userID) {
 		super(userID);

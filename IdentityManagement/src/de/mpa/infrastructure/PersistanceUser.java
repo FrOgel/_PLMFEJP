@@ -8,6 +8,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import de.mpa.domain.AccountVerification;
+import de.mpa.domain.PasswordChange;
 import de.mpa.domain.Qualification;
 import de.mpa.domain.User;
 
@@ -112,6 +113,17 @@ public class PersistanceUser {
 		emfactory.close();
 
 		return q_old;
+	}
+	
+	public void removePasswordChange(int id) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		PasswordChange pc = entitymanager.find(PasswordChange.class, id);
+		entitymanager.remove(pc);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
 	}
 
 }

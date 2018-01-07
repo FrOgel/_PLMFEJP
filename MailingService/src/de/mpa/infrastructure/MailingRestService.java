@@ -28,4 +28,13 @@ public class MailingRestService implements _ApplicationMailingService{
 		am.sendVerificationMail(to, id, hash);	
 	}
 
+
+	
+	@Override
+	@GET
+	@Path("passwordChangeMail/{to}/{id}/{hash}")
+	public void sendPasswordChangeMail(@PathParam("to") String to, @PathParam("id") String id, @PathParam("hash") String hash) {
+		am.sendPasswordChangeMail(to, id, hash);
+	}
+
 }

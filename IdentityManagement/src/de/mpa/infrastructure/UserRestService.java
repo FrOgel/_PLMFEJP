@@ -88,8 +88,8 @@ public class UserRestService implements _ApplicationUserService{
 	//https://localhost:8443/IdentityManagement/rest/user/verify
 	@Override
 	@GET
-	@Path("verify/{id}/{creationTime}")
-	public boolean verifyAccount(@PathParam("id") int id, @PathParam("creationTime") String creationTime) {
+	@Path("verify/{id}/{uuid}")
+	public boolean verifyAccount(@PathParam("id") int id, @PathParam("uuid") String creationTime) {
 		return as.verifyAccount(id, creationTime);
 	}
 
@@ -109,13 +109,15 @@ public class UserRestService implements _ApplicationUserService{
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("resetPassword")
 	public boolean requestPasswordReset(@FormParam("mailAddress") String mail) {
+		System.out.println(mail);
 		return as.requestPasswordReset(mail);
 	}
 
 	@Override
-	public Response changePassword(int id, String uuid) {
-		// TODO Auto-generated method stub
-		return null;
+	@GET
+	@Path("changePassword/{id}/{uuid}")
+	public Response changePassword(@PathParam("id") int id, @PathParam("uuid") String uuid) {
+		return as.changePassword(id, uuid);
 	}
 	
 }

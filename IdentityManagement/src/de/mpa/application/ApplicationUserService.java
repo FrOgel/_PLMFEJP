@@ -1,6 +1,7 @@
 package de.mpa.application;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Calendar;
 import javax.ejb.Stateless;
@@ -143,16 +144,15 @@ public class ApplicationUserService implements _ApplicationUserService {
 			System.out.println("It's false");
 			return false;
 		}
-
 	}
 	
 	@Override
 	public Response changePassword(int id, String uuid) {
 		PasswordChange pc = (PasswordChange) pu.getObjectFromPersistanceById(PasswordChange.class, id);
 		System.out.println("Verification in process...");
-	
+		
 		if (pc == null) {
-			System.out.println("no av");
+			System.out.println("no pc");
 			return Response.status(403).build();
 		}
 
@@ -160,14 +160,14 @@ public class ApplicationUserService implements _ApplicationUserService {
 				&& (Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
 			String token = ss.getToken(id);
 			NewCookie c = new NewCookie("token", token);
-			return Response
-					.ok()
-					.header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/");
+			pu.removePasswordChange(pc.getUserID());
+			return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/").build();
+			
 		} else {
 			System.out.println("It's false");
+			pu.removePasswordChange(pc.getUserID());
 			return Response.status(403).build();
 		}
-		return null;
 	}
 	// Sends the verification mail to the user mail address during the registration
 	// process
@@ -237,10 +237,12 @@ public class ApplicationUserService implements _ApplicationUserService {
 	public boolean requestPasswordReset(String mail) {
 		PasswordChange pc = new PasswordChange();
 		int userId = pu.findUserIdByMail(mail);
+		System.out.println(userId);
 		pc.setUserID(userId);
 		String uuid = pc.generateCheckSum();
 
 		this.callPasswordChangeMailService(mail, userId, this.encryptUUID(uuid));
+		System.out.println(mail);
 		pu.addObjectToPersistance(pc);
 
 		return true;

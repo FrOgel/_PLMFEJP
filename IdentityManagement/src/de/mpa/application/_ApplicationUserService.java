@@ -23,7 +23,7 @@ public interface _ApplicationUserService {
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
 	
-	public boolean verifyAccount(int id, String creationTime);
+	public boolean verifyAccount(int id, String uuid);
 	
 	public Response userLogin(String mail, String pw);
 	
