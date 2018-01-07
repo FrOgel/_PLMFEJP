@@ -7,10 +7,15 @@ import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.jboss.resteasy.specimpl.ResponseBuilderImpl;
+
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.ContactPerson;
+import de.mpa.domain.PasswordChange;
 import de.mpa.domain.PrivateUser;
 import de.mpa.domain.Qualification;
 import de.mpa.domain.User;
@@ -78,7 +83,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 	public Response userLogin(String mail, String pw) {
 
 		System.out.println("Started");
-		String id;
+		int id;
 		boolean verified;
 
 		System.out.println("AS: " + mail);
@@ -87,7 +92,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		// returend
 		User user = pu.checkUserCredentials(mail, ss.getSecurePw(pw, "Masse"));
 		if (user != null) {
-			id = String.valueOf(user.getUserID());
+			id = user.getUserID();
 			verified = user.getVerified();
 		} else {
 			return Response.status(403).build();
@@ -140,7 +145,30 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 
 	}
+	
+	@Override
+	public Response changePassword(int id, String uuid) {
+		PasswordChange pc = (PasswordChange) pu.getObjectFromPersistanceById(PasswordChange.class, id);
+		System.out.println("Verification in process...");
+	
+		if (pc == null) {
+			System.out.println("no av");
+			return Response.status(403).build();
+		}
 
+		if ((this.encryptUUID(pc.getCheckSum()).equals(uuid))
+				&& (Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
+			String token = ss.getToken(id);
+			NewCookie c = new NewCookie("token", token);
+			return Response
+					.ok()
+					.header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/");
+		} else {
+			System.out.println("It's false");
+			return Response.status(403).build();
+		}
+		return null;
+	}
 	// Sends the verification mail to the user mail address during the registration
 	// process
 	private void callVerificationMailService(String mail, int i, String hash) {
@@ -159,7 +187,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	// Encryption of the creation time of the link parameter for verifying the
+	// Encryption of the uuid time of the link parameter for verifying the
 	// account
 	private String encryptUUID(String time) {
 		return ss.getSecurePw(time, "verification");
@@ -177,16 +205,47 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	@Override
 	public Qualification saveQualificaation(String token, int qualificationId, String designation) {
-		
+
 		Qualification q_new = new Qualification();
 		q_new.setDescription(designation);
-		
-		if(qualificationId!=0) {
+
+		if (qualificationId != 0) {
 			Qualification q_old = (Qualification) pu.getObjectFromPersistanceById(Qualification.class, qualificationId);
 			return pu.updateQualification(q_old, q_new);
-		}else {
+		} else {
 			return (Qualification) pu.addObjectToPersistance(q_new);
 		}
 	}
+
+	private void callPasswordChangeMailService(String mail, int id, String hash) {
+		try {
+			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail + "/" + id + "/"
+					+ hash;
+			System.out.println(link);
+			URL url = new URL(link);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			con.getInputStream();
+			con.disconnect();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean requestPasswordReset(String mail) {
+		PasswordChange pc = new PasswordChange();
+		int userId = pu.findUserIdByMail(mail);
+		pc.setUserID(userId);
+		String uuid = pc.generateCheckSum();
+
+		this.callPasswordChangeMailService(mail, userId, this.encryptUUID(uuid));
+		pu.addObjectToPersistance(pc);
+
+		return true;
+	}
+
+	
 
 }

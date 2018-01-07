@@ -44,7 +44,7 @@ public class SecurityService {
 	}
 
 	//Returns the jwt authentication token for a specific user
-	public String getToken(String id) {
+	public String getToken(int id) {
 		
 		String token = null;
 		
@@ -52,7 +52,7 @@ public class SecurityService {
 			Algorithm  algorithm = Algorithm.HMAC256("ThisIsOurOwn");
 			token = JWT.create()
 				.withIssuer("mpa")
-				.withSubject(id)
+				.withSubject(String.valueOf(id))
 				.sign(algorithm);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block

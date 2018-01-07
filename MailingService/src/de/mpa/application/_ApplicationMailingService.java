@@ -11,4 +11,7 @@ import javax.ejb.Local;
 @Local
 public interface _ApplicationMailingService {
 	public void sendVerificationMail(String to, String id, String hash);
+	
+	public void sendPasswordChangeMail(String to, String id, String hash);
+
 }

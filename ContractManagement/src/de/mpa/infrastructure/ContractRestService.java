@@ -11,6 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.mysql.jdbc.StringUtils;
+
 import de.mpa.application._ApplicationContractService;
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
@@ -59,7 +61,7 @@ public class ContractRestService implements _ApplicationContractService {
 			@FormParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
 			@FormParam("location") String location, @FormParam("radius") int radius,
 			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
-			@FormParam("workload") int estimatedWorkload, double fee) {
+			@FormParam("workload") int estimatedWorkload, @FormParam("fee") double fee) {
 
 		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate,
 				estimatedWorkload, fee);
@@ -70,7 +72,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createRequirement")
 	public Requirement saveRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("requirementId") int requirementId, @FormParam("description") String description, 
+			@FormParam("requirementId") int requirementId, @FormParam("description") String description,
 			@FormParam("criteriaType") String criteriaType) {
 		return ac.saveRequirement(token, contractId, requirementId, description, criteriaType);
 	}

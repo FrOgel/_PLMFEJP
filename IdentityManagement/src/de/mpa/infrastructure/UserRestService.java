@@ -103,5 +103,19 @@ public class UserRestService implements _ApplicationUserService{
 			@FormParam("designation") String designation) {
 		return as.saveQualificaation(token, qualificationId, designation);
 	}
+
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("resetPassword")
+	public boolean requestPasswordReset(@FormParam("mailAddress") String mail) {
+		return as.requestPasswordReset(mail);
+	}
+
+	@Override
+	public Response changePassword(int id, String uuid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

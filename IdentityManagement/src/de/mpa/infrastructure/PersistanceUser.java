@@ -12,64 +12,89 @@ import de.mpa.domain.Qualification;
 import de.mpa.domain.User;
 
 /**
- * @author 		frank.vogel
- * created on: 	06.01.2018
- * purpose:		Class for persisting, deleting, updating and retrieving user related details
+ * @author frank.vogel created on: 06.01.2018 purpose: Class for persisting,
+ *         deleting, updating and retrieving user related details
  */
 @Stateless
 public class PersistanceUser {
 	public Object addObjectToPersistance(Object o) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
-	      
-	    EntityManager entitymanager = emfactory.createEntityManager( );
-	    entitymanager.getTransaction( ).begin( );
-		
-	    entitymanager.persist(o);
-	    entitymanager.getTransaction().commit();
-	    entitymanager.close();
-	    emfactory.close();
-	    return o;
-	}
-	public Object getObjectFromPersistanceById(Class<?> c, int id) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
-	    EntityManager entitymanager = emfactory.createEntityManager();
-	    Object o = entitymanager.find( c, id);
-	    entitymanager.close();
-	    emfactory.close();
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		entitymanager.persist(o);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
 		return o;
 	}
-	
-	public void persistVerifiedUser(User user, AccountVerification av) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );
-	    EntityManager entitymanager = emfactory.createEntityManager();
-	    entitymanager.getTransaction().begin();
-	    entitymanager.merge(user).setVerified(true);
-	    entitymanager.remove(entitymanager.merge(av));
-	    entitymanager.getTransaction().commit();
-	    entitymanager.close();
-	    emfactory.close();
+
+	public Object getObjectFromPersistanceById(Class<?> c, int id) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		Object o = entitymanager.find(c, id);
+		entitymanager.close();
+		emfactory.close();
+		return o;
 	}
+
+	public void persistVerifiedUser(User user, AccountVerification av) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		entitymanager.merge(user).setVerified(true);
+		entitymanager.remove(entitymanager.merge(av));
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+	}
+
 	public User checkUserCredentials(String mail, String password) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory( "IdentityManagement" );  
-	    EntityManager entitymanager = emfactory.createEntityManager( );
-	   
-	    Query q = entitymanager.createNamedQuery("find user by pw and mail");
-	    q.setParameter("mail", mail);
-	    q.setParameter("password", password);
-	    @SuppressWarnings("unchecked")
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+
+		Query q = entitymanager.createNamedQuery("find user by pw and mail");
+		q.setParameter("mail", mail);
+		q.setParameter("password", password);
+		@SuppressWarnings("unchecked")
 		List<User> list = (List<User>) q.getResultList();
-	    
-	    entitymanager.close();
-	    emfactory.close();
-	    
-	    if((list!=null) && (list.size()>0)) {
-	    	for(User u : list) {
-	    		return u;
-	    	};
-	    	return null;
-	    }else {
-	    	return null;
-	    }
+
+		entitymanager.close();
+		emfactory.close();
+
+		if ((list != null) && (list.size() > 0)) {
+			for (User u : list) {
+				return u;
+			}
+			;
+			return null;
+		} else {
+			return null;
+		}
+	}
+	
+	public int findUserIdByMail(String mail) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+
+		Query q = entitymanager.createNamedQuery("get userId by mail");
+		q.setParameter("mail", mail);
+		@SuppressWarnings("unchecked")
+		List<Integer> id = (List<Integer>) q.getResultList();
+		
+		entitymanager.close();
+		emfactory.close();
+
+		if ((id != null) && (id.size() > 0)) {
+			for (Integer i : id) {
+				return i;
+			}
+			;
+			return 0;
+		} else {
+			return 0;
+		}
 	}
 
 	public Qualification updateQualification(Qualification q_old, Qualification q_new) {
@@ -88,5 +113,5 @@ public class PersistanceUser {
 
 		return q_old;
 	}
-	
+
 }

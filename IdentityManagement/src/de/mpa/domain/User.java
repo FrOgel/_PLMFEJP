@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -24,7 +25,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQuery(query = "SELECT u FROM User u WHERE u.mailAddress = :mail AND u.password = :password", name = "find user by pw and mail")
+@NamedQueries({
+	@NamedQuery(query = "SELECT u FROM User u WHERE u.mailAddress = :mail AND u.password = :password", name = "find user by pw and mail"),
+	@NamedQuery(query = "SELECT u.userID FROM User u WHERE u.mailAddress = :mail", name = "get userId by mail"),
+})	
+
 @XmlRootElement
 public class User {
 

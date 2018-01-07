@@ -30,4 +30,8 @@ public interface _ApplicationUserService {
 	public String authenticateViaToken(String token);
 	
 	public Qualification saveQualificaation(String token, int qualificationId, String designation);
+
+	public boolean requestPasswordReset(String mail);
+
+	public Response changePassword(int id, String uuid);
 }
