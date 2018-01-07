@@ -222,7 +222,19 @@ public class ApplicationContractService implements _ApplicationContractService {
 	
 	@Override
 	public boolean makeOffer(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
+		
+		int id = Integer.parseInt(ss.authenticateToken(token));
+		
+		int receiverId;
+		int senderId;
+		
+		if(id == candidateId) {
+			senderId = candidateId;
+			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+			receiverId = c.getPrincipalID();
+		}
+		
+		
 		return false;
 	}
 

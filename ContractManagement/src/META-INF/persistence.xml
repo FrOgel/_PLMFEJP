@@ -10,6 +10,7 @@
       <class>java.util.Date</class>
       <class>de.mpa.domain.Candidate</class>
       <class>de.mpa.domain.CandidateId</class>
+      <class>de.mpa.domain.NegotiationCondition</class>
       <exclude-unlisted-classes>false</exclude-unlisted-classes>
       <properties>
          <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mpa_contractmanagement"/>

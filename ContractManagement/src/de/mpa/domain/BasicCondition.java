@@ -18,7 +18,7 @@ public class BasicCondition {
 	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int BasicConditionID;
+	private int basicConditionId;
 	private String location;
 	private int radius;
 	private LocalDate startDate;

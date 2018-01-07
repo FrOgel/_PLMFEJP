@@ -13,6 +13,7 @@ import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
+import de.mpa.domain.NegotiationCondition;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -391,8 +392,9 @@ public class PersistanceContract {
 		
 		Contract c = entitymanager.find(Contract.class, candidateId.getContractId());
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
-		List<BasicCondition> list = (List<BasicCondition>) can.getNegotiatedConditions();
-		list.add(c.getBasicConditions());
+		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
+		NegotiationCondition nc = (NegotiationCondition) c.getBasicConditions();
+		list.add(nc);
 		can.setNegotiatedConditions(list);
 		can.setAccepted(true);
 		
