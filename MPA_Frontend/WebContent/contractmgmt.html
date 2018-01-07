@@ -208,7 +208,7 @@ function getContracts(){
 	<p>Add your basic conditions</p>
 	<form name="basicCondition" id="basicCondition">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="basicConditionId" id="basicConditionId" value=""/>
+		<input type="hidden" name="basicConditionId" id="basicConditionId" value="0"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>location <input type="text" name="location" id="location"/>
@@ -237,7 +237,7 @@ function getContracts(){
 	<p>Add your special condition</p>
 	<form name="special" id="special">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="conditionId" id="conditionId" value="1"/>
+		<input type="hidden" name="conditionId" id="conditionId" value="0"/>
 		<p>Description: <input type="text" name="description" id="description"/>
 		<button onclick="createSC(); return false;">Add condition</button>
 		<button onclick="deleteSC(); return false;">Delete condition</button>

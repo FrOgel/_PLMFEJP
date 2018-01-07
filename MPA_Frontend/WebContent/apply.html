@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function createContract(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#apply').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/applyForContract',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully created in";
+				}
+		});
+	
+}
+</script>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<button onclick="applyForContract(); return false;">Apply for contract</button>"
+	<form name="apply">
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
+	</form>
+</body>
+
+
+</html>

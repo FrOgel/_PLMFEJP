@@ -148,6 +148,9 @@ public class ContractRestService implements _ApplicationContractService {
 
 	
 	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("applyForContract")
 	public Candidate applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
 		return ac.applyForContract(token, contractId);
 	}
