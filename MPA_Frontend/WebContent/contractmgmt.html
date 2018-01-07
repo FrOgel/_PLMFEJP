@@ -168,7 +168,7 @@ function getContracts(){
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>
 	<form name="contract" id="contract">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<input type="hidden" name="contractId" id="contractId" value="0"/>
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
 			<datalist id="contractTypeList">
    		 		<option value="Consulting">
@@ -207,22 +207,29 @@ function getContracts(){
 	
 	<p>Add your basic conditions</p>
 	<form name="basicCondition" id="basicCondition">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<input type="hidden" name="contractId" id="contractId" value="0"/>
 		<input type="hidden" name="basicConditionId" id="basicConditionId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>location <input type="text" name="location" id="location"/>
 		<p>radius <input type="text" name="radius" id="radius"/>
 		<p>Workload <input type="text" name="workload" id="workload"/>
+		<p>Fee <input type="text" name="fee" id="fee"/>
 		<button onclick="createBC(); return false;">Add basic conditions</button>
 		<button onclick="deleteBC(); return false;">Delete basic conditions</button>
 	</form>
 	
 	<p>Add your requirement</p>
 	<form name="requirement" id="requirement">
-		<input type="hidden" name="requirementId" id="requirementId" value="1"/>
+		<input type="hidden" name="requirementId" id="requirementId" value="0"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Description: <input type="text" name="description" id="description"/>
+		Type <input type="text" name="criteriaType" id="criteriaType" list="criteriaTypeList">
+			<datalist id="criteriaTypeList">
+   		 		<option value="Mandatory">
+    			<option value="Should">
+    			<option value="Optional">
+			</datalist>
 		<button onclick="createRequirement(); return false;">Add requirement</button>
 		<button onclick="deleteRequirement(); return false;">Delete requirement</button>
 	</form>

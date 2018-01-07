@@ -18,9 +18,9 @@ public interface _ApplicationContractService {
 	public Task saveTask(String token, int contractId, int taskId, String description, String type, String subType);
 
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
-			int radius, String startDate, String endDate, int estimatedWorkload);
+			int radius, String startDate, String endDate, int estimatedWorkload, double fee);
 
-	public Requirement saveRequirement(String token, int contractId, int requirementId, String description);
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description, String criteriaType);
 
 	public SpecialCondition saveSpecialCondition(String token, int contractId, int specialConditionId,
 			String description);

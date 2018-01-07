@@ -9,6 +9,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
+import de.mpa.domain.CriteriaType;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -77,7 +78,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
-			int radius, String startDate, String endDate, int estimatedWorkload) {
+			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 
 		BasicCondition b_new = new BasicCondition();
 		if (!(endDate.equals("")))
@@ -87,6 +88,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setEstimatedWorkload(estimatedWorkload);
 		b_new.setLocation(location);
 		b_new.setRadius(radius);
+		b_new.setFee(fee);
 
 		if (basicConditionId != 0) {
 			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
@@ -99,10 +101,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Requirement saveRequirement(String token, int contractId, int requirementId, String description) {
+	public Requirement saveRequirement(String token, int contractId, int requirementId, String description, String criteriaType) {
 
 		Requirement r_new = new Requirement();
 		r_new.setDescription(description);
+		if(!(criteriaType.equals("")))
+			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
 
 		if (requirementId != 0) {
 			Requirement r_old = (Requirement) pc.getObjectFromPersistanceById(Requirement.class, requirementId);

@@ -1,6 +1,8 @@
 package de.mpa.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +17,8 @@ public class Requirement {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int requirementID;
 	private String description;
+	@Enumerated(EnumType.STRING)
+	private CriteriaType criteriaType;
 
 	// Constructor to build a requirement
 	// ---------------------
@@ -46,5 +50,13 @@ public class Requirement {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	// -----------------
+
+	@XmlElement
+	public CriteriaType getCriteriaType() {
+		return criteriaType;
+	}
+
+	public void setCriteriaType(CriteriaType criteriaType) {
+		this.criteriaType = criteriaType;
+	}
 }

@@ -59,10 +59,10 @@ public class ContractRestService implements _ApplicationContractService {
 			@FormParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
 			@FormParam("location") String location, @FormParam("radius") int radius,
 			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
-			@FormParam("workload") int estimatedWorkload) {
+			@FormParam("workload") int estimatedWorkload, double fee) {
 
 		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate,
-				estimatedWorkload);
+				estimatedWorkload, fee);
 	}
 
 	@Override
@@ -70,8 +70,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("createRequirement")
 	public Requirement saveRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("requirementId") int requirementId, @FormParam("description") String description) {
-		return ac.saveRequirement(token, contractId, requirementId, description);
+			@FormParam("requirementId") int requirementId, @FormParam("description") String description, 
+			@FormParam("criteriaType") String criteriaType) {
+		return ac.saveRequirement(token, contractId, requirementId, description, criteriaType);
 	}
 
 	@Override

@@ -24,6 +24,7 @@ public class BasicCondition {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private int estimatedWorkload;
+	private double fee;
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -78,4 +79,13 @@ public class BasicCondition {
 		this.estimatedWorkload = estimatedWorkload;
 	}
 	// -----------------
+
+	@XmlElement
+	public double getFee() {
+		return fee;
+	}
+
+	public void setFee(double fee) {
+		this.fee = fee;
+	}
 }

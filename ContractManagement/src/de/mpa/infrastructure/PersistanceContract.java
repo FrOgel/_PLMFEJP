@@ -286,6 +286,9 @@ public class PersistanceContract {
 		if ((!(b_old.getEstimatedWorkload() == b_new.getEstimatedWorkload()))) {
 			b_old.setEstimatedWorkload(b_new.getEstimatedWorkload());
 		}
+		if ((b_new.getFee()!=0) && (!(b_old.getFee() == b_new.getFee()))) {
+			b_old.setFee(b_new.getFee());
+		}
 
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
@@ -302,6 +305,10 @@ public class PersistanceContract {
 
 		if (!(r_new.getDescription().equals("")) && (!(r_old.getDescription().equals(r_new.getDescription())))) {
 			r_old.setDescription(r_new.getDescription());
+		}
+		
+		if ((r_new.getCriteriaType() != null) && (!(r_old.getCriteriaType().equals(r_new.getCriteriaType())))) {
+			r_old.setCriteriaType(r_new.getCriteriaType());
 		}
 
 		entitymanager.getTransaction().commit();

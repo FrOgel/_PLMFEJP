@@ -78,7 +78,7 @@ public class PersistanceUser {
 		entitymanager.getTransaction().begin();
 		q_old = entitymanager.merge(q_old);
 
-		if (!(q_old.getDescription().equals("")) && (!(q_old.getDescription().equals(q_new.getDescription())))) {
+		if (!(q_new.getDescription().equals("")) && (!(q_old.getDescription().equals(q_new.getDescription())))) {
 			q_old.setDescription(q_new.getDescription());
 		}
 
