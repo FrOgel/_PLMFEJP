@@ -154,42 +154,42 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.applyForContract(token, contractId);
 	}
 
-	
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("pickCandidate")
-	public boolean pickCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId, @FormParam("candidateId") int candidateId, 
-			@FormParam("acceptance") String acceptance) {
+	public boolean pickCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+			@FormParam("candidateId") int candidateId, @FormParam("acceptance") String acceptance) {
 		return ac.pickCandidate(token, contractId, candidateId, acceptance);
 	}
-
 
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("makeOffer")
-	public boolean makeOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
-			@FormParam("candidateId") int candidateId, int basicConditionId) {
-		return ac.makeOffer(token, contractId, candidateId, basicConditionId);
+	public boolean makeOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+			@FormParam("candidateId") int candidateId, @FormParam("location") String location,
+			@FormParam("radius") int radius, @FormParam("startDate") String startDate,
+			@FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload,
+			@FormParam("fee") double fee) {
+
+		return ac.makeOffer(token, contractId, candidateId, location, radius, startDate, endDate, estimatedWorkload, fee);
 	}
 
-	
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("cancelNegotiation")
-	public boolean cancelNegotiation(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+	public boolean cancelNegotiation(@CookieParam("token") String token, @FormParam("contractId") int contractId,
 			@FormParam("candidateId") int candidateId) {
 		return ac.cancelNegotiation(token, contractId, candidateId);
 	}
 
-	
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("acceptOffer")
-	public boolean acceptOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
+	public boolean acceptOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId,
 			@FormParam("candidateId") int candidateId) {
 		return ac.acceptOffer(token, contractId, candidateId);
 	}

@@ -22,7 +22,7 @@ import de.mpa.domain.TaskType;
 @Stateless
 public class PersistanceContract {
 
-	private Object addObjectToPersistance(Object o) {
+	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -218,15 +218,12 @@ public class PersistanceContract {
 		return true;
 	}
 
-	public boolean deleteCandidateFromContract(CandidateId candidateId) {
+	public boolean declineCandidateInContract(CandidateId candidateId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
-		Contract c = entitymanager.find(Contract.class, candidateId.getContractId());
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
-		List<Candidate> list = (List<Candidate>) c.getCandidates();
-		list.remove(can);
-		entitymanager.remove(can);
+		can.setAccepted(false);
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
@@ -408,17 +405,15 @@ public class PersistanceContract {
 		return true;
 	}
 	
-	public boolean addOfferToCandidateContract(CandidateId candidateId, int basicConditionId, NegotiationCondition nc) {
+	public boolean addOfferToCandidateContract(CandidateId candidateId, BasicCondition bc, NegotiationCondition nc) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		
-		BasicCondition b = entitymanager.find(BasicCondition.class, basicConditionId);
-		nc.setCondition(b);
-		
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
 		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
 		list.add(nc);
+		nc.setCondition(bc);
 		can.setNegotiatedConditions(list);
 		can.setAccepted(true);
 

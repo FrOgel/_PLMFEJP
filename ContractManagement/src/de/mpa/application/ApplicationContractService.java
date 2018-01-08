@@ -1,6 +1,5 @@
 package de.mpa.application;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -82,20 +81,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
-		
+
 		BasicCondition b_new = new BasicCondition();
 		if (!(endDate.equals("")))
-			b_new.setEndDate(LocalDate.parse(endDate));
+			b_new.setEndDate(endDate);
 		if (!(startDate.equals("")))
-			b_new.setStartDate(LocalDate.parse(startDate));
+			b_new.setStartDate(startDate);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 		b_new.setLocation(location);
 		b_new.setRadius(radius);
 		b_new.setFee(fee);
+		
 
 		if (basicConditionId != 0) {
 			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
-					basicConditionId);
+					basicConditionId); // ==> Bad -> better: only hand over the basic condition id 
 			return pc.updateBasicCondition(b_old, b_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
@@ -213,7 +213,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		case "ACCEPT":
 			return pc.acceptCandidateInContract(new CandidateId(contractId, candidateId));
 		case "DECLINE":
-			return pc.deleteCandidateFromContract(new CandidateId(contractId, candidateId));
+			return pc.declineCandidateInContract(new CandidateId(contractId, candidateId));
 		default:
 			return false;
 		}
@@ -222,12 +222,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	
 	@Override
-	public boolean makeOffer(String token, int contractId, int candidateId, int basicConditionId) {
+	public boolean makeOffer(String token, int contractId, int candidateId, String location,
+			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 		
 		int token_subject_id = Integer.parseInt(ss.authenticateToken(token));
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		int senderId = 0;
 		int receiverId = 0;
+		
+		BasicCondition b_new = new BasicCondition();
+		if (!(endDate.equals(""))) b_new.setEndDate(endDate);
+		if (!(startDate.equals(""))) b_new.setStartDate(startDate);
+		if (!(location.equals("")))  b_new.setLocation(location);
+		b_new.setEstimatedWorkload(estimatedWorkload);
+		b_new.setRadius(radius);
+		b_new.setFee(fee);
 		
 		if(token_subject_id == candidateId) {
 			senderId = candidateId;
@@ -241,7 +250,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			nc.setReceiverId(receiverId);
 			nc.setSenderId(senderId);
 			
-		return pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), basicConditionId, nc);
+		return pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), b_new, nc);
 	}
 
 	
