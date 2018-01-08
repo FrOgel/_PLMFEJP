@@ -13,7 +13,7 @@ import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
-import de.mpa.domain.NegotiationCondition;
+import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -389,8 +389,8 @@ public class PersistanceContract {
 
 		Contract c = entitymanager.find(Contract.class, candidateId.getContractId());
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
-		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
-		NegotiationCondition nc = new NegotiationCondition();
+		List<ConditionOffer> list = (List<ConditionOffer>) can.getNegotiatedConditions();
+		ConditionOffer nc = new ConditionOffer();
 		nc.setCondition(c.getBasicConditions());
 		nc.setSenderId(c.getPrincipalID());
 		nc.setReceiverId(candidateId.getCandidateId());
@@ -405,13 +405,13 @@ public class PersistanceContract {
 		return true;
 	}
 	
-	public NegotiationCondition addOfferToCandidateContract(CandidateId candidateId, BasicCondition bc, NegotiationCondition nc) {
+	public ConditionOffer addOfferToCandidateContract(CandidateId candidateId, BasicCondition bc, ConditionOffer nc) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
-		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
+		List<ConditionOffer> list = (List<ConditionOffer>) can.getNegotiatedConditions();
 		list.add(nc);
 		nc.setCondition(bc);
 		can.setNegotiatedConditions(list);

@@ -29,7 +29,6 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 	// Sends the verification mail to the user mail address
 	@Override
 	public void sendVerificationMail(String to, String id, String hash) {
-		
 
 		this.sendMail(to, "Thank you for your registration. Please verify your account.",
 				this.getVerificationMailTemplate(id, hash));

@@ -17,10 +17,8 @@ public class SecurityService {
 			JWTVerifier verifier = JWT.require(algorithm).withIssuer("mpa").build();
 			DecodedJWT jwt = verifier.verify(token);
 			return jwt.getSubject();
-		} catch (UnsupportedEncodingException exception) {
-			return "n/a";
-		} catch (JWTVerificationException exception) {
-			return "Not verified";
+		} catch (JWTVerificationException | IllegalArgumentException | UnsupportedEncodingException exception) {
+			throw new JWTVerificationException(token);
 		}
 
 	}

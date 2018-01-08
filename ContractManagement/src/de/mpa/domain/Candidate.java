@@ -25,7 +25,7 @@ public class Candidate {
 	private boolean accepted;
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("timestamp DESC")
-	private List<NegotiationCondition> negotiatedConditions = new ArrayList<NegotiationCondition>();
+	private List<ConditionOffer> negotiatedConditions = new ArrayList<ConditionOffer>();
 
 	public Candidate() {
 		super();
@@ -50,11 +50,11 @@ public class Candidate {
 	}
 
 	@XmlElement
-	public List<NegotiationCondition> getNegotiatedConditions() {
+	public List<ConditionOffer> getNegotiatedConditions() {
 		return negotiatedConditions;
 	}
 
-	public void setNegotiatedConditions(List<NegotiationCondition> negotiatedConditions) {
+	public void setNegotiatedConditions(List<ConditionOffer> negotiatedConditions) {
 		this.negotiatedConditions = negotiatedConditions;
 	}
 

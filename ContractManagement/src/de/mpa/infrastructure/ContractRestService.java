@@ -1,135 +1,199 @@
 package de.mpa.infrastructure;
 
+import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
+
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import de.mpa.application._ApplicationContractService;
 
 @Path("/contract")
 @Produces(MediaType.APPLICATION_JSON)
+ 
 public class ContractRestService implements _ApplicationContractService {
-
+	
 	// Inject ApplicationContractService
 	@EJB
 	_ApplicationContractService ac;
 
+	@Context 
+	UriInfo uriInfo;
+	
+	/*For service registration
+	@WebListener
+	Interface: ServletContextListener
+	 
+	public void contextDestroyed(ServletContextEvent arg0) {
+		
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent arg0) {
+		for (Method method : ContractRestService.class.getDeclaredMethods()) {
+			try {
+			System.out.println(ContractRestService.registerServices(method.getName(), ""));
+			}catch(IllegalArgumentException e) {
+				continue;
+			}
+		}
+	}
+	
+	private static String registerServices(String methodName, String baseUri)  {
+		UriBuilder builder = UriBuilder.fromResource(ContractRestService.class);
+		try {
+			String host = InetAddress.getLocalHost().toString();
+			host = host.substring(host.indexOf('/'));
+			builder.host("https:/" + host + "/ContractManagement/rest")
+				   .path(ContractRestService.class, methodName);
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return builder.toTemplate();
+	}*/
+	
 	/*
 	 * Testring https://localhost:8443/ContractManagement/rest/contract/create
 	 */
+	
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("createContract")
-	public Response saveContract(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("designation") String designation, @FormParam("contractType") String contractType,
-			@FormParam("contractSubject") String contractSubject) {
-		System.out.println(contractType);
-		return ac.saveContract(token, contractId, designation, contractType, contractSubject);
+	@Path("contracts")
+	public Response saveContract(@CookieParam("token") String token, @FormParam("designation") String designation,
+			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject,
+			@FormParam("contractId") int contractId) {
+		return ac.saveContract(token, designation, contractType, contractSubject, contractId);
+	}
+	
+	@UserAuthorization
+	@Override
+	@GET
+	@Path("contracts")
+	public Response getContracts(@CookieParam("token") String token) {
+		return ac.getContracts(token);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("createTask")
-	public Response saveTask(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+	@Path("contracts/{contractId}/tasks")
+	public Response saveTask(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@FormParam("taskId") int taskId, @FormParam("description") String description,
 			@FormParam("taskType") String type, @FormParam("taskSubType") String subType) {
 		return ac.saveTask(token, contractId, taskId, description, type, subType);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("createBasicCondition")
-	public Response saveBasicCondition(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
-			@FormParam("location") String location, @FormParam("radius") int radius,
+	@Path("contracts/{contractId}/basicconditions")
+	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("location") String location,
 			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
-			@FormParam("workload") int estimatedWorkload, @FormParam("fee") double fee) {
+			@PathParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
+			@FormParam("radius") int radius, @FormParam("workload") int estimatedWorkload,
+			@FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, contractId, basicConditionId, location, radius, startDate, endDate,
+		return ac.saveBasicCondition(token, location, startDate, endDate, contractId, basicConditionId, radius,
 				estimatedWorkload, fee);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("createRequirement")
-	public Response saveRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("requirementId") int requirementId, @FormParam("description") String description,
-			@FormParam("criteriaType") String criteriaType) {
-		return ac.saveRequirement(token, contractId, requirementId, description, criteriaType);
+	@Path("contracts/{contractId}/requirements")
+	public Response saveRequirement(@CookieParam("token") String token, @FormParam("description") String description,
+			@FormParam("criteriaType") String criteriaType, @PathParam("contractId") int contractId) {
+		return ac.saveRequirement(token, description, criteriaType, contractId);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("createSpecialCondition")
-	public Response saveSpecialCondition(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, @FormParam("conditionId") int specialConditionId,
-			@FormParam("description") String description) {
-		return ac.saveSpecialCondition(token, contractId, specialConditionId, description);
+	@Path("contracts/{contractId}/specialconditions")
+	public Response saveSpecialCondition(@CookieParam("token") String token, @FormParam("description") String description,
+			@PathParam("contractId") int contractId) {
+		return ac.saveSpecialCondition(token, description, contractId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("deleteContract")
-	public Response deleteContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+	@Path("contracts/{contractId}/")
+	public Response deleteContract(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
 		System.out.println(contractId);
 		return ac.deleteContract(token, contractId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("deleteTask")
-	public Response deleteTask(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+	@Path("contracts/{contractId}/tasks")
+	public Response deleteTask(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@FormParam("taskId") int taskId) {
 		return ac.deleteTask(token, contractId, taskId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("deleteBasicCondition")
-	public Response deleteBasicCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+	@Path("contracts/{contractId}/basicconditions")
+	public Response deleteBasicCondition(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
 		return ac.deleteBasicCondition(token, contractId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("deleteRequirement")
-	public Response deleteRequirement(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+	@Path("contracts/{contractId}/requirements")
+	public Response deleteRequirement(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@FormParam("requirementId") int requirementId) {
 		return ac.deleteRequirement(token, contractId, requirementId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("deleteSpecialCondition")
-	public Response deleteSpecialCondition(@CookieParam("token") String token, @FormParam("contractId") int contractId,
+	@Path("contracts/{contractId}/specialconditions")
+	public Response deleteSpecialCondition(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@FormParam("conditionId") int conditionId) {
 		return ac.deleteSpecialCondition(token, contractId, conditionId);
 	}
 
-	@Override
-	@POST
-	@Path("getUserContracts")
-	public Response getAllContractsFromUser(@CookieParam("token") String token) {
-		return ac.getAllContractsFromUser(token);
-	}
-
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -139,36 +203,41 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.changeContractState(token, contractId, state);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("applyForContract")
-	public Response applyForContract(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
-		return ac.applyForContract(token, contractId);
+	@Path("contracts/{@PathParam}/candidates")
+	public Response saveCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+		return ac.saveCandidate(token, contractId);
 	}
 
+	@UserAuthorization
 	@Override
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("pickCandidate")
-	public Response pickCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("candidateId") int candidateId, @FormParam("acceptance") String acceptance) {
+	@Path("contracts/{contractId}/candidate/{candidateId}")
+	public Response pickCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+			@PathParam("candidateId") int candidateId, @FormParam("acceptance") String acceptance) {
 		return ac.pickCandidate(token, contractId, candidateId, acceptance);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("makeOffer")
-	public Response makeOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId,
-			@FormParam("candidateId") int candidateId, @FormParam("location") String location,
+	@Path("contracts/{contractId}/candidate/{candidateId}/offer")
+	public Response saveOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+			@PathParam("candidateId") int candidateId, @FormParam("location") String location,
 			@FormParam("radius") int radius, @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload,
 			@FormParam("fee") double fee) {
 
-		return ac.makeOffer(token, contractId, candidateId, location, radius, startDate, endDate, estimatedWorkload, fee);
+		return ac.saveOffer(token, contractId, candidateId, location, radius, startDate, endDate, estimatedWorkload,
+				fee);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -178,6 +247,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.cancelNegotiation(token, contractId, candidateId);
 	}
 
+	@UserAuthorization
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -186,5 +256,7 @@ public class ContractRestService implements _ApplicationContractService {
 			@FormParam("candidateId") int candidateId) {
 		return ac.acceptOffer(token, contractId, candidateId);
 	}
+
+	
 
 }

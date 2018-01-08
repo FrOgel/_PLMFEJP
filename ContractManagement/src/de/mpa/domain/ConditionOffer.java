@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement
-public class NegotiationCondition {
+public class ConditionOffer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class NegotiationCondition {
 	private int receiverId;
 	private LocalDateTime timestamp;
 
-	public NegotiationCondition() {
+	public ConditionOffer() {
 		super();
 		this.timestamp = LocalDateTime.now();
 	}

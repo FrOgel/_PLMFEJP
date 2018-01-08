@@ -13,7 +13,7 @@ import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
-import de.mpa.domain.NegotiationCondition;
+import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -29,8 +29,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private SecurityService ss = new SecurityService();
 
 	@Override
-	public Response saveContract(String token, int contractId, String designation, String contractType,
-			String contractSubject) {
+	public Response saveContract(String token, String designation, String contractType, String contractSubject,
+			int contractId) {
 
 		Contract c_new = new Contract();
 		if (!(designation.equals(""))) {
@@ -84,8 +84,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response saveBasicCondition(String token, int contractId, int basicConditionId, String location,
-			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
+	public Response saveBasicCondition(String token, String location, String startDate, String endDate,
+			int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee) {
 
 		BasicCondition b_new = new BasicCondition();
 		if (!(endDate.equals("")))
@@ -111,8 +111,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response saveRequirement(String token, int contractId, int requirementId, String description,
-			String criteriaType) {
+	public Response saveRequirement(String token, String description, String criteriaType, int contractId) {
 
 		Requirement r_new = new Requirement();
 		r_new.setDescription(description);
@@ -131,8 +130,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response saveSpecialCondition(String token, int contractId, int specialConditionId,
-			String description) {
+	public Response saveSpecialCondition(String token, String description, int contractId) {
 
 		SpecialCondition s_new = new SpecialCondition();
 		s_new.setDescription(description);
@@ -152,7 +150,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteContract(String token, int contractId) {
-		ss.authenticateToken(token);
 		if (pc.deleteContract(contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -162,7 +159,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteTask(String token, int contractId, int taskId) {
-		ss.authenticateToken(token);
 		if(pc.deleteTaskFromContracT(contractId, taskId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -172,7 +168,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteBasicCondition(String token, int contractId) {
-		ss.authenticateToken(token);
 		if(pc.deleteBasicCondition(contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -182,7 +177,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteRequirement(String token, int contractId, int requirementId) {
-		ss.authenticateToken(token);
 		if(pc.deleteRequirementFromContract(contractId, requirementId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -192,7 +186,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteSpecialCondition(String token, int contractId, int conditionId) {
-		ss.authenticateToken(token);
 		if(pc.deleteSpecialConditionFromContract(contractId, conditionId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -202,7 +195,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response changeContractState(String token, int contractId, String state) {
-		ss.authenticateToken(token);
 		if(pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()))) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		}else {
@@ -211,8 +203,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getAllContractsFromUser(String token) {
-		ss.authenticateToken(token);
+	public Response getContracts(String token) {
 		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
 		if(contracts!=null) {
 			return Response.ok(contracts, MediaType.APPLICATION_JSON).build();
@@ -222,7 +213,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 	
 	@Override
-	public Response applyForContract(String token, int contractId) {
+	public Response saveCandidate(String token, int contractId) {
 
 		String tokenSubject = ss.authenticateToken(token);
 		int principalId = Integer.parseInt(tokenSubject);
@@ -247,8 +238,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response pickCandidate(String token, int contractId, int candidateId, String acceptance) {
 
-		ss.authenticateToken(token);
-
 		switch (acceptance.toUpperCase()) {
 		case "ACCEPT":
 			  if(pc.acceptCandidateInContract(new CandidateId(contractId, candidateId))) {
@@ -269,9 +258,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
-	
 	@Override
-	public Response makeOffer(String token, int contractId, int candidateId, String location,
+	public Response saveOffer(String token, int contractId, int candidateId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 		
 		int tokenSubjectId = Integer.parseInt(ss.authenticateToken(token));
@@ -296,7 +284,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			receiverId = candidateId;
 		}
 		
-		NegotiationCondition nc = new NegotiationCondition();
+		ConditionOffer nc = new ConditionOffer();
 			nc.setReceiverId(receiverId);
 			nc.setSenderId(senderId);
 			
@@ -305,14 +293,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return Response.ok(nc, MediaType.APPLICATION_JSON).build();
 	}
 
-	
 	@Override
 	public Response cancelNegotiation(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub
 		return Response.ok().build();
 	}
 
-	
 	@Override
 	public Response acceptOffer(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub
