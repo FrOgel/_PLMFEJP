@@ -1,7 +1,8 @@
 package de.mpa.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,15 +23,15 @@ public class NegotiationCondition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int negotiationConditionId;
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition condition;
 	private int senderId;
 	private int receiverId;
-	private LocalDate timestamp;
+	private LocalDateTime timestamp;
 
 	public NegotiationCondition() {
 		super();
-		this.timestamp = LocalDate.now();
+		this.timestamp = LocalDateTime.now();
 	}
 
 	@XmlElement
@@ -71,7 +72,7 @@ public class NegotiationCondition {
 
 	
 	@XmlElement
-	public LocalDate getTimestamp() {
+	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
 

@@ -29,9 +29,7 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 	// Sends the verification mail to the user mail address
 	@Override
 	public void sendVerificationMail(String to, String id, String hash) {
-		// Verification mail recipient is the to variable
-		// Password: Hallo123!
-		// User: mpadhbw@gmail.com
+		
 
 		this.sendMail(to, "Thank you for your registration. Please verify your account.",
 				this.getVerificationMailTemplate(id, hash));
@@ -40,6 +38,9 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 
 	private void sendMail(String to, String subject, String html) {
 		// Set properties for the SSL connection to the gmail smtp server
+		// Verification mail recipient is the to variable
+		// Password: Hallo123!
+		// User: mpadhbw@gmail.com
 		Properties properties = new Properties();
 		properties.put("mail.smtp.host", "smtp.gmail.com");
 		properties.put("mail.smtp.socketFactory.port", "465");

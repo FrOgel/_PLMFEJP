@@ -1,6 +1,6 @@
 package de.mpa.domain;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class Contract {
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Candidate> candidates = new ArrayList<Candidate>();
 	private String subject;
-	private LocalDate creationDate;
+	private LocalDateTime creationDate;
 	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
 	@OneToMany(cascade = CascadeType.ALL)
@@ -53,7 +53,7 @@ public class Contract {
 	// Constructor to build a contract object
 	public Contract() {
 		super();
-		this.creationDate = LocalDate.now();
+		this.creationDate = LocalDateTime.now();
 		this.contractState = ContractState.NOT_PUBLISHED;
 	}
 	// --------------------------------------
@@ -123,7 +123,7 @@ public class Contract {
 	}
 
 	@XmlElement
-	public LocalDate getCreationDate() {
+	public LocalDateTime getCreationDate() {
 		return creationDate;
 	}
 

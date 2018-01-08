@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NamedQueries({
 	@NamedQuery(query = "SELECT u FROM User u WHERE u.mailAddress = :mail AND u.password = :password", name = "find user by pw and mail"),
 	@NamedQuery(query = "SELECT u.userID FROM User u WHERE u.mailAddress = :mail", name = "get userId by mail"),
+	@NamedQuery(query = "SELECT u.mailAddress FROM User u WHERE u.userID = :userId", name = "get mail by userId"),
 })	
 
 @XmlRootElement

@@ -274,8 +274,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response makeOffer(String token, int contractId, int candidateId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 		
-		int token_subject_id = Integer.parseInt(ss.authenticateToken(token));
+		int tokenSubjectId = Integer.parseInt(ss.authenticateToken(token));
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		
 		int senderId = 0;
 		int receiverId = 0;
 		
@@ -287,12 +288,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setRadius(radius);
 		b_new.setFee(fee);
 		
-		if(token_subject_id == candidateId) {
+		if(tokenSubjectId == candidateId) {
 			senderId = candidateId;
 			receiverId = c.getPrincipalID();
 		}else {
 			senderId = c.getPrincipalID();
-			receiverId = token_subject_id;
+			receiverId = candidateId;
 		}
 		
 		NegotiationCondition nc = new NegotiationCondition();

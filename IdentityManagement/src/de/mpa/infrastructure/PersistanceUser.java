@@ -76,7 +76,7 @@ public class PersistanceUser {
 			return null;
 		}
 	}
-	
+
 	public int findUserIdByMail(String mail) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -85,7 +85,7 @@ public class PersistanceUser {
 		q.setParameter("mail", mail);
 		@SuppressWarnings("unchecked")
 		List<Integer> id = (List<Integer>) q.getResultList();
-		
+
 		entitymanager.close();
 		emfactory.close();
 
@@ -100,23 +100,45 @@ public class PersistanceUser {
 		}
 	}
 	
+	public String findUserMailById(int userId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+
+		Query q = entitymanager.createNamedQuery("get mail by userId");
+		q.setParameter("userId", userId);
+		String mail = (String) q.getSingleResult();
+		return mail;
+		
+		/*List<String> list = (List<String>) q.getResultList();
+		
+		if ((list != null) && (list.size() > 0)) {
+			for (String mail : list) {
+				return mail;
+			}
+			;
+			return "Not found";
+		} else {
+			return "No result";
+		}*/
+	}
+
 	public boolean checkIfValidationExists(int userId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 
 		Query q = entitymanager.createNamedQuery("check if validation exists");
 		q.setParameter("userID", userId);
-		
+
 		long count = (long) q.getSingleResult();
-		
-		if(count == 0) {
+
+		if (count == 0) {
 			return false;
-		}else {
+		} else {
 			return true;
 		}
-		
+		//
 	}
-	
+
 	public PasswordChange findPasswordChange(String uuid) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -125,7 +147,7 @@ public class PersistanceUser {
 		q.setParameter("uuid", uuid);
 		@SuppressWarnings("unchecked")
 		List<PasswordChange> list = (List<PasswordChange>) q.getResultList();
-		
+
 		entitymanager.close();
 		emfactory.close();
 
@@ -156,7 +178,7 @@ public class PersistanceUser {
 
 		return q_old;
 	}
-	
+
 	public void removceSecurityValidation(int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();

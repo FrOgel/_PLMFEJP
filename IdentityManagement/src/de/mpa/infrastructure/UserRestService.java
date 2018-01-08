@@ -22,7 +22,7 @@ import de.mpa.application._ApplicationUserService;
  * purpose:		Encapsulates the rest endpoint from the business logic
  */
 @Path("/user")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 public class UserRestService implements _ApplicationUserService{
 	
 	
@@ -123,6 +123,14 @@ public class UserRestService implements _ApplicationUserService{
 	@Path("changePassword")
 	public Response changePassword(@FormParam("uuid") String uuid, @FormParam("newPassword") String newPassword) {
 		return as.changePassword(uuid, newPassword);
+	}
+
+	@Override
+	@GET
+	@Produces(MediaType.TEXT_PLAIN)
+	@Path("getUserMail/{id}")
+	public Response getUserMailAddress(@PathParam("id") int userId) {
+		return as.getUserMailAddress(userId);
 	}
 	
 }

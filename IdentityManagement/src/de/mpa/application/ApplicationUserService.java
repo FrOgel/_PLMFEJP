@@ -266,4 +266,18 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
 	}
+
+	
+	@Override
+	public Response getUserMailAddress(int userId) {
+		
+		String mail = pu.findUserMailById(userId);
+		
+		if(mail!=null) {
+			return Response.ok(mail, MediaType.TEXT_PLAIN).build();
+		}else{
+			return Response.noContent().build();
+		}
+
+	}
 }

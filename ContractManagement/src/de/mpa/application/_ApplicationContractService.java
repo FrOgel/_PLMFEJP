@@ -32,6 +32,8 @@ public interface _ApplicationContractService {
 	public Response deleteSpecialCondition(String token, int contractId, int conditionId);
 
 	public Response getAllContractsFromUser(String token);
+	
+	//public Response getMyAppliedContracts(String token);
 
 	public Response changeContractState(String token, int contractId, String state);
 

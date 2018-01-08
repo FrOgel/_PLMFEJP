@@ -32,4 +32,6 @@ public interface _ApplicationUserService {
 	public Response passwordResetAuthentication(String uuid);
 
 	public Response changePassword(String uuid, String newPassword);
+
+	public Response getUserMailAddress(int userId);
 }
