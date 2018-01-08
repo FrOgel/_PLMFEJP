@@ -76,6 +76,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		c_new.setSubject(contractSubject);
 		c_new.setContractID(contractId);
+		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
 		
 		c_new = pc.updateContract(c_new);
 		
