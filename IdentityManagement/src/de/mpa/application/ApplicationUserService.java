@@ -155,8 +155,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 
 		if ((Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
-			String token = ss.getToken(pc.getUserID());
-			NewCookie c = new NewCookie("token", token);
 			try {
 				return Response.seeOther(new URI("https://localhost:8443/MPA_Frontend/passwordReset.html?id=" + uuid)).build();
 			} catch (URISyntaxException e) {

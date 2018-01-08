@@ -46,7 +46,7 @@ public interface _ApplicationContractService {
 	//Method to accept or decline a candidate by the principal of the specific contract
 	public boolean pickCandidate(String token, int contractId, int candidateId, String acceptance);
 	
-	public boolean makeOffer(String token, int contractId, int candidateId);
+	public boolean makeOffer(String token, int contractId, int candidateId, int basicConditionId);
 	
 	public boolean cancelNegotiation(String token, int contractId, int candidateId);
 	

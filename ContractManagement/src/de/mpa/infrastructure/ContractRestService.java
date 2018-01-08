@@ -170,8 +170,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("makeOffer")
 	public boolean makeOffer(@CookieParam("token") String token, @FormParam("contractId") int contractId, 
-			@FormParam("candidateId") int candidateId) {
-		return ac.makeOffer(token, contractId, candidateId);
+			@FormParam("candidateId") int candidateId, int basicConditionId) {
+		return ac.makeOffer(token, contractId, candidateId, basicConditionId);
 	}
 
 	

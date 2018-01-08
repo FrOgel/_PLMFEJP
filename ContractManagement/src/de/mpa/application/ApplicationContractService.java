@@ -12,6 +12,7 @@ import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
+import de.mpa.domain.NegotiationCondition;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.SpecialCondition;
 import de.mpa.domain.Task;
@@ -81,7 +82,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
-
+		
 		BasicCondition b_new = new BasicCondition();
 		if (!(endDate.equals("")))
 			b_new.setEndDate(LocalDate.parse(endDate));
@@ -98,7 +99,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return pc.updateBasicCondition(b_old, b_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.persistBasicCondition(c, b_new);
+			return pc.persistBasicConditionInContract(c, b_new);
 		}
 	}
 
@@ -221,21 +222,26 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	
 	@Override
-	public boolean makeOffer(String token, int contractId, int candidateId) {
+	public boolean makeOffer(String token, int contractId, int candidateId, int basicConditionId) {
 		
-		int id = Integer.parseInt(ss.authenticateToken(token));
+		int token_subject_id = Integer.parseInt(ss.authenticateToken(token));
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		int senderId = 0;
+		int receiverId = 0;
 		
-		int receiverId;
-		int senderId;
-		
-		if(id == candidateId) {
+		if(token_subject_id == candidateId) {
 			senderId = candidateId;
-			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 			receiverId = c.getPrincipalID();
+		}else {
+			senderId = c.getPrincipalID();
+			receiverId = token_subject_id;
 		}
 		
-		
-		return false;
+		NegotiationCondition nc = new NegotiationCondition();
+			nc.setReceiverId(receiverId);
+			nc.setSenderId(senderId);
+			
+		return pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), basicConditionId, nc);
 	}
 
 	

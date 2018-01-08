@@ -77,7 +77,7 @@ public class PersistanceContract {
 		return t;
 	}
 
-	public BasicCondition persistBasicCondition(Contract c, BasicCondition b) {
+	public BasicCondition persistBasicConditionInContract(Contract c, BasicCondition b) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
@@ -232,7 +232,7 @@ public class PersistanceContract {
 		emfactory.close();
 		return true;
 	}
-	
+
 	public boolean changeContractState(int contractId, ContractState state) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -244,7 +244,7 @@ public class PersistanceContract {
 		emfactory.close();
 		return true;
 	}
-	
+
 	public Contract updateContract(Contract c_old, Contract c_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -385,19 +385,43 @@ public class PersistanceContract {
 	}
 
 	public boolean acceptCandidateInContract(CandidateId candidateId) {
-		
+
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		Contract c = entitymanager.find(Contract.class, candidateId.getContractId());
+		Candidate can = entitymanager.find(Candidate.class, candidateId);
+		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
+		NegotiationCondition nc = new NegotiationCondition();
+		nc.setCondition(c.getBasicConditions());
+		nc.setSenderId(c.getPrincipalID());
+		nc.setReceiverId(candidateId.getCandidateId());
+		list.add(nc);
+		can.setNegotiatedConditions(list);
+		can.setAccepted(true);
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return true;
+	}
+	
+	public boolean addOfferToCandidateContract(CandidateId candidateId, int basicConditionId, NegotiationCondition nc) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		
-		Contract c = entitymanager.find(Contract.class, candidateId.getContractId());
+		BasicCondition b = entitymanager.find(BasicCondition.class, basicConditionId);
+		nc.setCondition(b);
+		
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
 		List<NegotiationCondition> list = (List<NegotiationCondition>) can.getNegotiatedConditions();
-		NegotiationCondition nc = (NegotiationCondition) c.getBasicConditions();
 		list.add(nc);
 		can.setNegotiatedConditions(list);
 		can.setAccepted(true);
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();

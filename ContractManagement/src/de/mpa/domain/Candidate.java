@@ -29,7 +29,6 @@ public class Candidate {
 
 	public Candidate() {
 		super();
-		this.accepted = false;
 	}
 	
 	@XmlElement
