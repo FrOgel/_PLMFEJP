@@ -13,9 +13,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import de.mpa.application._ApplicationUserService;
-import de.mpa.domain.CompanyUser;
-import de.mpa.domain.PrivateUser;
-import de.mpa.domain.Qualification;
 
 
 //This rest service provides the functionality for managing user registration and authentication
@@ -40,7 +37,7 @@ public class UserRestService implements _ApplicationUserService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/registerCompanyUser")
-	public CompanyUser registerCompanyUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
+	public Response registerCompanyUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
 			@FormParam("companyName") String companyName, @FormParam("country") String country, @FormParam("state") String state, @FormParam("zipCode") String zipCode, 
 			@FormParam("city") String city, @FormParam("street") String street, @FormParam("houseNumber") String houseNumber, @FormParam("firstName") String firstName, 
 			@FormParam("surName") String surName, @FormParam("cpPhone") String cpPhone, @FormParam("cpMail") String mailAddress, @FormParam("department") String department) {
@@ -54,7 +51,7 @@ public class UserRestService implements _ApplicationUserService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("registerPrivateUser")
-	public PrivateUser registerPrivateUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
+	public Response registerPrivateUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw, @FormParam("phoneNumber") String phoneNumber, 
 			@FormParam("country") String country, @FormParam("state") String state, @FormParam("zipCode") String zipCode, @FormParam("city") String city, 
 			@FormParam("street") String street, @FormParam("houseNumber") String houseNumber,
 			@FormParam("firstName") String firstName, @FormParam("surName") String surName, @FormParam("birthday") String birthday) {
@@ -80,7 +77,7 @@ public class UserRestService implements _ApplicationUserService{
 
 	//Token authentication
 	@Override
-	public String authenticateViaToken(@CookieParam("token") String token) {
+	public Response authenticateViaToken(@CookieParam("token") String token) {
 		return as.authenticateViaToken(token);
 	}
 
@@ -89,7 +86,7 @@ public class UserRestService implements _ApplicationUserService{
 	@Override
 	@GET
 	@Path("verify/{id}/{uuid}")
-	public boolean verifyAccount(@PathParam("id") int id, @PathParam("uuid") String creationTime) {
+	public Response verifyAccount(@PathParam("id") int id, @PathParam("uuid") String creationTime) {
 		return as.verifyAccount(id, creationTime);
 	}
 
@@ -99,7 +96,7 @@ public class UserRestService implements _ApplicationUserService{
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("saveQualification")
-	public Qualification saveQualificaation(@CookieParam("token") String token, @FormParam("qualificationId") int qualificationId, 
+	public Response saveQualificaation(@CookieParam("token") String token, @FormParam("qualificationId") int qualificationId, 
 			@FormParam("designation") String designation) {
 		return as.saveQualificaation(token, qualificationId, designation);
 	}
@@ -108,7 +105,7 @@ public class UserRestService implements _ApplicationUserService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("resetPassword")
-	public boolean requestPasswordReset(@FormParam("mailAddress") String mail) {
+	public Response requestPasswordReset(@FormParam("mailAddress") String mail) {
 		System.out.println(mail);
 		return as.requestPasswordReset(mail);
 	}
@@ -124,7 +121,7 @@ public class UserRestService implements _ApplicationUserService{
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("changePassword")
-	public boolean changePassword(@FormParam("uuid") String uuid, @FormParam("newPassword") String newPassword) {
+	public Response changePassword(@FormParam("uuid") String uuid, @FormParam("newPassword") String newPassword) {
 		return as.changePassword(uuid, newPassword);
 	}
 	

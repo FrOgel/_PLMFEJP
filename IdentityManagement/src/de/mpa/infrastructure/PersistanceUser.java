@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.PasswordChange;
 import de.mpa.domain.Qualification;
+import de.mpa.domain.SecurityValidation;
 import de.mpa.domain.User;
 
 /**
@@ -40,7 +41,7 @@ public class PersistanceUser {
 		return o;
 	}
 
-	public void persistVerifiedUser(User user, AccountVerification av) {
+	public User persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
@@ -49,6 +50,7 @@ public class PersistanceUser {
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
+		return user;
 	}
 
 	public User checkUserCredentials(String mail, String password) {
@@ -98,6 +100,23 @@ public class PersistanceUser {
 		}
 	}
 	
+	public boolean checkIfValidationExists(int userId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+
+		Query q = entitymanager.createNamedQuery("check if validation exists");
+		q.setParameter("userID", userId);
+		
+		long count = (long) q.getSingleResult();
+		
+		if(count == 0) {
+			return false;
+		}else {
+			return true;
+		}
+		
+	}
+	
 	public PasswordChange findPasswordChange(String uuid) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -138,12 +157,12 @@ public class PersistanceUser {
 		return q_old;
 	}
 	
-	public void removePasswordChange(int id) {
+	public void removceSecurityValidation(int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
-		PasswordChange pc = entitymanager.find(PasswordChange.class, id);
-		entitymanager.remove(pc);
+		SecurityValidation sc = entitymanager.find(PasswordChange.class, id);
+		entitymanager.remove(sc);
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();

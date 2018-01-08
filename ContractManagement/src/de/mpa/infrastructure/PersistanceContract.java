@@ -405,7 +405,7 @@ public class PersistanceContract {
 		return true;
 	}
 	
-	public boolean addOfferToCandidateContract(CandidateId candidateId, BasicCondition bc, NegotiationCondition nc) {
+	public NegotiationCondition addOfferToCandidateContract(CandidateId candidateId, BasicCondition bc, NegotiationCondition nc) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
@@ -421,6 +421,6 @@ public class PersistanceContract {
 		entitymanager.close();
 		emfactory.close();
 
-		return true;
+		return nc;
 	}
 }

@@ -3,6 +3,8 @@ package de.mpa.application;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
@@ -27,7 +29,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private SecurityService ss = new SecurityService();
 
 	@Override
-	public Contract saveContract(String token, int contractId, String designation, String contractType,
+	public Response saveContract(String token, int contractId, String designation, String contractType,
 			String contractSubject) {
 
 		Contract c_new = new Contract();
@@ -45,16 +47,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (contractId != 0) {
 			Contract c_old = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.updateContract(c_old, c_new);
+			c_new = pc.updateContract(c_old, c_new);
 		} else {
 			c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
-			return pc.persistContract(c_new);
+			c_new = pc.persistContract(c_new);
 		}
+		
+		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 
 	}
 
 	@Override
-	public Task saveTask(String token, int contractId, int taskId, String description, String type, String subType) {
+	public Response saveTask(String token, int contractId, int taskId, String description, String type, String subType) {
 
 		Task t_new = new Task();
 
@@ -70,16 +74,17 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (taskId != 0) {
 			Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
-			return pc.updateTask(t_old, t_new);
+			t_new = pc.updateTask(t_old, t_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.persistTaskInContract(c, t_new);
+			t_new = pc.persistTaskInContract(c, t_new);
 		}
 
+		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
-	public BasicCondition saveBasicCondition(String token, int contractId, int basicConditionId, String location,
+	public Response saveBasicCondition(String token, int contractId, int basicConditionId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 
 		BasicCondition b_new = new BasicCondition();
@@ -96,15 +101,17 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (basicConditionId != 0) {
 			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
 					basicConditionId); // ==> Bad -> better: only hand over the basic condition id 
-			return pc.updateBasicCondition(b_old, b_new);
+			b_new = pc.updateBasicCondition(b_old, b_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.persistBasicConditionInContract(c, b_new);
+			b_new = pc.persistBasicConditionInContract(c, b_new);
 		}
+		
+		return Response.ok(b_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
-	public Requirement saveRequirement(String token, int contractId, int requirementId, String description,
+	public Response saveRequirement(String token, int contractId, int requirementId, String description,
 			String criteriaType) {
 
 		Requirement r_new = new Requirement();
@@ -114,16 +121,17 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (requirementId != 0) {
 			Requirement r_old = (Requirement) pc.getObjectFromPersistanceById(Requirement.class, requirementId);
-			return pc.updateRequirement(r_old, r_new);
+			r_new = pc.updateRequirement(r_old, r_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.persistRequirementInContract(c, r_new);
+			r_new = pc.persistRequirementInContract(c, r_new);
 		}
 
+		return Response.ok(r_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
-	public SpecialCondition saveSpecialCondition(String token, int contractId, int specialConditionId,
+	public Response saveSpecialCondition(String token, int contractId, int specialConditionId,
 			String description) {
 
 		SpecialCondition s_new = new SpecialCondition();
@@ -132,57 +140,89 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (specialConditionId != 0) {
 			SpecialCondition s_old = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
 					specialConditionId);
-			return pc.updateSpecialCondition(s_old, s_new);
+			s_new = pc.updateSpecialCondition(s_old, s_new);
 		} else {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			return pc.persistSpecialConditionInContract(c, s_new);
+			s_new = pc.persistSpecialConditionInContract(c, s_new);
 		}
+		
+		return Response.ok(s_new, MediaType.APPLICATION_JSON).build();
 
 	}
 
 	@Override
-	public boolean deleteContract(String token, int contractId) {
+	public Response deleteContract(String token, int contractId) {
 		ss.authenticateToken(token);
-		return pc.deleteContract(contractId);
+		if (pc.deleteContract(contractId)) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Contract").build();
+		}
 	}
 
 	@Override
-	public boolean deleteTask(String token, int contractId, int taskId) {
+	public Response deleteTask(String token, int contractId, int taskId) {
 		ss.authenticateToken(token);
-		return pc.deleteTaskFromContracT(contractId, taskId);
+		if(pc.deleteTaskFromContracT(contractId, taskId)) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Task").build();
+		}
 	}
 
 	@Override
-	public boolean deleteBasicCondition(String token, int contractId) {
+	public Response deleteBasicCondition(String token, int contractId) {
 		ss.authenticateToken(token);
-		return pc.deleteBasicCondition(contractId);
+		if(pc.deleteBasicCondition(contractId)) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Basic condition").build();
+		}
 	}
 
 	@Override
-	public boolean deleteRequirement(String token, int contractId, int requirementId) {
+	public Response deleteRequirement(String token, int contractId, int requirementId) {
 		ss.authenticateToken(token);
-		return pc.deleteRequirementFromContract(contractId, requirementId);
+		if(pc.deleteRequirementFromContract(contractId, requirementId)) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Requirement").build();
+		}
 	}
 
 	@Override
-	public boolean deleteSpecialCondition(String token, int contractId, int conditionId) {
+	public Response deleteSpecialCondition(String token, int contractId, int conditionId) {
 		ss.authenticateToken(token);
-		return pc.deleteSpecialConditionFromContract(contractId, conditionId);
+		if(pc.deleteSpecialConditionFromContract(contractId, conditionId)) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Contract").build();
+		}
 	}
 
 	@Override
-	public List<Contract> getAllContractsFromUser(String token) {
-		return pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
-	}
-
-	@Override
-	public boolean changeContractState(String token, int contractId, String state) {
+	public Response changeContractState(String token, int contractId, String state) {
 		ss.authenticateToken(token);
-		return pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()));
+		if(pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()))) {
+			return Response.ok(true, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.notModified("Contract").build();
+		}
 	}
 
 	@Override
-	public Candidate applyForContract(String token, int contractId) {
+	public Response getAllContractsFromUser(String token) {
+		ss.authenticateToken(token);
+		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
+		if(contracts!=null) {
+			return Response.ok(contracts, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.noContent().build();
+		}
+	}
+	
+	@Override
+	public Response applyForContract(String token, int contractId) {
 
 		String tokenSubject = ss.authenticateToken(token);
 		int principalId = Integer.parseInt(tokenSubject);
@@ -197,32 +237,41 @@ public class ApplicationContractService implements _ApplicationContractService {
 			can.setAccepted(false);
 			can.setCandidateId(candidateId);
 			can = pc.persistCandidateInContract(c, can);
-			return can;
+			return Response.ok(can, MediaType.APPLICATION_JSON).build();
 		} else {
-			return null;
+			return Response.notModified("Already applied").build();
 		}
 
 	}
 
 	@Override
-	public boolean pickCandidate(String token, int contractId, int candidateId, String acceptance) {
+	public Response pickCandidate(String token, int contractId, int candidateId, String acceptance) {
 
 		ss.authenticateToken(token);
 
 		switch (acceptance.toUpperCase()) {
 		case "ACCEPT":
-			return pc.acceptCandidateInContract(new CandidateId(contractId, candidateId));
+			  if(pc.acceptCandidateInContract(new CandidateId(contractId, candidateId))) {
+				  return Response.ok("Accepted", MediaType.APPLICATION_JSON).build();
+			  }
+			  break;
 		case "DECLINE":
-			return pc.declineCandidateInContract(new CandidateId(contractId, candidateId));
+			  if(pc.declineCandidateInContract(new CandidateId(contractId, candidateId))) {
+				  return Response.ok("Declined", MediaType.APPLICATION_JSON).build();
+			  }
+			  break;
 		default:
-			return false;
+			return Response.status(500).build();
 		}
+		
+		//Method return 500 status code if the accept or the decline for a candidate fails at persistence level
+		return Response.status(500).build();
 
 	}
 
 	
 	@Override
-	public boolean makeOffer(String token, int contractId, int candidateId, String location,
+	public Response makeOffer(String token, int contractId, int candidateId, String location,
 			int radius, String startDate, String endDate, int estimatedWorkload, double fee) {
 		
 		int token_subject_id = Integer.parseInt(ss.authenticateToken(token));
@@ -250,22 +299,23 @@ public class ApplicationContractService implements _ApplicationContractService {
 			nc.setReceiverId(receiverId);
 			nc.setSenderId(senderId);
 			
-		return pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), b_new, nc);
+		nc = pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), b_new, nc);
+		
+		return Response.ok(nc, MediaType.APPLICATION_JSON).build();
 	}
 
 	
 	@Override
-	public boolean cancelNegotiation(String token, int contractId, int candidateId) {
+	public Response cancelNegotiation(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub
-		return false;
+		return Response.ok().build();
 	}
 
 	
 	@Override
-	public boolean acceptOffer(String token, int contractId, int candidateId) {
+	public Response acceptOffer(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub
-		return false;
+		return Response.ok().build();
 	}
 
-	
 }

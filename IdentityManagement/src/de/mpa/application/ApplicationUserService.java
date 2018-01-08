@@ -7,8 +7,11 @@ import java.net.URL;
 import java.util.Calendar;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
 import de.mpa.domain.CompanyUser;
@@ -33,7 +36,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	// Persists the company user for registration purposes
 	@Override
-	public CompanyUser registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department) {
 
@@ -49,13 +52,13 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		this.createAccountVerification(user.getUserID(), mail);
 
-		return user;
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 
 	}
 
 	// Persists the private user for registration purposes
 	@Override
-	public PrivateUser registerPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
+	public Response registerPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
 			String zipCode, String city, String street, String houseNumber, String firstName, String surName,
 			String birthday) {
 
@@ -68,7 +71,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		this.createAccountVerification(user.getUserID(), mail);
 
-		return user;
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
 
 	/*
@@ -111,61 +114,35 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	// Calls the token authentication method from the security service
 	@Override
-	public String authenticateViaToken(String token) {
-		return ss.authenticateToken(token);
+	public Response authenticateViaToken(String token) {
+		ss.authenticateToken(token);
+		return Response.ok("Authenticated").build();
 	}
 
 	// Checks if the provided URL parameters are valid with the persisted ones
 	@Override
-	public boolean verifyAccount(int id, String checkSum) {
+	public Response verifyAccount(int id, String checkSum) {
 		User user = (User) pu.getObjectFromPersistanceById(User.class, id);
 		AccountVerification av = (AccountVerification) pu.getObjectFromPersistanceById(AccountVerification.class, id);
 		System.out.println("Verification in process...");
 		if (user == null) {
-			System.out.println("no user");
-			return false;
+			return Response.status(Status.NOT_FOUND).entity("No user found").build();
 		}
 
 		if (av == null) {
-			System.out.println("no av");
-			return false;
+			return Response.status(Status.NOT_FOUND).entity("No verification found").build();
 		}
 
 		if (user.getVerified())
-			return false;
+			return Response.status(Status.NOT_MODIFIED).entity("Already verified").build();;
 
 		if ((ss.getEncryptedKey(av.getCheckSum(), ToBeEncrypted.VERIFICATION).equals(checkSum))
 				&& (Long.parseLong(av.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
-			pu.persistVerifiedUser(user, av);
-			return true;
+			user = pu.persistVerifiedUser(user, av);
+			return Response.ok(user, MediaType.APPLICATION_JSON).build();
 		} else {
-			System.out.println("It's false");
-			return false;
-		}
-	}
-
-	@Override
-	public Response passwordResetAuthentication(String uuid) {
-		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
-		System.out.println("Verification in process...");
-
-		if (pc == null) {
-			System.out.println("no pc");
-			return Response.status(403).build();
-		}
-
-		if ((Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
-			try {
-				return Response.seeOther(new URI("https://localhost:8443/MPA_Frontend/passwordReset.html?id=" + uuid)).build();
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-				return Response.status(500).build();
-			}
-
-		} else {
-			System.out.println("It's false");
-			pu.removePasswordChange(pc.getUserID());
-			return Response.status(403).build();
+			
+			return Response.status(Status.FORBIDDEN).entity("Verification timed out. Please request a new verification mail.").build();
 		}
 	}
 
@@ -193,24 +170,38 @@ public class ApplicationUserService implements _ApplicationUserService {
 		AccountVerification av = new AccountVerification(id);
 		String uuid = av.generateCheckSum();
 
+		//Check if verification already exists
+		if(pu.checkIfValidationExists(id)) pu.removceSecurityValidation(id);
+		
 		this.callVerificationMailService(mail, id, ss.getEncryptedKey(uuid, ToBeEncrypted.VERIFICATION));
 		pu.addObjectToPersistance(av);
 	}
 
 	@Override
-	public Qualification saveQualificaation(String token, int qualificationId, String designation) {
+	public Response passwordResetAuthentication(String uuid) {
+		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
+		System.out.println("Verification in process...");
 
-		Qualification q_new = new Qualification();
-		q_new.setDescription(designation);
+		if (pc == null) {
+			System.out.println("no pc");
+			return Response.status(403).build();
+		}
 
-		if (qualificationId != 0) {
-			Qualification q_old = (Qualification) pu.getObjectFromPersistanceById(Qualification.class, qualificationId);
-			return pu.updateQualification(q_old, q_new);
+		if ((Long.parseLong(pc.getExpirationDate()) >= Calendar.getInstance().getTimeInMillis())) {
+			try {
+				return Response.seeOther(new URI("https://localhost:8443/MPA_Frontend/passwordReset.html?id=" + uuid)).build();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+				return Response.status(500).build();
+			}
+
 		} else {
-			return (Qualification) pu.addObjectToPersistance(q_new);
+			System.out.println("It's false");
+			pu.removceSecurityValidation(pc.getUserID());
+			return Response.status(403).entity("Link expired").build();
 		}
 	}
-
+	
 	private void callPasswordChangeMailService(String mail, String hash) {
 		try {
 			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail +"/" + hash;
@@ -227,7 +218,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 	}
 
 	@Override
-	public boolean requestPasswordReset(String mail) {
+	public Response requestPasswordReset(String mail) {
 		PasswordChange pc = new PasswordChange();
 		int userId = pu.findUserIdByMail(mail);
 		System.out.println(userId);
@@ -235,27 +226,44 @@ public class ApplicationUserService implements _ApplicationUserService {
 		String uuid = pc.generateCheckSum();
 		pc.setCheckSum(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
 		
+		//Check if password reset validation already exists
+		if(pu.checkIfValidationExists(userId)) pu.removceSecurityValidation(userId);
+		
 		this.callPasswordChangeMailService(mail, uuid);
 		pu.addObjectToPersistance(pc);
 
-		return true;
+		return Response.ok().build();
 	}
 
 	@Override
-	public boolean changePassword(String uuid, String newPassword) {
+	public Response changePassword(String uuid, String newPassword) {
 		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
 		System.out.println("Verification in process...");
 
 		if (pc == null) {
-			System.out.println("Not valid");
-			return false;
+			return Response.status(Status.UNAUTHORIZED).entity("No password reset request").build();
 		}else {
 			User user = (User) pu.getObjectFromPersistanceById(User.class, pc.getUserID());
 			pu.changePassword(user, ss.getEncryptedKey(newPassword, ToBeEncrypted.PASSWORD));
-			pu.removePasswordChange(pc.getUserID());
-			System.out.println("Password successfully changed");
-			return true;
+			pu.removceSecurityValidation(pc.getUserID());
+			return Response.ok("Password successfully changed").build();
 		}
 	}
 
+	@Override
+	public Response saveQualificaation(String token, int qualificationId, String designation) {
+
+		Qualification q_new = new Qualification();
+		q_new.setDescription(designation);
+
+		if (qualificationId != 0) {
+			Qualification q_old = (Qualification) pu.getObjectFromPersistanceById(Qualification.class, qualificationId);
+			q_new = pu.updateQualification(q_old, q_new);
+			
+		} else {
+			q_new = (Qualification) pu.addObjectToPersistance(q_new);
+		}
+		
+		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
+	}
 }
