@@ -12,17 +12,19 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author 	frank.vogel
- * Date:	07.01.2018
- * Purpose:	Represents a applicant for a specific contract
+ * @author frank.vogel Date: 07.01.2018 Purpose: Represents a applicant for a
+ *         specific contract
  */
 
 @Entity
 @XmlRootElement
 public class Candidate {
 
-	@EmbeddedId private CandidateId candidateId;
+	@EmbeddedId
+	private CandidateId candidateId;
 	private boolean accepted;
+	private boolean negotiationCancelled;
+	private BasicCondition acceptedCondition;
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("timestamp DESC")
 	private List<ConditionOffer> negotiatedConditions = new ArrayList<ConditionOffer>();
@@ -30,7 +32,7 @@ public class Candidate {
 	public Candidate() {
 		super();
 	}
-	
+
 	@XmlElement
 	public CandidateId getCandidateId() {
 		return candidateId;
@@ -58,6 +60,22 @@ public class Candidate {
 		this.negotiatedConditions = negotiatedConditions;
 	}
 
-	
+	@XmlElement
+	public boolean isNegotiationCancelled() {
+		return negotiationCancelled;
+	}
+
+	public void setNegotiationCancelled(boolean negotiationCancelled) {
+		this.negotiationCancelled = negotiationCancelled;
+	}
+
+	@XmlElement
+	public BasicCondition getAcceptedCondition() {
+		return acceptedCondition;
+	}
+
+	public void setAcceptedCondition(BasicCondition acceptedCondition) {
+		this.acceptedCondition = acceptedCondition;
+	}
 
 }

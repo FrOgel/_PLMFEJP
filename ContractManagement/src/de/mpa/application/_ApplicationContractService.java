@@ -12,6 +12,8 @@ public interface _ApplicationContractService {
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
 			int contractId);
 
+	public Response partialUpdateContractState(String token, String state, int contractId);
+
 	public Response deleteContract(String token, int contractId);
 
 	public Response getContracts(String token);
@@ -45,7 +47,7 @@ public interface _ApplicationContractService {
 
 	public Response deleteRequirement(String token, int contractId, int requirementId);
 
-	public Response updateRequirement(String token, int contractID);
+	public Response updateRequirement(String token, int contractID, int requirementId);
 
 	public Response getRequirement(String token, int contractId, int requirementId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -67,32 +69,25 @@ public interface _ApplicationContractService {
 
 	public Response updateCandidate(String token, int contractId, int candidateId);
 
+	public Response partialUpdateAcceptedOffer(String token, int contractId, int candidateId);
+
+	public Response partialUpdateCandidateAccepted(String token, int contractId, int candidateId, boolean acceptance);
+
+	public Response partialUpdateCandidateNegotiationCancelled(String token, int contractId, int candidateId,
+			boolean cancellation);
+
 	public Response getCandidate(String token, int contractId, int candidateId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Condition offer in contract from candidate or principal
 	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee);
-	
+
 	public Response updateOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee);
-	
+
 	public Response getOffer(String token, int contractId, int candidateId);
-	//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-	
-	// public Response getMyAppliedContracts(String token);
-
-	public Response changeContractState(String token, int contractId, String state);
-
-	// Method to accept or decline a candidate by the principal of the specific
-	// contract
-	public Response pickCandidate(String token, int contractId, int candidateId, String acceptance);
-
-	
-
-	public Response cancelNegotiation(String token, int contractId, int candidateId);
-
-	public Response acceptOffer(String token, int contractId, int candidateId);
+	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 }
