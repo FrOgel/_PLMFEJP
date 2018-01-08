@@ -1,10 +1,7 @@
 package de.mpa.infrastructure;
 
 import java.io.IOException;
-import java.util.Map;
-
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

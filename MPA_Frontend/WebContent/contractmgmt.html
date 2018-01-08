@@ -9,7 +9,7 @@ function createContract(){
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/createContract',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts',
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -82,12 +82,10 @@ function createSC(){
 }
 function deleteContract(){
 	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#contractId').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
-		type: 'POST',
-		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/deleteContract',
-		contentType: 'application/x-www-form-urlencoded',
+		type: 'DELETE',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId,
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
 				document.getElementById("authorized").innerHTML = "Successfully deleted contract";
@@ -166,6 +164,21 @@ function getContracts(){
 				}
 		});
 }
+function updateContract(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var formData = $('#contract').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -176,7 +189,7 @@ function getContracts(){
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>
 	<form name="contract" id="contract">
-		<input type="hidden" name="contractId" id="contractId" value="0"/>
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
 			<datalist id="contractTypeList">
    		 		<option value="Consulting">
@@ -186,6 +199,7 @@ function getContracts(){
 		<p>Subject: <input type="text" name="contractSubject" id="contractSubject"/>
 		<button onclick="createContract(); return false;">Save contract</button>
 		<button onclick="deleteContract(); return false;">Delete contract</button>
+		<button onclick="updateContract(); return false;">Update contract</button>
 	</form>
 	<p id="authorized"></p>
 	<form name="task" id="task">

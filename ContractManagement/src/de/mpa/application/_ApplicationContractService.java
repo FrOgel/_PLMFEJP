@@ -6,8 +6,7 @@ import javax.ws.rs.core.Response;
 @Local
 public interface _ApplicationContractService {
 	// Contract itself
-	public Response saveContract(String token, String designation, String contractType, String contractSubject,
-			int contractId);
+	public Response saveContract(String token, String designation, String contractType, String contractSubject);
 
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
 			int contractId);
@@ -81,9 +80,6 @@ public interface _ApplicationContractService {
 
 	// Condition offer in contract from candidate or principal
 	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
-			String startDate, String endDate, int estimatedWorkload, double fee);
-
-	public Response updateOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee);
 
 	public Response getOffer(String token, int contractId, int candidateId);

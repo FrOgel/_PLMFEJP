@@ -242,28 +242,16 @@ public class PersistanceContract {
 		return true;
 	}
 
-	public Contract updateContract(Contract c_old, Contract c_new) {
+	public Contract updateContract(Contract c_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
-		c_old = entitymanager.merge(c_old);
-
-		if ((c_new.getDesignation() != null) && (!(c_old.getDesignation().equals(c_new.getDesignation())))) {
-			c_old.setDesignation(c_new.getDesignation());
-		}
-
-		if ((c_new.getType() != null) && (!(c_old.getType().equals(c_new.getType())))) {
-			c_old.setType(c_new.getType());
-		}
-
-		if ((c_new.getSubject() != null) && (!(c_old.getSubject().equals(c_new.getSubject())))) {
-			c_old.setSubject(c_new.getSubject());
-		}
-
+		//Contract attached = entitymanager.find(Contract.class, c_new.getContractID());
+		Contract attached = entitymanager.merge(c_new);
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
-		return c_old;
+		return attached;
 	}
 
 	public Task updateTask(Task t_old, Task t_new) {

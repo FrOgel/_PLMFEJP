@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
@@ -29,29 +30,20 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private SecurityService ss = new SecurityService();
 
 	@Override
-	public Response saveContract(String token, String designation, String contractType, String contractSubject,
-			int contractId) {
+	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
 
 		Contract c_new = new Contract();
-		if (!(designation.equals(""))) {
+		if (!(designation.equals("")))
 			c_new.setDesignation(designation);
-		}
 
-		if (!(contractType.equals(""))) {
+		if (!(contractType.equals("")))
 			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		}
 
-		if (!(contractSubject.equals(""))) {
+		if (!(contractSubject.equals("")))
 			c_new.setSubject(contractSubject);
-		}
 
-		if (contractId != 0) {
-			Contract c_old = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			c_new = pc.updateContract(c_old, c_new);
-		} else {
-			c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
-			c_new = pc.persistContract(c_new);
-		}
+		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); // ==> Performance optimization potential through handing over the id instead of the token
+		c_new = pc.persistContract(c_new);
 
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 
@@ -62,28 +54,49 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (pc.deleteContract(contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
-			return Response.notModified("Contract").build();
+			return Response.status(Status.BAD_REQUEST).entity("Contract wasn't deleted.").build();
 		}
 	}
 
-	
 	@Override
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
 			int contractId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		if(designation.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
+		if(contractType.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
+		if(contractSubject.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
+		if(contractId==0)
+			return Response.status(Status.BAD_REQUEST).entity("No contract id").build();
+		
+		Contract c_new = new Contract();
+		c_new.setDesignation(designation);
+		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		c_new.setSubject(contractSubject);
+		c_new.setContractID(contractId);
+		
+		c_new = pc.updateContract(c_new);
+		
+		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response partialUpdateContractState(String token, String state, int contractId) {
+		
+		if(state.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No state").build();
+		if(contractId==0)
+			return Response.status(Status.BAD_REQUEST).entity("No id").build();
+		
 		if (pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()))) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
-			return Response.notModified("Contract").build();
+			return Response.status(Status.BAD_REQUEST).entity("Persist failed").build();
 		}
 	}
 
-	
 	@Override
 	public Response getContracts(String token) {
 		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
@@ -129,7 +142,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 	}
 
-	
 	@Override
 	public Response updateTask(String token, String description, String type, String subType, int contractId,
 			int taskId) {
@@ -143,7 +155,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return null;
 	}
 
-	
 	@Override
 	public Response saveBasicCondition(String token, String location, String startDate, String endDate, int contractId,
 			int basicConditionId, int radius, int estimatedWorkload, double fee) {
@@ -382,13 +393,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateOffer(String token, int contractId, int candidateId, String location, int radius,
-			String startDate, String endDate, int estimatedWorkload, double fee) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Response partialUpdateAcceptedOffer(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub
 		return Response.ok().build();
@@ -400,7 +404,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return null;
 	}
 
-	
 	@Override
 	public Response partialUpdateCandidateNegotiationCancelled(String token, int contractId, int candidateId,
 			boolean cancellation) {
@@ -408,7 +411,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return null;
 	}
 
-	
 	@Override
 	public Response getOffer(String token, int contractId, int candidateId) {
 		// TODO Auto-generated method stub

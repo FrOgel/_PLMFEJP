@@ -7,6 +7,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -24,6 +25,7 @@ public class Candidate {
 	private CandidateId candidateId;
 	private boolean accepted;
 	private boolean negotiationCancelled;
+	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition acceptedCondition;
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("timestamp DESC")
