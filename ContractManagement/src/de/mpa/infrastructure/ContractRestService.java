@@ -38,8 +38,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@EJB
 	_ApplicationContractService ac;
 
-	//@Context
-	//UriInfo uriInfo;
+	// @Context
+	// UriInfo uriInfo;
 
 	/*
 	 * For service registration
@@ -94,18 +94,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}")
 	public Response updateContract(@CookieParam("token") String token, @FormParam("designation") String designation,
 			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject,
-			@PathParam("contractId") int contractId) {
-		return ac.updateContract(token, designation, contractType, contractSubject, contractId);
-	}
-
-	@UserAuthorization
-	@Override
-	@PATCH
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}")
-	public Response partialUpdateContractState(@CookieParam("token") String token,
-			@FormParam("contractState") String state, @PathParam("contractId") int contractId) {
-		return ac.partialUpdateContractState(token, state, contractId);
+			@FormParam("contractState") String contractState, @PathParam("contractId") int contractId) {
+		return ac.updateContract(token, designation, contractType, contractSubject, contractState, contractId);
 	}
 
 	@UserAuthorization
@@ -133,8 +123,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks/{taskId}")
 	public Response updateTask(@CookieParam("token") String token, @FormParam("description") String description,
-			@FormParam("type") String type, @FormParam("subType") String subType,
-			@PathParam("contractId") int contractId, @PathParam("taskId") int taskId) {
+			@FormParam("taskType") String type, @FormParam("taskSubType") String subType, @PathParam("contractId") int contractId, 
+			@PathParam("taskId") int taskId) {
 		return ac.updateTask(token, description, type, subType, contractId, taskId);
 	}
 
@@ -150,7 +140,7 @@ public class ContractRestService implements _ApplicationContractService {
 
 	@UserAuthorization
 	@Override
-	@DELETE
+	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks")
 	public Response getTasks(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
@@ -375,7 +365,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidate/{candidateId}/offer/{offerId}")
-	public Response getOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId, 
+	public Response getOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
 		return ac.getOffer(token, contractId, candidateId);
 	}

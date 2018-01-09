@@ -9,9 +9,7 @@ public interface _ApplicationContractService {
 	public Response saveContract(String token, String designation, String contractType, String contractSubject);
 
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
-			int contractId);
-
-	public Response partialUpdateContractState(String token, String state, int contractId);
+			String contractState, int contractId);
 
 	public Response deleteContract(String token, int contractId);
 
@@ -21,8 +19,7 @@ public interface _ApplicationContractService {
 	// Task in contract
 	public Response saveTask(String token, String description, String type, String subType, int contractId);
 
-	public Response updateTask(String token, String description, String type, String subType, int contractId,
-			int taskId);
+	public Response updateTask(String token, String description, String type, String subType, int contractId, int taskId);
 
 	public Response deleteTask(String token, int contractId, int taskId);
 

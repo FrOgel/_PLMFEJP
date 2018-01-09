@@ -1,5 +1,6 @@
 package de.mpa.infrastructure;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,6 +10,7 @@ import javax.ws.rs.HttpMethod;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@HttpMethod("PATCH")
+@HttpMethod(value="PATCH")
+@Documented
 public @interface PATCH {
 }

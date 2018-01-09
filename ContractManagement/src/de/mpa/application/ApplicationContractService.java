@@ -33,16 +33,27 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
 
 		Contract c_new = new Contract();
-		if (!(designation.equals("")))
+		if (!(designation.equals(""))) {
 			c_new.setDesignation(designation);
-
-		if (!(contractType.equals("")))
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
+		}
+			
+		if (!(contractType.equals(""))){
 			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-
-		if (!(contractSubject.equals("")))
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
+		}
+			
+		if (!(contractSubject.equals(""))){
 			c_new.setSubject(contractSubject);
-
-		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); // ==> Performance optimization potential through handing over the id instead of the token
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
+		}
+			
+		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); // ==> Performance optimization potential
+																				// through handing over the id instead
+																				// of the token
 		c_new = pc.persistContract(c_new);
 
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
@@ -54,106 +65,121 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (pc.deleteContract(contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
-			return Response.status(Status.BAD_REQUEST).entity("Contract wasn't deleted.").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Contract not deleted.").build();
 		}
 	}
 
 	@Override
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
-			int contractId) {
-		
-		if(designation.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
-		if(contractType.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
-		if(contractSubject.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
-		if(contractId==0)
-			return Response.status(Status.BAD_REQUEST).entity("No contract id").build();
-		
+			String contractState, int contractId) {
+
 		Contract c_new = new Contract();
-		c_new.setDesignation(designation);
-		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		c_new.setSubject(contractSubject);
-		c_new.setContractID(contractId);
 		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
-		
+
+		if (!(designation.equals("")))
+			c_new.setDesignation(designation);
+		if (!(contractType.equals("")))
+			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		if (!(contractSubject.equals("")))
+			c_new.setSubject(contractSubject);
+		if (contractId != 0)
+			c_new.setContractID(contractId);
+
 		c_new = pc.updateContract(c_new);
-		
+
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
-	public Response partialUpdateContractState(String token, String state, int contractId) {
-		
-		if(state.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No state").build();
-		if(contractId==0)
-			return Response.status(Status.BAD_REQUEST).entity("No id").build();
-		
-		if (pc.changeContractState(contractId, ContractState.valueOf(state.toUpperCase()))) {
-			return Response.ok(true, MediaType.APPLICATION_JSON).build();
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("Persist failed").build();
-		}
-	}
-
-	@Override
 	public Response getContracts(String token) {
+
 		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
 		if (contracts != null) {
 			return Response.ok(contracts, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.noContent().build();
 		}
+
 	}
 
 	@Override
 	public Response saveTask(String token, String description, String type, String subType, int contractId) {
+
 		Task t_new = new Task();
 
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+		
 		if (!(description.equals(""))) {
 			t_new.setDescription(description);
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No description").build();
 		}
 		if (!(type.equals(""))) {
 			t_new.setType(TaskType.valueOf(type.toUpperCase()));
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No type").build();
 		}
+			
 		if (!(subType.equals(""))) {
 			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
 		}
 
-		if (taskId != 0) {
-			Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
-			t_new = pc.updateTask(t_old, t_new);
-		} else {
-			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			t_new = pc.persistTaskInContract(c, t_new);
-		}
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		t_new = pc.persistTaskInContract(c, t_new);
 
 		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
-		return null;
 	}
 
 	@Override
 	public Response deleteTask(String token, int contractId, int taskId) {
+
+		if (contractId != 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+		if (taskId != 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+
 		if (pc.deleteTaskFromContracT(contractId, taskId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
-			return Response.notModified("Task").build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Task not deleted.").build();
 		}
 	}
 
 	@Override
-	public Response updateTask(String token, String description, String type, String subType, int contractId,
-			int taskId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response updateTask(String token, String description, String type, String subType, int contractId, int taskId) {
+		Task t_new = new Task();
+
+		if (taskId == 0) {
+			return Response.status(Status.BAD_REQUEST).entity("No taskId").build();
+		} else {
+			t_new.setTaskID(taskId);
+		}
+		if (!(description.equals("")))
+			t_new.setDescription(description);
+		if (!(type.equals("")))
+			t_new.setType(TaskType.valueOf(type.toUpperCase()));
+		if (!(subType.equals("")))
+			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+
+		Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
+		t_new = pc.updateTask(t_old, t_new);
+
+		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response getTasks(String token, int contractId) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		if (c != null) {
+			return Response.ok(c.getTaskDescription(), MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.noContent().build();
+		}
+		
 	}
 
 	@Override

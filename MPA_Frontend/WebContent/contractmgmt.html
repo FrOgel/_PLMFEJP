@@ -21,10 +21,11 @@ function createContract(){
 function createTask(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#task').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/createTask',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/tasks",
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -96,10 +97,12 @@ function deleteContract(){
 function deleteTask(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#task').serializeArray();
+	var contractId = $('#contractId').val();
+	var taskId = $('#taskId').val();
 	$.ajax({
-		type: 'POST',
+		type: 'DELETE',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/deleteTask',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/tasks/" + taskId,
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -179,11 +182,55 @@ function updateContract(){
 				}
 		});
 }
+function patchContractState(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var formData = $('#setContractState').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
+function updateTask(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#task').serializeArray();
+	var contractId = $('#contractId').val();
+	var taskId = $('#taskId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/tasks/" + taskId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
+function getTasks(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	$.ajax({
+		type: 'GET',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/tasks",
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
 </head>
 <body>
+	<p id="authorized"></p>
 	<button onclick="getContracts(); return false;">Get all contracts</button>"
 	<form name="contractId">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
@@ -197,13 +244,14 @@ function updateContract(){
 			</datalist>
 		<p>Designation: <input type="text" name="designation" id="designation"/>
 		<p>Subject: <input type="text" name="contractSubject" id="contractSubject"/>
+		<p>State: <input type="text" name="contractState" id="contractState"/>
 		<button onclick="createContract(); return false;">Save contract</button>
 		<button onclick="deleteContract(); return false;">Delete contract</button>
 		<button onclick="updateContract(); return false;">Update contract</button>
 	</form>
 	<p id="authorized"></p>
 	<form name="task" id="task">
-		<input type="hidden" name="taskId" id="taskId" value="0"/>
+		<input type="hidden" name="taskId" id="taskId" value="1"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Task description: <input type="text" name="description" id="description"/>
 		<p>Type <input type="text" name="taskType" id="taskType" list="typeList">
@@ -224,6 +272,8 @@ function updateContract(){
 			</datalist>
 		<button onclick="createTask(); return false;">Add task</button>
 		<button onclick="deleteTask(); return false;">Delete task</button>
+		<button onclick="updateTask(); return false;">Update task</button>
+		<button onclick="getTask(); return false,">Get tasks</button>
 	</form>
 	<p id="task"></p>
 	
