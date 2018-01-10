@@ -27,7 +27,8 @@ import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
-import de.mpa.domain.SpecialCondition;
+import de.mpa.domain.Term;
+import de.mpa.domain.TermType;
 import de.mpa.domain.Task;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
@@ -56,7 +57,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		c_new.setSubject(contractSubject);
 		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		c_new.setDesignation(designation);
+		c_new.setName(designation);
 		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); // ==> Performance optimization potential
 																				// through handing over the id instead
 																				// of the token
@@ -92,7 +93,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 		if (!(designation.equals("")))
-			c_new.setDesignation(designation);
+			c_new.setName(designation);
 		if (!(contractType.equals("")))
 			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		if (!(contractSubject.equals("")))
@@ -409,15 +410,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response saveSpecialCondition(String token, String description, int contractId) {
+	public Response saveTerm(String token, String description, String termType, int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		if (description.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
+		if (termType.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No termType").build();
 
-		SpecialCondition s_new = new SpecialCondition();
+		Term s_new = new Term();
 		s_new.setDescription(description);
+		s_new.setTermType(TermType.valueOf(termType.toUpperCase()));
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		s_new = pc.persistSpecialConditionInContract(c, s_new);
@@ -427,7 +431,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteSpecialCondition(String token, int contractId, int specialConditionId) {
+	public Response deleteTerm(String token, int contractId, int specialConditionId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -442,35 +446,41 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateSpecialCondition(String token, String description, int contractId, int specialConditionId) {
+	public Response updateTerm(String token, String description, String termType, int contractId, int specialConditionId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		if (specialConditionId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not conditionId").build();
 
-		SpecialCondition s_old = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
+		Term s_old = (Term) pc.getObjectFromPersistanceById(Term.class,
 				specialConditionId);
 
 		if (s_old == null)
 			return Response.status(Status.BAD_REQUEST).entity("Specialcondition doesn't exist").build();
 
-		SpecialCondition s_new = new SpecialCondition();
-		s_new.setSpecialConditionID(specialConditionId);
+		Term s_new = new Term();
+		s_new.setTermId(specialConditionId);
 
 		if (description.equals("")) {
 			s_new.setDescription(s_old.getDescription());
 		} else {
 			s_new.setDescription(description);
 		}
+		
+		if(termType.equals("")) {
+			s_new.setTermType(s_old.getTermType());
+		} else {
+			s_new.setTermType(TermType.valueOf(termType.toUpperCase()));
+		}
 
-		s_new = (SpecialCondition) pc.updateExistingObject(s_new);
+		s_new = (Term) pc.updateExistingObject(s_new);
 
 		return Response.ok(s_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
-	public Response getSpecialCondition(String token, int contractId, int specialConditionId) {
+	public Response getTerm(String token, int contractId, int specialConditionId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -478,7 +488,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (specialConditionId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
 
-		SpecialCondition sc = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
+		Term sc = (Term) pc.getObjectFromPersistanceById(Term.class,
 				specialConditionId);
 
 		if (sc != null) {
@@ -543,10 +553,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 		
 		
 		if (candidateAccepted) {
-			String canMailHTML = this.getCandidateAcceptMail("accepted", c.getDesignation(), contractId);
+			String canMailHTML = this.getCandidateAcceptMail("accepted", c.getName(), contractId);
 			this.sendCandidateAcceptMail(candidateMail, "You were accepted as a candidate!",canMailHTML);
 		} else {
-			String canMailHTML = this.getCandidateAcceptMail("declined", c.getDesignation(), contractId);
+			String canMailHTML = this.getCandidateAcceptMail("declined", c.getName(), contractId);
 			this.sendCandidateAcceptMail(candidateMail,"You were declined as a candidate...", canMailHTML);
 		}
 
@@ -714,8 +724,5 @@ public class ApplicationContractService implements _ApplicationContractService {
 		
 		return (String) response.readEntity(String.class);
 	}
-
-	
-	
 
 }

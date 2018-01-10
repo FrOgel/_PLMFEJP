@@ -1,42 +1,51 @@
 package de.mpa.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author 	frank.vogel
+ * Date: 	10.01.2018
+ * Purpose:	Class for setting the contract terms
+ */
 @Entity
 @XmlRootElement
-public class SpecialCondition {
+public class Term {
 
 	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int specialConditionID;
+	private int termId;
 	private String description;
+	@Enumerated(EnumType.STRING)
+	private TermType termType;
 	// ---------------------
 
 	// Constructor to build a special condition
-	public SpecialCondition() {
+	public Term() {
 		super();
 	}
 
-	public SpecialCondition(int specialConditionID, String description) {
-		this.specialConditionID = specialConditionID;
+	public Term(int specialConditionID, String description) {
+		this.termId = specialConditionID;
 		this.description = description;
 	}
 	// ----------------------------------------
 
 	// Setter and getter
 	@XmlElement
-	public int getSpecialConditionID() {
-		return specialConditionID;
+	public int getTermId() {
+		return termId;
 	}
 
-	public void setSpecialConditionID(int specialConditionID) {
-		this.specialConditionID = specialConditionID;
+	public void setTermId(int specialConditionID) {
+		this.termId = specialConditionID;
 	}
 
 	@XmlElement
@@ -47,5 +56,12 @@ public class SpecialCondition {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	// -----------------
+
+	public TermType getTermType() {
+		return termType;
+	}
+
+	public void setTermType(TermType termType) {
+		this.termType = termType;
+	}
 }

@@ -53,13 +53,13 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Special condition in contract
-	public Response saveSpecialCondition(String token, String description, int contractId);
+	public Response saveTerm(String token, String description, String termType, int contractId);
 
-	public Response deleteSpecialCondition(String token, int contractId, int specialConditionId);
+	public Response deleteTerm(String token, int contractId, int specialConditionId);
 
-	public Response updateSpecialCondition(String token, String description, int contractId, int specialConditionId);
+	public Response updateTerm(String token, String description, String termType, int contractId, int specialConditionId);
 
-	public Response getSpecialCondition(String token, int contractId, int specialConditionId);
+	public Response getTerm(String token, int contractId, int specialConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Candidate in contract

@@ -33,25 +33,29 @@ public class Contract {
 	private int contractID;
 	private int clientID;
 	private int principalID;
-	private String designation;
-	@Enumerated(EnumType.STRING)
-	private ContractType type;
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="CONTRACTID")
-	private List<Candidate> candidates = new ArrayList<Candidate>();
+	private String name;
 	private String subject;
 	private LocalDateTime creationDate;
-	@Enumerated(EnumType.STRING)
-	private ContractState contractState;
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<Task> taskDescription = new ArrayList<Task>();
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
-	// The condition offer consists of the basicConditions and the specialConditions
 	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<SpecialCondition> specialConditions = new ArrayList<SpecialCondition>();
+	private List<Task> taskDescription = new ArrayList<Task>();
+	private List<Term> contractTerms = new ArrayList<Term>();
+	
+	@Enumerated(EnumType.STRING)
+	private ContractType type;
+	@Enumerated(EnumType.STRING)
+	private ContractState contractState;
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="CONTRACTID")
+	private List<Candidate> candidates = new ArrayList<Candidate>();
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
+	
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Term> specialConditions = new ArrayList<Term>();
+	
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Rank> ranking = new ArrayList<Rank>();
 	// ---------------------
@@ -75,12 +79,12 @@ public class Contract {
 	}
 
 	@XmlElement
-	public String getDesignation() {
-		return designation;
+	public String getName() {
+		return name;
 	}
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@XmlElement
@@ -161,11 +165,11 @@ public class Contract {
 	}
 
 	@XmlElement
-	public List<SpecialCondition> getSpecialConditions() {
+	public List<Term> getSpecialConditions() {
 		return specialConditions;
 	}
 
-	public void setSpecialConditions(List<SpecialCondition> specialConditions) {
+	public void setSpecialConditions(List<Term> specialConditions) {
 		this.specialConditions = specialConditions;
 	}
 

@@ -248,9 +248,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/specialconditions")
-	public Response saveSpecialCondition(@CookieParam("token") String token,
-			@FormParam("description") String description, @PathParam("contractId") int contractId) {
-		return ac.saveSpecialCondition(token, description, contractId);
+	public Response saveTerm(@CookieParam("token") String token,
+			@FormParam("description") String description, @FormParam("termType") String termType, @PathParam("contractId") int contractId) {
+		return ac.saveTerm(token, description, termType, contractId);
 	}
 
 	@UserAuthorization
@@ -258,9 +258,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
-	public Response deleteSpecialCondition(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response deleteTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("specialConditionId") int conditionId) {
-		return ac.deleteSpecialCondition(token, contractId, conditionId);
+		return ac.deleteTerm(token, contractId, conditionId);
 	}
 
 	@UserAuthorization
@@ -268,10 +268,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
-	public Response updateSpecialCondition(@CookieParam("token") String token,
-			@FormParam("description") String description, @PathParam("contractId") int contractId,
-			@PathParam("specialConditionId") int conditionId) {
-		return ac.updateSpecialCondition(token, description, contractId, conditionId);
+	public Response updateTerm(@CookieParam("token") String token,
+			@FormParam("description") String description, @FormParam("termType") String termType,
+			@PathParam("contractId") int contractId, @PathParam("specialConditionId") int conditionId) {
+		return ac.updateTerm(token, description, termType, contractId, conditionId);
 	}
 
 	@UserAuthorization
@@ -279,9 +279,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
-	public Response getSpecialCondition(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response getTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("specialConditionId") int specialConditionId) {
-		return ac.getSpecialCondition(token, contractId, specialConditionId);
+		return ac.getTerm(token, contractId, specialConditionId);
 	}
 
 	@UserAuthorization

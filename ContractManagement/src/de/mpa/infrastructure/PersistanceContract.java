@@ -17,7 +17,7 @@ import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
-import de.mpa.domain.SpecialCondition;
+import de.mpa.domain.Term;
 import de.mpa.domain.Task;
 import de.mpa.domain.TaskType;
 
@@ -142,13 +142,13 @@ public class PersistanceContract {
 		return r;
 	}
 
-	public SpecialCondition persistSpecialConditionInContract(Contract c, SpecialCondition s) {
+	public Term persistSpecialConditionInContract(Contract c, Term s) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		c = entitymanager.merge(c);
 
-		List<SpecialCondition> list = (List<SpecialCondition>) c.getSpecialConditions();
+		List<Term> list = (List<Term>) c.getSpecialConditions();
 		list.add(s);
 		c.setSpecialConditions(list);
 
@@ -243,8 +243,8 @@ public class PersistanceContract {
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		Contract c = entitymanager.find(Contract.class, contractId);
-		SpecialCondition s = entitymanager.find(SpecialCondition.class, conditionId);
-		List<SpecialCondition> list = (List<SpecialCondition>) c.getSpecialConditions();
+		Term s = entitymanager.find(Term.class, conditionId);
+		List<Term> list = (List<Term>) c.getSpecialConditions();
 		list.remove(s);
 		entitymanager.remove(s);
 		entitymanager.getTransaction().commit();
@@ -369,7 +369,7 @@ public class PersistanceContract {
 		return r_old;
 	}
 
-	public SpecialCondition updateSpecialCondition(SpecialCondition s_old, SpecialCondition s_new) {
+	public Term updateSpecialCondition(Term s_old, Term s_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
