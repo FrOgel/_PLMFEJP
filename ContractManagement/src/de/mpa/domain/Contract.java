@@ -40,22 +40,20 @@ public class Contract {
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Task> taskDescription = new ArrayList<Task>();
+	@OneToMany(cascade = CascadeType.ALL)
 	private List<Term> contractTerms = new ArrayList<Term>();
-	
+
 	@Enumerated(EnumType.STRING)
 	private ContractType type;
 	@Enumerated(EnumType.STRING)
 	private ContractState contractState;
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="CONTRACTID")
+	@JoinColumn(name = "CONTRACTID")
 	private List<Candidate> candidates = new ArrayList<Candidate>();
-	
+
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
-	
-	@OneToMany(cascade = CascadeType.ALL)
-	private List<Term> specialConditions = new ArrayList<Term>();
-	
+
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Rank> ranking = new ArrayList<Rank>();
 	// ---------------------
@@ -165,12 +163,12 @@ public class Contract {
 	}
 
 	@XmlElement
-	public List<Term> getSpecialConditions() {
-		return specialConditions;
+	public List<Term> getTermId() {
+		return this.contractTerms;
 	}
 
-	public void setSpecialConditions(List<Term> specialConditions) {
-		this.specialConditions = specialConditions;
+	public void setTermId(List<Term> contractTerms) {
+		this.contractTerms = contractTerms;
 	}
 
 	@XmlElement
@@ -181,7 +179,6 @@ public class Contract {
 	public void setRanking(List<Rank> ranking) {
 		this.ranking = ranking;
 	}
-	// -----------------
 
 	public List<Candidate> getCandidates() {
 		return candidates;
@@ -189,6 +186,15 @@ public class Contract {
 
 	public void setCandidates(List<Candidate> candidates) {
 		this.candidates = candidates;
+	}
+
+	@XmlElement
+	public List<Term> getContractTerms() {
+		return contractTerms;
+	}
+
+	public void setContractTerms(List<Term> contractTerms) {
+		this.contractTerms = contractTerms;
 	}
 
 }

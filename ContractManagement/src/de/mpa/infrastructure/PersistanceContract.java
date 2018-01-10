@@ -142,15 +142,15 @@ public class PersistanceContract {
 		return r;
 	}
 
-	public Term persistSpecialConditionInContract(Contract c, Term s) {
+	public Term persistTermInContract(Contract c, Term s) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		c = entitymanager.merge(c);
 
-		List<Term> list = (List<Term>) c.getSpecialConditions();
+		List<Term> list = (List<Term>) c.getTermId();
 		list.add(s);
-		c.setSpecialConditions(list);
+		c.setTermId(list);
 
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
@@ -238,13 +238,13 @@ public class PersistanceContract {
 		return true;
 	}
 
-	public boolean deleteSpecialConditionFromContract(int contractId, int conditionId) {
+	public boolean deleteTermFromContract(int contractId, int conditionId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		Contract c = entitymanager.find(Contract.class, contractId);
 		Term s = entitymanager.find(Term.class, conditionId);
-		List<Term> list = (List<Term>) c.getSpecialConditions();
+		List<Term> list = (List<Term>) c.getTermId();
 		list.remove(s);
 		entitymanager.remove(s);
 		entitymanager.getTransaction().commit();
@@ -369,7 +369,7 @@ public class PersistanceContract {
 		return r_old;
 	}
 
-	public Term updateSpecialCondition(Term s_old, Term s_new) {
+	public Term updateTerm(Term s_old, Term s_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();

@@ -1,16 +1,6 @@
 package de.mpa.infrastructure;
 
-import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.UnknownHostException;
-
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
@@ -21,12 +11,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
 import de.mpa.application._ApplicationContractService;
 
 @Path("/contract")
@@ -247,7 +233,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/specialconditions")
+	@Path("contracts/{contractId}/terms")
 	public Response saveTerm(@CookieParam("token") String token,
 			@FormParam("description") String description, @FormParam("termType") String termType, @PathParam("contractId") int contractId) {
 		return ac.saveTerm(token, description, termType, contractId);
@@ -257,31 +243,31 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
+	@Path("contracts/{contractId}/terms/{termId}")
 	public Response deleteTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
-			@PathParam("specialConditionId") int conditionId) {
-		return ac.deleteTerm(token, contractId, conditionId);
+			@PathParam("specialConditionId") int termId) {
+		return ac.deleteTerm(token, contractId, termId);
 	}
 
 	@UserAuthorization
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
+	@Path("contracts/{contractId}/terms/{termId}")
 	public Response updateTerm(@CookieParam("token") String token,
 			@FormParam("description") String description, @FormParam("termType") String termType,
-			@PathParam("contractId") int contractId, @PathParam("specialConditionId") int conditionId) {
-		return ac.updateTerm(token, description, termType, contractId, conditionId);
+			@PathParam("contractId") int contractId, @PathParam("termId") int termId) {
+		return ac.updateTerm(token, description, termType, contractId, termId);
 	}
 
 	@UserAuthorization
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
+	@Path("contracts/{contractId}/terms/{termId}")
 	public Response getTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
-			@PathParam("specialConditionId") int specialConditionId) {
-		return ac.getTerm(token, contractId, specialConditionId);
+			@PathParam("termId") int termId) {
+		return ac.getTerm(token, contractId, termId);
 	}
 
 	@UserAuthorization

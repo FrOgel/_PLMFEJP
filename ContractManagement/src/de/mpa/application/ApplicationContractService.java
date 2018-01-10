@@ -424,21 +424,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 		s_new.setTermType(TermType.valueOf(termType.toUpperCase()));
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		s_new = pc.persistSpecialConditionInContract(c, s_new);
+		s_new = pc.persistTermInContract(c, s_new);
 
 		return Response.ok(s_new, MediaType.APPLICATION_JSON).build();
 
 	}
 
 	@Override
-	public Response deleteTerm(String token, int contractId, int specialConditionId) {
+	public Response deleteTerm(String token, int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		if (specialConditionId == 0)
+		if (termId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not conditionId").build();
 
-		if (pc.deleteSpecialConditionFromContract(contractId, specialConditionId)) {
+		if (pc.deleteTermFromContract(contractId, termId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.notModified("Contract").build();
@@ -446,21 +446,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateTerm(String token, String description, String termType, int contractId, int specialConditionId) {
+	public Response updateTerm(String token, String description, String termType, int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		if (specialConditionId == 0)
+		if (termId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not conditionId").build();
 
 		Term s_old = (Term) pc.getObjectFromPersistanceById(Term.class,
-				specialConditionId);
+				termId);
 
 		if (s_old == null)
-			return Response.status(Status.BAD_REQUEST).entity("Specialcondition doesn't exist").build();
+			return Response.status(Status.BAD_REQUEST).entity("Term doesn't exist").build();
 
 		Term s_new = new Term();
-		s_new.setTermId(specialConditionId);
+		s_new.setTermId(termId);
 
 		if (description.equals("")) {
 			s_new.setDescription(s_old.getDescription());
@@ -480,16 +480,16 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getTerm(String token, int contractId, int specialConditionId) {
+	public Response getTerm(String token, int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
 
-		if (specialConditionId == 0)
+		if (termId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
 
 		Term sc = (Term) pc.getObjectFromPersistanceById(Term.class,
-				specialConditionId);
+				termId);
 
 		if (sc != null) {
 			return Response.ok(sc, MediaType.APPLICATION_JSON).build();

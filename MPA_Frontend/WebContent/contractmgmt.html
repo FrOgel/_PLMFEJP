@@ -92,7 +92,7 @@ function createSC(){
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions",
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/terms",
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -152,7 +152,7 @@ function deleteSC(){
 	var specialConditionId = $('#specialConditionId').val();
 	$.ajax({
 		type: 'DELETE',
-		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,	
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/terms/" + specialConditionId,	
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
 				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
@@ -269,7 +269,7 @@ function updateSC(){
 	$.ajax({
 		type: 'PUT',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/terms/" + specialConditionId,
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -284,7 +284,7 @@ function getSC(){
 	var specialConditionId = $('#specialConditionId').val();
 	$.ajax({
 		type: 'GET',
-		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/terms/" + specialConditionId,
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
 				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
@@ -374,11 +374,12 @@ function getSC(){
 		<button onclick="updateRequirement(); return false;">Update requirement</button>
 	</form>
 	
-	<p>Add your special condition</p>
+	<p>Add your term</p>
 	<form name="special" id="special">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<input type="hidden" name="specialConditionId" id="specialConditionId" value="2"/>
 		<p>Description: <input type="text" name="description" id="description"/>
+		<p>Term type: <input type="text" name="termType" id="termType"/>
 		<button onclick="createSC(); return false;">Add condition</button>
 		<button onclick="deleteSC(); return false;">Delete condition</button>
 		<button onclick="updateSC(); return false;">Update condition</button>
