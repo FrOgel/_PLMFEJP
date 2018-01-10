@@ -25,6 +25,10 @@ public class Candidate {
 
 	@EmbeddedId
 	private CandidateId candidateId;
+	/*
+	 * Is true as soon as the principal accepts the applicant for the contract. Is
+	 * false if the principal declines the candidate during the negotiation
+	 */
 	private Boolean candidateAccepted;
 	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition acceptedCondition;
@@ -34,8 +38,8 @@ public class Candidate {
 
 	public Candidate() {
 		super();
+		this.negotiatedConditions = new ArrayList<ConditionOffer>();
 	}
-
 
 	@XmlElement
 	public CandidateId getCandidateId() {

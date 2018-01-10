@@ -108,6 +108,14 @@ public class ContractRestService implements _ApplicationContractService {
 
 	@UserAuthorization
 	@Override
+	@GET
+	@Path("contracts/{id}")
+	public Response getContract(@CookieParam("token") String token, @PathParam("id") int contractId) {
+		return ac.getContract(token, contractId);
+	}
+	
+	@UserAuthorization
+	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks")
@@ -154,12 +162,11 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}/basicconditions")
 	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("location") String location,
 			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
-			@PathParam("contractId") int contractId, @FormParam("basicConditionId") int basicConditionId,
-			@FormParam("radius") int radius, @FormParam("estimatedWorkload") int estimatedWorkload,
-			@FormParam("fee") double fee) {
+			@PathParam("contractId") int contractId, @FormParam("radius") int radius,
+			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, location, startDate, endDate, contractId, basicConditionId, radius,
-				estimatedWorkload, fee);
+		return ac.saveBasicCondition(token, location, startDate, endDate, contractId, radius, estimatedWorkload,
+				fee);
 	}
 
 	@UserAuthorization
@@ -312,7 +319,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}/offer")
+	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
 	public Response saveOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId, @FormParam("location") String location,
 			@FormParam("radius") int radius, @FormParam("startDate") String startDate,
@@ -327,10 +334,12 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}/offer/{offerId}")
-	public Response getOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
+	public Response getOffers(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
-		return ac.getOffer(token, contractId, candidateId);
+		return ac.getOffers(token, contractId, candidateId);
 	}
+
+	
 
 }

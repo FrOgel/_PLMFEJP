@@ -276,6 +276,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		if(mail!=null) {
 			return Response.ok(mail, MediaType.TEXT_PLAIN).build();
 		}else{
+			System.out.println(mail);
 			return Response.noContent().build();
 		}
 

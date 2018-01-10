@@ -14,6 +14,8 @@ public interface _ApplicationContractService {
 	public Response deleteContract(String token, int contractId);
 
 	public Response getContracts(String token);
+	
+	public Response getContract(String token, int contractId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Task in contract
@@ -29,7 +31,7 @@ public interface _ApplicationContractService {
 
 	// Basic condition in contract
 	public Response saveBasicCondition(String token, String location, String startDate, String endDate, int contractId,
-			int basicConditionId, int radius, int estimatedWorkload, double fee);
+			int radius, int estimatedWorkload, double fee);
 
 	public Response deleteBasicCondition(String token, int contractId);
 
@@ -73,7 +75,7 @@ public interface _ApplicationContractService {
 	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee);
 
-	public Response getOffer(String token, int contractId, int candidateId);
+	public Response getOffers(String token, int contractId, int candidateId);
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

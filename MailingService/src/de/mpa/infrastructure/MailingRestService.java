@@ -1,7 +1,9 @@
 package de.mpa.infrastructure;
 
 import javax.ejb.EJB;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import de.mpa.application._ApplicationMailingService;
@@ -30,6 +32,15 @@ public class MailingRestService implements _ApplicationMailingService {
 	@Path("passwordChangeMail/{to}/{hash}")
 	public void sendPasswordChangeMail(@PathParam("to") String to, @PathParam("hash") String hash) {
 		am.sendPasswordChangeMail(to, hash);
+	}
+
+	
+	@Override
+	@POST
+	@Path("candidateAccept/{to}")
+	public void sendCandidateAcceptMail(@PathParam("to") String to, @FormParam("subject") String subject, @FormParam("html") String html) {
+		System.out.println(html);
+		am.sendCandidateAcceptMail(to, subject, html);
 	}
 
 }

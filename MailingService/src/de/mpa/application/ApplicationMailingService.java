@@ -132,10 +132,15 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 		}
 
 	}
-
+	
 	@Override
 	public void sendPasswordChangeMail(String to, String hash) {
 		this.sendMail(to, "Reset your password.", this.getPasswordChangeMailTemplate(hash));
+	}
+
+	@Override
+	public void sendCandidateAcceptMail(String to, String subject, String html) {
+		this.sendMail(to, subject, html);
 	}
 
 }

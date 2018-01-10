@@ -1,8 +1,20 @@
 package de.mpa.application;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.net.ssl.HttpsURLConnection;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -11,7 +23,6 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
 import de.mpa.domain.ConditionOffer;
@@ -32,25 +43,20 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
 
-		Contract c_new = new Contract();
-		if (!(designation.equals(""))) {
-			c_new.setDesignation(designation);
-		} else {
+		if (designation.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
-		}
 
-		if (!(contractType.equals(""))) {
-			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		} else {
+		if (contractType.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
-		}
 
-		if (!(contractSubject.equals(""))) {
-			c_new.setSubject(contractSubject);
-		} else {
+		if (contractSubject.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
-		}
 
+		Contract c_new = new Contract();
+
+		c_new.setSubject(contractSubject);
+		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		c_new.setDesignation(designation);
 		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); // ==> Performance optimization potential
 																				// through handing over the id instead
 																				// of the token
@@ -62,6 +68,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response deleteContract(String token, int contractId) {
+
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+
 		if (pc.deleteContract(contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
@@ -74,10 +84,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 			String contractState, int contractId) {
 
 		Contract c_new = new Contract();
-		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
 
-		if (contractId != 0)
+		if (contractId != 0) {
 			c_new.setContractID(contractId);
+		} else {
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+		}
+
 		if (!(designation.equals("")))
 			c_new.setDesignation(designation);
 		if (!(contractType.equals("")))
@@ -85,7 +98,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (!(contractSubject.equals("")))
 			c_new.setSubject(contractSubject);
 
-		c_new = pc.updateContract(c_new);
+		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
+
+		c_new = (Contract) pc.updateExistingObject(c_new);
 
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -103,29 +118,40 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response saveTask(String token, String description, String type, String subType, int contractId) {
+	public Response getContract(String token, int contractId) {
+		
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+		
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		
+		if(c!=null) {
+			return Response.ok(c, MediaType.APPLICATION_JSON).build();
+		}else {
+			return Response.status(Status.BAD_REQUEST).entity("Not contract found").build();
+		}
 
-		Task t_new = new Task();
+	}
+	
+	@Override
+	public Response saveTask(String token, String description, String type, String subType, int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		if (!(description.equals(""))) {
-			t_new.setDescription(description);
-		} else {
+		if (description.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
-		}
-		if (!(type.equals(""))) {
-			t_new.setType(TaskType.valueOf(type.toUpperCase()));
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No type").build();
-		}
 
-		if (!(subType.equals(""))) {
-			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
-		} else {
+		if (type.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No type").build();
+
+		if (subType.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
-		}
+
+		Task t_new = new Task();
+		t_new.setDescription(description);
+		t_new.setType(TaskType.valueOf(type.toUpperCase()));
+		t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		t_new = pc.persistTaskInContract(c, t_new);
@@ -136,9 +162,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response deleteTask(String token, int contractId, int taskId) {
 
-		if (contractId != 0)
+		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		if (taskId != 0)
+		if (taskId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
 		if (pc.deleteTaskFromContracT(contractId, taskId)) {
@@ -165,14 +191,16 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (!(subType.equals("")))
 			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
 
-		Task t_old = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
-		t_new = pc.updateTask(t_old, t_new);
+		t_new = (Task) pc.updateExistingObject(t_new);
 
 		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response getTasks(String token, int contractId) {
+
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		if (c != null) {
@@ -185,48 +213,39 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response saveBasicCondition(String token, String location, String startDate, String endDate, int contractId,
-			int basicConditionId, int radius, int estimatedWorkload, double fee) {
+			int radius, int estimatedWorkload, double fee) {
+
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+
+		if (radius == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
+
+		if (estimatedWorkload == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
+
+		if (fee == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
+
+		if (endDate.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No end date").build();
+
+		if (startDate.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
+
+		if (endDate.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No location").build();
 
 		BasicCondition b_new = new BasicCondition();
-		if (!(endDate.equals(""))) {
-			b_new.setEndDate(endDate);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No end date").build();
-		}
-		if (!(startDate.equals(""))) {
-			b_new.setStartDate(startDate);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
-		}
-		if (estimatedWorkload != 0) {
-			b_new.setEstimatedWorkload(estimatedWorkload);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
-		}
-		if (!(endDate.equals(""))) {
-			b_new.setLocation(location);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No location").build();
-		}
-		if (radius != 0) {
-			b_new.setRadius(radius);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
-		}
-		if (fee != 0) {
-			b_new.setFee(fee);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
-		}
+		b_new.setEndDate(endDate);
+		b_new.setStartDate(startDate);
+		b_new.setRadius(radius);
+		b_new.setLocation(location);
+		b_new.setFee(fee);
+		b_new.setEstimatedWorkload(estimatedWorkload);
 
-		if (basicConditionId != 0) {
-			BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class,
-					basicConditionId); // ==> Bad -> better: only hand over the basic condition id
-			b_new = pc.updateBasicCondition(b_old, b_new);
-		} else {
-			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			b_new = pc.persistBasicConditionInContract(c, b_new);
-		}
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		b_new = pc.persistBasicConditionInContract(c, b_new);
 
 		return Response.ok(b_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -248,40 +267,33 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response updateBasicCondition(String token, String location, String startDate, String endDate,
 			int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee) {
 
-		BasicCondition b_new = new BasicCondition();
-		if (!(endDate.equals(""))) {
-			b_new.setEndDate(endDate);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No end date").build();
-		}
-		if (!(startDate.equals(""))) {
-			b_new.setStartDate(startDate);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
-		}
-		if (estimatedWorkload != 0) {
-			b_new.setEstimatedWorkload(estimatedWorkload);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
-		}
-		if (!(endDate.equals(""))) {
-			b_new.setLocation(location);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No location").build();
-		}
-		if (radius != 0) {
-			b_new.setRadius(radius);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
-		}
-		if (fee != 0) {
-			b_new.setFee(fee);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
-		}
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		BasicCondition b_old = (BasicCondition) pc.getObjectFromPersistanceById(BasicCondition.class, basicConditionId);
-		b_new = pc.updateBasicCondition(b_old, b_new);
+		if (basicConditionId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
+
+		BasicCondition b_new = new BasicCondition();
+
+		if (!(endDate.equals("")))
+			b_new.setEndDate(endDate);
+
+		if (!(startDate.equals("")))
+			b_new.setStartDate(startDate);
+
+		if (estimatedWorkload != 0)
+			b_new.setEstimatedWorkload(estimatedWorkload);
+
+		if (!(endDate.equals("")))
+			b_new.setLocation(location);
+
+		if (radius != 0)
+			b_new.setRadius(radius);
+
+		if (fee != 0)
+			b_new.setFee(fee);
+
+		b_new = (BasicCondition) pc.updateExistingObject(b_new);
 
 		return Response.ok(b_new, MediaType.APPLICATION_JSON).build();
 
@@ -357,8 +369,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response updateRequirement(String token, String description, String criteriaType, int contractId,
 			int requirementId) {
 
-		Requirement r_new = new Requirement();
-
 		if (contractId == 0) {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		}
@@ -367,21 +377,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No requirementId").build();
 		}
 
-		if (!(description.equals(""))) {
+		Requirement r_new = new Requirement();
+
+		if (!(description.equals("")))
 			r_new.setDescription(description);
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No description").build();
-		}
 
-		if (!(criteriaType.equals(""))) {
+		if (!(criteriaType.equals("")))
 			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No criteria type").build();
-		}
 
-		System.out.println(requirementId);
-		Requirement r_old = (Requirement) pc.getObjectFromPersistanceById(Requirement.class, requirementId);
-		r_new = pc.updateRequirement(r_old, r_new);
+		r_new = (Requirement) pc.updateExistingObject(r_new);
 
 		return Response.ok(r_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -411,6 +415,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		if (description.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
+
 		SpecialCondition s_new = new SpecialCondition();
 		s_new.setDescription(description);
 
@@ -530,9 +535,23 @@ public class ApplicationContractService implements _ApplicationContractService {
 		} else {
 			c_new.setCandidateAccepted(candidateAccepted);
 		}
+		
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		
+		String candidateMail = this.getUserMailAddress(candidateId);
+		
+		
+		
+		if (candidateAccepted) {
+			String canMailHTML = this.getCandidateAcceptMail("accepted", c.getDesignation(), contractId);
+			this.sendCandidateAcceptMail(candidateMail, "You were accepted as a candidate!",canMailHTML);
+		} else {
+			String canMailHTML = this.getCandidateAcceptMail("declined", c.getDesignation(), contractId);
+			this.sendCandidateAcceptMail(candidateMail,"You were declined as a candidate...", canMailHTML);
+		}
 
 		c_new = (Candidate) pc.updateExistingObject(c_new);
-
+		
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
@@ -546,7 +565,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
 
 		CandidateId candidateID = new CandidateId(contractId, candidateId);
-		
+
 		Candidate c = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateID);
 
 		if (c != null) {
@@ -561,22 +580,43 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee) {
 
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+
+		if (candidateId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
+
+		if (radius == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
+
+		if (fee == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
+
+		if (estimatedWorkload == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
+
+		if (endDate.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No end date").build();
+
+		if (startDate.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
+
+		if (location.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No location").build();
+
 		int tokenSubjectId = Integer.parseInt(ss.authenticateToken(token));
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		int senderId = 0;
-		int receiverId = 0;
-
 		BasicCondition b_new = new BasicCondition();
-		if (!(endDate.equals("")))
-			b_new.setEndDate(endDate);
-		if (!(startDate.equals("")))
-			b_new.setStartDate(startDate);
-		if (!(location.equals("")))
-			b_new.setLocation(location);
-		b_new.setEstimatedWorkload(estimatedWorkload);
+		b_new.setEndDate(endDate);
+		b_new.setStartDate(startDate);
 		b_new.setRadius(radius);
+		b_new.setLocation(location);
 		b_new.setFee(fee);
+		b_new.setEstimatedWorkload(estimatedWorkload);
+
+		int senderId;
+		int receiverId;
 
 		if (tokenSubjectId == candidateId) {
 			senderId = candidateId;
@@ -596,9 +636,86 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getOffer(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Response getOffers(String token, int contractId, int candidateId) {
+
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
+
+		if (candidateId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
+
+		CandidateId candidateID = new CandidateId(contractId, candidateId);
+
+		Candidate c = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateID);
+
+		if (c != null) {
+			return Response.ok(c.getNegotiatedConditions(), MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.status(Status.BAD_REQUEST).entity("No requirement found").build();
+		}
 	}
+
+	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
+		URL url;
+		try {
+			url = new URL("https://localhost:8443/ContractManagement/CandidateAcceptMail.jsp?accept=" + accept + "&id=" + contractId + "&name=" + contractName);
+			System.out.println(url);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+			String inputline;
+			StringBuffer html = new StringBuffer();
+
+			while ((inputline = in.readLine()) != null) {
+				html.append(inputline);
+			}
+
+			in.close();
+
+			return html.toString();
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Wrong URL";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Not available";
+		}
+
+	}
+	
+	private String getUserMailAddress(int userId) {
+
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client.target("https://localhost:8443/IdentityManagement/rest/user").path("getUserMail/" + userId);
+		
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
+				
+		Response response = invocationBuilder.get();
+		
+		return (String) response.readEntity(String.class);
+		
+	}
+	
+	private String sendCandidateAcceptMail(String mail, String subject, String html) {
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
+		
+		Form form = new Form();
+		form.param("html", html);
+		form.param("subject", subject);
+				
+		Response response = webTarget.request(MediaType.TEXT_PLAIN).post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+		
+		return (String) response.readEntity(String.class);
+	}
+
+	
+	
 
 }

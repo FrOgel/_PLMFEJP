@@ -16,21 +16,6 @@ function applyForContract(){
 		});
 	
 }
-function makeOffer(){
-	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#basicCondition').serializeArray();
-	$.ajax({
-		type: 'POST',
-		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/makeOffer',
-		contentType: 'application/x-www-form-urlencoded',
-		success: function(){
-				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
-				document.getElementById("authorized").innerHTML = "Successfully applied ";
-				}
-		});makeOffer
-	
-}
 function pickCandidate(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#accept').serializeArray();
@@ -46,6 +31,37 @@ function pickCandidate(){
 				document.getElementById("accepted").innerHTML = "Successfully applied ";
 				}
 		});
+	
+}
+function makeOffer(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#basicCondition').serializeArray();
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidate/" + candidateId + "/offers",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});makeOffer
+	
+}
+function getOffers(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
+	$.ajax({
+		type: 'GET',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidate/" + candidateId + "/offers",
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});makeOffer
 	
 }
 </script>
@@ -66,15 +82,14 @@ function pickCandidate(){
 	<button onclick="pickCandidate(); return false;">Accept for contract</button>"
 	<form name="accept" id="accept">
 		<p>Contract id: <input type="text" name="contractId" id="contractId" value="1"/>
-		<p>Candidate id: <input type="text" name="candidateId" id="candidateId" value="2"/>
+		<p>Candidate id: <input type="text" name="candidateId" id="candidateId" value="1"/>
 		<p>Acceptance: <input type="text" name="candidateAccepted" id="candidateAccepted" value="true"/>
 	</form>
 	
 	<p>Make your offer</p>
 	<form name="basicCondition" id="basicCondition">
-		<input type="hidden" name="candidateId" id="candidateId" value="2"/>
+		<input type="hidden" name="candidateId" id="candidateId" value="1"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="basicConditionId" id="basicConditionId" value="0"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>location <input type="text" name="location" id="location"/>
@@ -82,6 +97,7 @@ function pickCandidate(){
 		<p>Workload <input type="text" name="workload" id="workload"/>
 		<p>Fee <input type="text" name="fee" id="fee"/>
 		<button onclick="makeOffer(); return false;">Offer!</button>
+		<button onclick="getOffers(); return false;">Get offers!</button>
 	</form>
 </body>
 
