@@ -123,8 +123,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks/{taskId}")
 	public Response updateTask(@CookieParam("token") String token, @FormParam("description") String description,
-			@FormParam("taskType") String type, @FormParam("taskSubType") String subType, @PathParam("contractId") int contractId, 
-			@PathParam("taskId") int taskId) {
+			@FormParam("taskType") String type, @FormParam("taskSubType") String subType,
+			@PathParam("contractId") int contractId, @PathParam("taskId") int taskId) {
 		return ac.updateTask(token, description, type, subType, contractId, taskId);
 	}
 
@@ -190,7 +190,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
-	public Response getBasicCondition(@CookieParam("token") String token, int contractId, @PathParam("basicConditionId") int basicConditionId) {
+	public Response getBasicCondition(@CookieParam("token") String token, int contractId,
+			@PathParam("basicConditionId") int basicConditionId) {
 		return ac.getBasicCondition(token, contractId, basicConditionId);
 	}
 
@@ -220,7 +221,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/requirements/{requirementId}")
 	public Response updateRequirement(@CookieParam("token") String token, @FormParam("description") String description,
-			@FormParam("criteriaType") String criteriaType, @PathParam("contractId") int contractID, 
+			@FormParam("criteriaType") String criteriaType, @PathParam("contractId") int contractID,
 			@PathParam("requirementId") int requirementId) {
 		return ac.updateRequirement(token, description, criteriaType, contractID, requirementId);
 	}
@@ -260,8 +261,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/specialconditions/{specialConditionId}")
-	public Response updateSpecialCondition(@CookieParam("token") String token, @FormParam("description") String description,
-			@PathParam("contractId") int contractId, @PathParam("specialConditionId") int conditionId) {
+	public Response updateSpecialCondition(@CookieParam("token") String token,
+			@FormParam("description") String description, @PathParam("contractId") int contractId,
+			@PathParam("specialConditionId") int conditionId) {
 		return ac.updateSpecialCondition(token, description, contractId, conditionId);
 	}
 
@@ -280,18 +282,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates")
-	public Response saveCandidate(@CookieParam("token") String token, @FormParam("contractId") int contractId) {
+	public Response saveCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
 		return ac.saveCandidate(token, contractId);
-	}
-
-	@UserAuthorization
-	@Override
-	@DELETE
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidates/{candidateId}")
-	public Response deleteCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId,
-			@PathParam("candidateId") int candidateId) {
-		return ac.deleteCandidate(token, contractId, candidateId);
 	}
 
 	@UserAuthorization
@@ -299,38 +291,18 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates/{candidateId}")
-	public Response updateCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response updateCandidate(@CookieParam("token") String token,
+			@FormParam("candidateAccepted") Boolean candidateAccepted,
+			@FormParam("candidateDeclined") Boolean candidateDeclined, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
-		return null;
-	}
-
-	@UserAuthorization
-	@Override
-	@PATCH
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}")
-	public Response partialUpdateCandidateAccepted(@CookieParam("token") String token,
-			@PathParam("contractId") int contractId, @PathParam("candidateId") int candidateId,
-			@FormParam("acceptance") boolean acceptance) {
-		return ac.partialUpdateCandidateAccepted(token, contractId, candidateId, acceptance);
-	}
-
-	@UserAuthorization
-	@Override
-	@PATCH
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}")
-	public Response partialUpdateCandidateNegotiationCancelled(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, @FormParam("candidateId") int candidateId,
-			@FormParam("cancellation") boolean cancellation) {
-		return ac.partialUpdateCandidateNegotiationCancelled(token, contractId, candidateId, cancellation);
+		return ac.updateCandidate(token, candidateAccepted, candidateDeclined, contractId, candidateId);
 	}
 
 	@UserAuthorization
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}")
+	@Path("contracts/{contractId}/candidates/{candidateId}")
 	public Response getCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
 		return ac.getCandidate(token, contractId, candidateId);
@@ -349,16 +321,6 @@ public class ContractRestService implements _ApplicationContractService {
 
 		return ac.saveOffer(token, contractId, candidateId, location, radius, startDate, endDate, estimatedWorkload,
 				fee);
-	}
-
-	@UserAuthorization
-	@Override
-	@PATCH
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}/offer/{offerId}")
-	public Response partialUpdateAcceptedOffer(@CookieParam("token") String token,
-			@FormParam("contractId") int contractId, @FormParam("candidateId") int candidateId) {
-		return ac.partialUpdateAcceptedOffer(token, contractId, candidateId);
 	}
 
 	@UserAuthorization

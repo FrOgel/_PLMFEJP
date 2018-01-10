@@ -5,12 +5,10 @@
 <script>
 function applyForContract(){
 	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#apply').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
 		type: 'POST',
-		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/applyForContract',
-		contentType: 'application/x-www-form-urlencoded',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/candidates",
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
 				document.getElementById("authorized").innerHTML = "Successfully applied ";
@@ -36,10 +34,12 @@ function makeOffer(){
 function pickCandidate(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#accept').serializeArray();
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
 	$.ajax({
-		type: 'POST',
+		type: 'PUT',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/pickCandidate',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidates/" + candidateId,
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -55,6 +55,7 @@ function pickCandidate(){
 <body>
 	<p id="authorized"></p>
 	<button onclick="applyForContract(); return false;">Apply for contract</button>"
+
 	<form name="apply" id="apply">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>
@@ -62,11 +63,11 @@ function pickCandidate(){
 	
 	Accept candidate for contract
 	<p id="accepted"></p>
-	<button onclick="pickCandidate(); return false;">Apply for contract</button>"
+	<button onclick="pickCandidate(); return false;">Accept for contract</button>"
 	<form name="accept" id="accept">
-		<input type="text" name="contractId" id="contractId" value="1"/>
-		<input type="text" name="candidateId" id="candidateId" value="2"/>
-		<input type="text" name="acceptance" id="acceptance" value="Accept"/>
+		<p>Contract id: <input type="text" name="contractId" id="contractId" value="1"/>
+		<p>Candidate id: <input type="text" name="candidateId" id="candidateId" value="2"/>
+		<p>Acceptance: <input type="text" name="candidateAccepted" id="candidateAccepted" value="true"/>
 	</form>
 	
 	<p>Make your offer</p>

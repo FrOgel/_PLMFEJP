@@ -76,14 +76,14 @@ public class ApplicationContractService implements _ApplicationContractService {
 		Contract c_new = new Contract();
 		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
 
+		if (contractId != 0)
+			c_new.setContractID(contractId);
 		if (!(designation.equals("")))
 			c_new.setDesignation(designation);
 		if (!(contractType.equals("")))
 			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		if (!(contractSubject.equals("")))
 			c_new.setSubject(contractSubject);
-		if (contractId != 0)
-			c_new.setContractID(contractId);
 
 		c_new = pc.updateContract(c_new);
 
@@ -151,13 +151,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response updateTask(String token, String description, String type, String subType, int contractId,
 			int taskId) {
-		Task t_new = new Task();
 
-		if (taskId == 0) {
+		if (taskId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No taskId").build();
-		} else {
-			t_new.setTaskID(taskId);
-		}
+
+		Task t_new = new Task();
+		t_new.setTaskID(taskId);
+
 		if (!(description.equals("")))
 			t_new.setDescription(description);
 		if (!(type.equals("")))
@@ -406,7 +406,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response saveSpecialCondition(String token, String description, int contractId) {
-		
+
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		if (description.equals(""))
@@ -443,16 +443,23 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		if (specialConditionId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not conditionId").build();
-		if (description.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No description").build();
-
-		SpecialCondition s_new = new SpecialCondition();
-		s_new.setDescription(description);
-		s_new.setSpecialConditionID(specialConditionId);
 
 		SpecialCondition s_old = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
 				specialConditionId);
-		s_new = pc.updateSpecialCondition(s_old, s_new);
+
+		if (s_old == null)
+			return Response.status(Status.BAD_REQUEST).entity("Specialcondition doesn't exist").build();
+
+		SpecialCondition s_new = new SpecialCondition();
+		s_new.setSpecialConditionID(specialConditionId);
+
+		if (description.equals("")) {
+			s_new.setDescription(s_old.getDescription());
+		} else {
+			s_new.setDescription(description);
+		}
+
+		s_new = (SpecialCondition) pc.updateExistingObject(s_new);
 
 		return Response.ok(s_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -466,7 +473,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (specialConditionId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
 
-		SpecialCondition sc = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class, specialConditionId);
+		SpecialCondition sc = (SpecialCondition) pc.getObjectFromPersistanceById(SpecialCondition.class,
+				specialConditionId);
 
 		if (sc != null) {
 			return Response.ok(sc, MediaType.APPLICATION_JSON).build();
@@ -478,72 +486,75 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response saveCandidate(String token, int contractId) {
 
-		String tokenSubject = ss.authenticateToken(token);
-		int principalId = Integer.parseInt(tokenSubject);
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		CandidateId candidateId = new CandidateId(contractId, principalId);
+		int requesterId = Integer.parseInt(ss.authenticateToken(token));
 
-		Candidate can = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateId);
+		CandidateId candidateId = new CandidateId(contractId, requesterId);
 
-		if (can == null) {
+		if (pc.doesCandiateAlreadyExistInContract(candidateId)) {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-			can = new Candidate();
-			can.setAccepted(false);
+			Candidate can = new Candidate();
 			can.setCandidateId(candidateId);
 			can = pc.persistCandidateInContract(c, can);
 			return Response.ok(can, MediaType.APPLICATION_JSON).build();
 		} else {
-			return Response.notModified("Already applied").build();
+			return Response.status(Status.BAD_REQUEST).entity("Already applied").build();
 		}
 
 	}
 
 	@Override
-	public Response deleteCandidate(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public Response updateCandidate(String token, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
+			int candidateId) {
 
-	@Override
-	public Response updateCandidate(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
+		if (candidateId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
 
-	@Override
-	public Response partialUpdateCandidateAccepted(String token, int contractId, int candidateId, String acceptance) {
+		CandidateId candidateID = new CandidateId(contractId, candidateId);
+		Candidate c_old = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateID);
 
-		switch (acceptance.toUpperCase()) {
-		case "ACCEPT":
-			if (pc.acceptCandidateInContract(new CandidateId(contractId, candidateId))) {
-				return Response.ok("Accepted", MediaType.APPLICATION_JSON).build();
+		if (c_old == null)
+			return Response.status(Status.BAD_REQUEST).entity("Candidate doesn't exist").build();
+
+		Candidate c_new = new Candidate();
+		c_new.setCandidateId(candidateID);
+
+		if (candidateAccepted == null) {
+			if (c_old.isCandidateAccepted() != null) {
+				c_new.setCandidateAccepted(c_old.isCandidateAccepted());
 			}
-			break;
-		case "DECLINE":
-			if (pc.declineCandidateInContract(new CandidateId(contractId, candidateId))) {
-				return Response.ok("Declined", MediaType.APPLICATION_JSON).build();
-			}
-			break;
-		default:
-			return Response.status(500).build();
+		} else {
+			c_new.setCandidateAccepted(candidateAccepted);
 		}
 
-		// Method return 500 status code if the accept or the decline for a candidate
-		// fails at persistence level
-		return Response.status(500).build();
+		c_new = (Candidate) pc.updateExistingObject(c_new);
 
-	}
-
-	@Override
-	public Response partialUpdateCandidateNegotiationCancelled(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return Response.ok().build();
+		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
 	public Response getCandidate(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (contractId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
+
+		if (candidateId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
+
+		CandidateId candidateID = new CandidateId(contractId, candidateId);
+		
+		Candidate c = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateID);
+
+		if (c != null) {
+			return Response.ok(c, MediaType.APPLICATION_JSON).build();
+		} else {
+			return Response.status(Status.BAD_REQUEST).entity("No requirement found").build();
+		}
+
 	}
 
 	@Override
@@ -582,25 +593,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		nc = pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), b_new, nc);
 
 		return Response.ok(nc, MediaType.APPLICATION_JSON).build();
-	}
-
-	@Override
-	public Response partialUpdateAcceptedOffer(String token, int contractId, int candidateId) {
-		// TODO Auto-generated method stub
-		return Response.ok().build();
-	}
-
-	@Override
-	public Response partialUpdateCandidateAccepted(String token, int contractId, int candidateId, boolean acceptance) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Response partialUpdateCandidateNegotiationCancelled(String token, int contractId, int candidateId,
-			boolean cancellation) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

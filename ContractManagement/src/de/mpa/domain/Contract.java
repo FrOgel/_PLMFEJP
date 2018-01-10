@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -36,6 +37,7 @@ public class Contract {
 	@Enumerated(EnumType.STRING)
 	private ContractType type;
 	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="CONTRACTID")
 	private List<Candidate> candidates = new ArrayList<Candidate>();
 	private String subject;
 	private LocalDateTime creationDate;

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -18,13 +19,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 
 @Entity
+@NamedQuery(query = "SELECT COUNT(c.candidateId) FROM Candidate c WHERE c.candidateId = :candidateId", name = "does candidate exist")
 @XmlRootElement
 public class Candidate {
 
 	@EmbeddedId
 	private CandidateId candidateId;
-	private boolean accepted;
-	private boolean negotiationCancelled;
+	private Boolean candidateAccepted;
 	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition acceptedCondition;
 	@OneToMany(cascade = CascadeType.ALL)
@@ -34,6 +35,7 @@ public class Candidate {
 	public Candidate() {
 		super();
 	}
+
 
 	@XmlElement
 	public CandidateId getCandidateId() {
@@ -45,12 +47,12 @@ public class Candidate {
 	}
 
 	@XmlElement
-	public boolean isAccepted() {
-		return accepted;
+	public Boolean isCandidateAccepted() {
+		return candidateAccepted;
 	}
 
-	public void setAccepted(boolean accepted) {
-		this.accepted = accepted;
+	public void setCandidateAccepted(boolean candidateAccepted) {
+		this.candidateAccepted = candidateAccepted;
 	}
 
 	@XmlElement
@@ -60,15 +62,6 @@ public class Candidate {
 
 	public void setNegotiatedConditions(List<ConditionOffer> negotiatedConditions) {
 		this.negotiatedConditions = negotiatedConditions;
-	}
-
-	@XmlElement
-	public boolean isNegotiationCancelled() {
-		return negotiationCancelled;
-	}
-
-	public void setNegotiationCancelled(boolean negotiationCancelled) {
-		this.negotiationCancelled = negotiationCancelled;
 	}
 
 	@XmlElement

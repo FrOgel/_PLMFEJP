@@ -35,6 +35,17 @@ public class PersistanceContract {
 		return o;
 	}
 
+	public Object updateExistingObject(Object o) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		Object attached = entitymanager.merge(o);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return attached;
+		}
+	
 	public Object getObjectFromPersistanceById(Class<?> c, Object id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -60,7 +71,7 @@ public class PersistanceContract {
 			return false;
 		}
 	}
-
+	
 	public boolean checkIfContractIdMatchesRequester(int contractId, int requesterId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -269,11 +280,11 @@ public class PersistanceContract {
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		//Contract attached = entitymanager.find(Contract.class, c_new.getContractID());
-		Contract attached = entitymanager.merge(c_new);
+		Object attached = entitymanager.merge((Object) c_new);
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
-		return attached;
+		return (Contract) attached;
 	}
 
 	public Task updateTask(Task t_old, Task t_new) {
@@ -373,7 +384,24 @@ public class PersistanceContract {
 
 		return s_old;
 	}
-
+	
+	public boolean doesCandiateAlreadyExistInContract(CandidateId candidateId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		Query q = entitymanager.createNamedQuery("does candidate exist");
+		q.setParameter("candidateId", candidateId);
+		int count = ((Number) q.getSingleResult()).intValue();
+		System.out.println(count);
+		entitymanager.close();
+		emfactory.close();
+		
+		if(count==0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 	public boolean addCandidateToContract(Contract c, Candidate candidate) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();

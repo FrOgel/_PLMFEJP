@@ -12,14 +12,15 @@ public interface _ApplicationContractService {
 			String contractState, int contractId);
 
 	public Response deleteContract(String token, int contractId);
-	
+
 	public Response getContracts(String token);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Task in contract
 	public Response saveTask(String token, String description, String type, String subType, int contractId);
 
-	public Response updateTask(String token, String description, String type, String subType, int contractId, int taskId);
+	public Response updateTask(String token, String description, String type, String subType, int contractId,
+			int taskId);
 
 	public Response deleteTask(String token, int contractId, int taskId);
 
@@ -43,7 +44,8 @@ public interface _ApplicationContractService {
 
 	public Response deleteRequirement(String token, int contractId, int requirementId);
 
-	public Response updateRequirement(String token, String description, String criteriaType, int contractId, int requirementId);
+	public Response updateRequirement(String token, String description, String criteriaType, int contractId,
+			int requirementId);
 
 	public Response getRequirements(String token, int contractId, int requirementId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -61,16 +63,8 @@ public interface _ApplicationContractService {
 	// Candidate in contract
 	public Response saveCandidate(String token, int contractId);
 
-	public Response deleteCandidate(String token, int contractId, int candidateId);
-
-	public Response updateCandidate(String token, int contractId, int candidateId);
-
-	public Response partialUpdateAcceptedOffer(String token, int contractId, int candidateId);
-
-	public Response partialUpdateCandidateAccepted(String token, int contractId, int candidateId, boolean acceptance);
-
-	public Response partialUpdateCandidateNegotiationCancelled(String token, int contractId, int candidateId,
-			boolean cancellation);
+	public Response updateCandidate(String token, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
+			int candidateId);
 
 	public Response getCandidate(String token, int contractId, int candidateId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
