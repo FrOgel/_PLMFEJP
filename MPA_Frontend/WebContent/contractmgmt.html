@@ -37,10 +37,28 @@ function createTask(){
 function createBC(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#basicCondition').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/createBasicCondition',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/basicconditions",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully created BC";
+				}
+		});
+	
+}
+function updateBC(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#basicCondition').serializeArray();
+	var contractId = $('#contractId').val();
+	var bcId = $('#bcId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/basicconditions/" + bcId,
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -53,10 +71,11 @@ function createBC(){
 function createRequirement(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#requirement').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/createRequirement',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/requirements",
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -69,10 +88,11 @@ function createRequirement(){
 function createSC(){
 	document.getElementById("authorized").innerHTML = "";
 	var formData = $('#special').serializeArray();
+	var contractId = $('#contractId').val();
 	$.ajax({
 		type: 'POST',
 		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/createSpecialCondition',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions",
 		contentType: 'application/x-www-form-urlencoded',
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
@@ -126,29 +146,13 @@ function deleteBC(){
 		});
 	
 }
-function deleteRequirement(){
-	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#requirement').serializeArray();
-	$.ajax({
-		type: 'POST',
-		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/deleteRequirement',
-		contentType: 'application/x-www-form-urlencoded',
-		success: function(){
-				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
-				document.getElementById("authorized").innerHTML = "Successfully deleted requirement";
-				}
-		});
-	
-}
 function deleteSC(){
 	document.getElementById("authorized").innerHTML = "";
-	var formData = $('#special').serializeArray();
+	var contractId = $('#contractId').val();
+	var specialConditionId = $('#specialConditionId').val();
 	$.ajax({
-		type: 'POST',
-		data: formData,
-		url: 'https://localhost:8443/ContractManagement/rest/contract/deleteSpecialCondition',
-		contentType: 'application/x-www-form-urlencoded',
+		type: 'DELETE',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,	
 		success: function(){
 				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
 				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
@@ -225,6 +229,69 @@ function getTasks(){
 				}
 		});
 }
+function updateRequirement(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#requirement').serializeArray();
+	var contractId = $('#contractId').val();
+	var requirementId = $('#requirementId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/requirements/" + requirementId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
+function deleteRequirement(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#requirement').serializeArray();
+	var contractId = $('#contractId').val();
+	var requirementId = $('#requirementId').val();
+	$.ajax({
+		type: 'DELETE',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/requirements/" + requirementId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully retrieved condition";
+				}
+		});
+}
+function updateSC(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#special').serializeArray();
+	var contractId = $('#contractId').val();
+	var specialConditionId = $('#specialConditionId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
+				}
+		});
+	
+}
+function getSC(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var specialConditionId = $('#specialConditionId').val();
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/specialconditions/" + specialConditionId,
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
+				}
+		});
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -273,27 +340,27 @@ function getTasks(){
 		<button onclick="createTask(); return false;">Add task</button>
 		<button onclick="deleteTask(); return false;">Delete task</button>
 		<button onclick="updateTask(); return false;">Update task</button>
-		<button onclick="getTask(); return false,">Get tasks</button>
+		<button onclick="getTasks(); return false,">Get tasks</button>
 	</form>
-	<p id="task"></p>
-	
+	<p id="task"></p>	
 	<p>Make your offer</p>
 	<form name="basicCondition" id="basicCondition">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="basicConditionId" id="basicConditionId" value="0"/>
+		<input type="hidden" name="bcId" id="bcId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>location <input type="text" name="location" id="location"/>
 		<p>radius <input type="text" name="radius" id="radius"/>
-		<p>Workload <input type="text" name="workload" id="workload"/>
+		<p>Workload <input type="text" name="estimatedWorkload" id="estimatedWorkload"/>
 		<p>Fee <input type="text" name="fee" id="fee"/>
 		<button onclick="createBC(); return false;">Add basic conditions</button>
 		<button onclick="deleteBC(); return false;">Delete basic conditions</button>
+		<button onclick="updateBC(); return false;">Update basic conditions</button>
+		<button onclick="updateBC(); return false;">Update basic conditions</button>
 	</form>
-	
 	<p>Add your requirement</p>
 	<form name="requirement" id="requirement">
-		<input type="hidden" name="requirementId" id="requirementId" value="0"/>
+		<input type="hidden" name="requirementId" id="requirementId" value="1"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Description: <input type="text" name="description" id="description"/>
 		Type <input type="text" name="criteriaType" id="criteriaType" list="criteriaTypeList">
@@ -304,15 +371,18 @@ function getTasks(){
 			</datalist>
 		<button onclick="createRequirement(); return false;">Add requirement</button>
 		<button onclick="deleteRequirement(); return false;">Delete requirement</button>
+		<button onclick="updateRequirement(); return false;">Update requirement</button>
 	</form>
 	
 	<p>Add your special condition</p>
 	<form name="special" id="special">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="conditionId" id="conditionId" value="0"/>
+		<input type="hidden" name="specialConditionId" id="specialConditionId" value="2"/>
 		<p>Description: <input type="text" name="description" id="description"/>
 		<button onclick="createSC(); return false;">Add condition</button>
 		<button onclick="deleteSC(); return false;">Delete condition</button>
+		<button onclick="updateSC(); return false;">Update condition</button>
+		<button onclick="getSC(); return false;">Get condition</button>
 	</form>
 </body>
 

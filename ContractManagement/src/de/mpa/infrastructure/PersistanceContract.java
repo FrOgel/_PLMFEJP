@@ -44,20 +44,42 @@ public class PersistanceContract {
 		return o;
 	}
 
-	private boolean deleteObjectFromPersistance(Class<?> c, Object id) {
-		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
-
-		EntityManager entitymanager = emfactory.createEntityManager();
-		entitymanager.getTransaction().begin();
-		Object o = entitymanager.find(c, id);
-		entitymanager.remove(o);
-		entitymanager.getTransaction().commit();
-		entitymanager.close();
-		emfactory.close();
-		return true;
+	public boolean deleteObjectFromPersistance(Class<?> c, Object id) {
+		try{
+			EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+			EntityManager entitymanager = emfactory.createEntityManager();
+			entitymanager.getTransaction().begin();
+			Object o = entitymanager.find(c, id);
+			entitymanager.remove(o);
+			entitymanager.getTransaction().commit();
+			entitymanager.close();
+			emfactory.close();
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
-	public Contract persistContract(Contract c) {
+	public boolean checkIfContractIdMatchesRequester(int contractId, int requesterId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		Query q = entitymanager.createNamedQuery("check requesterId");
+		q.setParameter("contractId", requesterId);
+		q.setParameter("requesterId", requesterId);
+		int count = ((Number) q.getSingleResult()).intValue();
+		System.out.println(count);
+		entitymanager.close();
+		emfactory.close();
+		
+		if(count!=0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+ 	public Contract persistContract(Contract c) {
 		return (Contract) this.addObjectToPersistance(c);
 	}
 

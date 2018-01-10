@@ -55,6 +55,11 @@ public class BasicCondition {
 	}
 
 	@XmlElement
+	public int getBasicConditionId() {
+		return basicConditionId;
+	}
+	
+	@XmlElement
 	public LocalDate getStartDate() {
 		return startDate;
 	}
@@ -98,7 +103,6 @@ public class BasicCondition {
 		this.fee = fee;
 	}
 
-	
 	@XmlElement
 	public LocalDate getTimestamp() {
 		return timestamp;

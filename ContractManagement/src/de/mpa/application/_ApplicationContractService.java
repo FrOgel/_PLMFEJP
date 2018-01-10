@@ -12,7 +12,7 @@ public interface _ApplicationContractService {
 			String contractState, int contractId);
 
 	public Response deleteContract(String token, int contractId);
-
+	
 	public Response getContracts(String token);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -35,7 +35,7 @@ public interface _ApplicationContractService {
 	public Response updateBasicCondition(String token, String location, String startDate, String endDate,
 			int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee);
 
-	public Response getBasicCondition(String token, int contractId);
+	public Response getBasicCondition(String token, int contractId, int basicConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Requirement in contract
@@ -43,19 +43,19 @@ public interface _ApplicationContractService {
 
 	public Response deleteRequirement(String token, int contractId, int requirementId);
 
-	public Response updateRequirement(String token, int contractID, int requirementId);
+	public Response updateRequirement(String token, String description, String criteriaType, int contractId, int requirementId);
 
-	public Response getRequirement(String token, int contractId, int requirementId);
+	public Response getRequirements(String token, int contractId, int requirementId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Special condition in contract
 	public Response saveSpecialCondition(String token, String description, int contractId);
 
-	public Response deleteSpecialCondition(String token, int contractId, int conditionId);
+	public Response deleteSpecialCondition(String token, int contractId, int specialConditionId);
 
-	public Response updateSpecialCondition(String token, int contractId, int conditionId);
+	public Response updateSpecialCondition(String token, String description, int contractId, int specialConditionId);
 
-	public Response getSpecialCondition(String token, int contractId, int conditionId);
+	public Response getSpecialCondition(String token, int contractId, int specialConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Candidate in contract
