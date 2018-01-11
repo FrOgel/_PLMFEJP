@@ -99,7 +99,7 @@ public class ContractRestService implements _ApplicationContractService {
 	public Response getContract(@CookieParam("token") String token, @PathParam("id") int contractId) {
 		return ac.getContract(token, contractId);
 	}
-	
+
 	@UserAuthorization
 	@Override
 	@POST
@@ -151,8 +151,7 @@ public class ContractRestService implements _ApplicationContractService {
 			@PathParam("contractId") int contractId, @FormParam("radius") int radius,
 			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, location, startDate, endDate, contractId, radius, estimatedWorkload,
-				fee);
+		return ac.saveBasicCondition(token, location, startDate, endDate, contractId, radius, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization
@@ -234,8 +233,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms")
-	public Response saveTerm(@CookieParam("token") String token,
-			@FormParam("description") String description, @FormParam("termType") String termType, @PathParam("contractId") int contractId) {
+	public Response saveTerm(@CookieParam("token") String token, @FormParam("description") String description,
+			@FormParam("termType") String termType, @PathParam("contractId") int contractId) {
 		return ac.saveTerm(token, description, termType, contractId);
 	}
 
@@ -245,7 +244,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms/{termId}")
 	public Response deleteTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
-			@PathParam("specialConditionId") int termId) {
+			@PathParam("termId") int termId) {
 		return ac.deleteTerm(token, contractId, termId);
 	}
 
@@ -254,9 +253,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms/{termId}")
-	public Response updateTerm(@CookieParam("token") String token,
-			@FormParam("description") String description, @FormParam("termType") String termType,
-			@PathParam("contractId") int contractId, @PathParam("termId") int termId) {
+	public Response updateTerm(@CookieParam("token") String token, @FormParam("description") String description,
+			@FormParam("termType") String termType, @PathParam("contractId") int contractId,
+			@PathParam("termId") int termId) {
 		return ac.updateTerm(token, description, termType, contractId, termId);
 	}
 
@@ -325,7 +324,5 @@ public class ContractRestService implements _ApplicationContractService {
 			@PathParam("candidateId") int candidateId) {
 		return ac.getOffers(token, contractId, candidateId);
 	}
-
-	
 
 }
