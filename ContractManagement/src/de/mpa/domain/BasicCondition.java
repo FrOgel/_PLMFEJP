@@ -28,8 +28,7 @@ public class BasicCondition {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private LocalDate timestamp;
-	@OneToOne(cascade = CascadeType.ALL)
-	private PlaceOfPerformance placeOfPerformance;
+	
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -104,12 +103,5 @@ public class BasicCondition {
 		return timestamp;
 	}
 
-	@XmlElement
-	public PlaceOfPerformance getPlaceOfPerformance() {
-		return placeOfPerformance;
-	}
 	
-	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
-		this.placeOfPerformance = placeOfPerformance;
-	}
 }
