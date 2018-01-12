@@ -2,12 +2,10 @@ package de.mpa.domain;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -28,7 +26,6 @@ public class BasicCondition {
 	private LocalDate startDate;
 	private LocalDate endDate;
 	private LocalDate timestamp;
-	
 	// ---------------------
 
 	// Constructor to build a basic condition

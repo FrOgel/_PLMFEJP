@@ -1,7 +1,6 @@
 package de.mpa.application;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -156,7 +155,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 			for(Contract c : contractList) {
 				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 				
-				if(this.getDisstance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), 
+				if(this.getDistance(p_old.getCountry(), 
+						p_old.getZipCode(), 
+						p_old.getPlace(), 
 						country, zipCode, city)<=radius) {
 					searchResult.add(c);
 				}
@@ -842,9 +843,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private String getLocationGeometryData(String country, String city, String zipCode) {
 
 		Client client = ClientBuilder.newClient();
+		
+		country = country.replace(" ", "%20");
+		zipCode = "+" + zipCode.replace(" ", "%20");
+		city = "+" + city.replace(" ", "%20");
 
 		WebTarget webTarget = client
-				.target("https://nominatim.openstreetmap.org/search?q=" + country + "+" + zipCode + "+" + city + "&format=json");
+				.target("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
+		
+		System.out.println("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
 		
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
 
@@ -887,7 +894,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		
 		return lng;
 	}
-	private double getDisstance(String country1, String zipCode1, String city1, String country2, String zipCode2,
+	private double getDistance(String country1, String zipCode1, String city1, String country2, String zipCode2,
 			String city2) {
 
 		double lng1 = 0, lat1 = 0, lng2 = 0, lat2 = 0;

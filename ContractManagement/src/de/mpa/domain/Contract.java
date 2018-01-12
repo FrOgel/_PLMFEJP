@@ -29,57 +29,57 @@ import com.fasterxml.jackson.annotation.JsonView;
 				+ "c.principalID = :requesterId", name = "check requesterId"),
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.searchString LIKE :searchString", name = "search contracts") })
 public class Contract {
-
-	public static class Public {
-	}
-
-	public static class Internal {
-	}
+	
+	
+	//Different declined views on the contract based on the user relationship to the contract
+	//Not fully implemented
+	public static class InternalView extends PrincipalView{}
+	public static class PrincipalView extends ContractorView{}
+	public static class ContractorView {}
+	public static class CandidateView {}
+	public static class Viewer {}
 
 	// Attribute declaration
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int contractID;
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private int clientID;
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private int principalID;
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	private String name;
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	private String subject;
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private LocalDateTime creationDate;
 	@OneToOne(cascade = CascadeType.ALL)
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	private List<Task> taskDescription = new ArrayList<Task>();
 	@OneToMany(cascade = CascadeType.ALL)
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private List<Term> contractTerms = new ArrayList<Term>();
-	
 	@Enumerated(EnumType.STRING)
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	private ContractType type = null;
 	@Enumerated(EnumType.STRING)
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private ContractState contractState = null;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CONTRACTID")
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private List<Candidate> candidates = new ArrayList<Candidate>();
 	@OneToMany(cascade = CascadeType.ALL)
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
-	@OneToMany(cascade = CascadeType.ALL)
-	@JsonView(Contract.Internal.class)
-	private List<Rank> ranking = new ArrayList<Rank>();
-	@JsonView(Contract.Internal.class)
+	@JsonView(Contract.InternalView.class)
 	private String searchString = "";
 	@OneToOne(cascade = CascadeType.ALL)
+	@JsonView(Contract.Viewer.class)
 	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
@@ -209,15 +209,6 @@ public class Contract {
 
 	public void setBasicConditions(BasicCondition basicConditions) {
 		this.basicConditions = basicConditions;
-	}
-
-	@XmlElement
-	public List<Rank> getRanking() {
-		return ranking;
-	}
-
-	public void setRanking(List<Rank> ranking) {
-		this.ranking = ranking;
 	}
 
 	public List<Candidate> getCandidates() {

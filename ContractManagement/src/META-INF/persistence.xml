@@ -3,7 +3,6 @@
 	<persistence-unit name="ContractManagement">
 	  <class>de.mpa.domain.BasicCondition</class>
       <class>de.mpa.domain.Contract</class>
-      <class>de.mpa.domain.Rank</class>
       <class>de.mpa.domain.Requirement</class>
       <class>de.mpa.domain.Term</class>
       <class>de.mpa.domain.Task</class>

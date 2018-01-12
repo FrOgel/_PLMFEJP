@@ -108,7 +108,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@POST
 	@Path("contracts/searches")
-	@JsonView(Contract.Public.class)
+	@JsonView(Contract.Viewer.class)
 	public Response createContractSearch(@CookieParam("token") String token, @FormParam("searchText") String searchText,
 			@FormParam("country") String country, @FormParam("zipCode") String zipCode, @FormParam("city") String city,
 			@FormParam("radius") int radius) {
