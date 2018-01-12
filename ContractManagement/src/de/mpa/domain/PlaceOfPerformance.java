@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -60,7 +61,7 @@ public class PlaceOfPerformance {
 		this.country = country;
 	}
 
-	@XmlElement
+	
 	public double getLatitude() {
 		return latitude;
 	}
@@ -69,7 +70,7 @@ public class PlaceOfPerformance {
 		this.latitude = latitude;
 	}
 
-	@XmlElement
+	
 	public double getLongitude() {
 		return longitude;
 	}

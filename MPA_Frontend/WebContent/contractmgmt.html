@@ -307,6 +307,38 @@ function searchContracts(){
 		});
 	
 }
+function createPoP(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#pop').serializeArray();
+	var contractId = $('#contractId').val();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/places",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
+				}
+		});
+	
+}
+function updatePoP(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#pop').serializeArray();
+	var contractId = $('#contractId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/places",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
+				}
+		});
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -315,10 +347,11 @@ function searchContracts(){
 	<p id="authorized"></p>
 	<button onclick="getContracts(); return false;">Get all contracts</button>"
 	<form name="search" id="search">
-		<input type="text" name="searchText" id="searchText"/>
-		<input type="text" name="country" id="country"/>
-		<input type="text" name="zipCode" id="zipCode"/>
-		
+		<p>Search text: <input type="text" name="searchText" id="searchText"/>
+		<p>Country: <input type="text" name="country" id="country"/>
+		<p>Postal code: <input type="text" name="zipCode" id="zipCode"/>
+		<p>City: <input type="text" name="city" id="city"/>
+		<p>radius: <input type="text" name="radius" id="radius"/>
 		<button onclick="searchContracts(); return false;">Search</button>
 	</form>
 	<form name="contractId">
@@ -338,7 +371,16 @@ function searchContracts(){
 		<button onclick="deleteContract(); return false;">Delete contract</button>
 		<button onclick="updateContract(); return false;">Update contract</button>
 	</form>
+	<p>Set place of performance</p>
+	<form name="pop" id="pop">
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<p>Country <input type="text" name="country" id="country"/>
+ 		<p>City <input type="text" name="place" id="place"/>
+		<p>Zipcode <input type="text" name="zipCode" id="zipCode"/>
+		<button onclick="createPoP(); return false;">Save place</button>
+		<button onclick="updatePoP(); return false;">Update place</button>
 	<p id="authorized"></p>
+	</form>
 	<form name="task" id="task">
 		<input type="hidden" name="taskId" id="taskId" value="1"/>
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
@@ -364,14 +406,14 @@ function searchContracts(){
 		<button onclick="updateTask(); return false;">Update task</button>
 		<button onclick="getTasks(); return false,">Get tasks</button>
 	</form>
-	<p id="task"></p>	
+	<p id="task"></p>
+		
 	<p>Make your offer</p>
 	<form name="basicCondition" id="basicCondition">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<input type="hidden" name="bcId" id="bcId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
-		<p>location <input type="text" name="location" id="location"/>
 		<p>radius <input type="text" name="radius" id="radius"/>
 		<p>Workload <input type="text" name="estimatedWorkload" id="estimatedWorkload"/>
 		<p>Fee <input type="text" name="fee" id="fee"/>

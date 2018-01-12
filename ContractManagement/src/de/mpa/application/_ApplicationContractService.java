@@ -14,12 +14,19 @@ public interface _ApplicationContractService {
 	public Response deleteContract(String token, int contractId);
 
 	public Response getContracts(String token);
-	
+
 	public Response getContract(String token, int contractId);
+
+	// Sub section search for contracts ==> Additional resource which won't be
+	// persisted
+
+	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city, int radius);
+
+	// Place of performance
 	
-	// Sub section search for contracts ==> Additional resource which won't be persisted
+	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode, int contractId);
 	
-	public Response createContractSearch(String token, String searchText, String country, String zipCode, int radius);
+	public Response updatePlaceOfPerformance(String token, String country, String place, String zipCode, int contractId);
 	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -35,13 +42,11 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Basic condition in contract
-	public Response saveBasicCondition(String token, String location, String startDate, String endDate, int contractId,
-			int radius, int estimatedWorkload, double fee);
+	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int radius, int estimatedWorkload, double fee);
 
 	public Response deleteBasicCondition(String token, int contractId);
 
-	public Response updateBasicCondition(String token, String location, String startDate, String endDate,
-			int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee);
+	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee);
 
 	public Response getBasicCondition(String token, int contractId, int basicConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -62,7 +67,8 @@ public interface _ApplicationContractService {
 
 	public Response deleteTerm(String token, int contractId, int specialConditionId);
 
-	public Response updateTerm(String token, String description, String termType, int contractId, int specialConditionId);
+	public Response updateTerm(String token, String description, String termType, int contractId,
+			int specialConditionId);
 
 	public Response getTerm(String token, int contractId, int specialConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

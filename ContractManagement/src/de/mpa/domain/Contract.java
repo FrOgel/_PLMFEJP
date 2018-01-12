@@ -60,8 +60,7 @@ public class Contract {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.Internal.class)
 	private List<Term> contractTerms = new ArrayList<Term>();
-	@OneToOne(cascade = CascadeType.ALL)
-	private PlaceOfPerformance placeOfPerformance;
+	
 	@Enumerated(EnumType.STRING)
 	@JsonView(Contract.Public.class)
 	private ContractType type = null;
@@ -80,6 +79,8 @@ public class Contract {
 	private List<Rank> ranking = new ArrayList<Rank>();
 	@JsonView(Contract.Internal.class)
 	private String searchString = "";
+	@OneToOne(cascade = CascadeType.ALL)
+	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
 	// Constructor to build a contract object
@@ -263,7 +264,6 @@ public class Contract {
 		return placeOfPerformance;
 	}
 	
-
 	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
 		this.placeOfPerformance = placeOfPerformance;
 	}
