@@ -1,31 +1,37 @@
 package de.mpa.application;
 
-import java.util.Map;
-
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
-import de.mpa.domain.CompanyUser;
-import de.mpa.domain.PrivateUser;
-
-
-//This interface builds the contract for the ApplicationUserService and the RestService to ensure the consistency between the external and the internal services
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Interface for guarantee the method consistency between the application and the rest endpoint
+ */
 @Local
 public interface _ApplicationUserService {
 	
-	public CompanyUser registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department);
 		
-	public PrivateUser registerPrivateUser(String mail, String pw, String phoneNumber, 
+	public Response registerPrivateUser(String mail, String pw, String phoneNumber, 
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
 	
-	public boolean verifyAccount(String id, String creationTime);
+	public Response verifyAccount(int id, String uuid);
 	
 	public Response userLogin(String mail, String pw);
 	
-	public boolean authenticateViaToken(String token);
+	public Response authenticateViaToken(String token);
 	
-	public PrivateUser registerPrivateUsser(PrivateUser map);
+	public Response saveQualificaation(String token, int qualificationId, String designation);
+
+	public Response requestPasswordReset(String mail);
+
+	public Response passwordResetAuthentication(String uuid);
+
+	public Response changePassword(String uuid, String newPassword);
+
+	public Response getUserMailAddress(int userId);
 }

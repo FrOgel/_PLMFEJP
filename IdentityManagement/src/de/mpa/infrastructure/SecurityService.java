@@ -11,12 +11,32 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 
-//Provides the service to hash user passwords
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Provides services for securing the password and generating / validating the verification token (JSON Web Token)
+ */
 public class SecurityService {
 		
-	//Hashes the password with a 512 bit sha encryption
-	public String getSecurePw(String pw, String salt) {
+	//Hashes the password with a SHA-512 encryption
+	public String getEncryptedKey(String pw, ToBeEncrypted type) {
 		String hashedPW = null;
+		String salt;
+		
+		switch(type) {
+			case PASSWORD:
+				salt = "12341234qwefqwdfj123$!";
+				break;
+			case VERIFICATION:
+				salt = "A12324jkldsfj12%!§4234";
+				break;
+			case PASSWORD_RESET:
+				salt = "189§48!§$djsaflkASDf";
+				break;
+			default:
+				salt = "JustTheDefaultCase";
+				break;
+		}
 		
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -40,7 +60,7 @@ public class SecurityService {
 	}
 
 	//Returns the jwt authentication token for a specific user
-	public String getToken(String id) {
+	public String getToken(int id) {
 		
 		String token = null;
 		
@@ -48,7 +68,7 @@ public class SecurityService {
 			Algorithm  algorithm = Algorithm.HMAC256("ThisIsOurOwn");
 			token = JWT.create()
 				.withIssuer("mpa")
-				.withSubject(id)
+				.withSubject(String.valueOf(id))
 				.sign(algorithm);
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -62,20 +82,20 @@ public class SecurityService {
 	}
 
 	//Checks if the client sends the correct authentication token
-	public boolean authenticateToken(String token) {
+	public String authenticateToken(String token) {
 		
 		try {
-		Algorithm algorithm = Algorithm.HMAC256("ThisIsOurOwn");
-		JWTVerifier verifier = JWT.require(algorithm)
-				.withIssuer("mpa")
-				.build();
-		DecodedJWT jwt = verifier.verify(token);
-			return true;
-		} catch(UnsupportedEncodingException exception) {
-			return false;
-		} catch(JWTVerificationException exception) {
-			return false;
-		}
+			Algorithm algorithm = Algorithm.HMAC256("ThisIsOurOwn");
+			JWTVerifier verifier = JWT.require(algorithm)
+					.withIssuer("mpa")
+					.build();
+			DecodedJWT jwt = verifier.verify(token);
+				return jwt.getSubject();
+			} catch(UnsupportedEncodingException exception) {
+				return "n/a";
+			} catch(JWTVerificationException exception) {
+				return "Not verified";
+			}
 		
 	}
 	

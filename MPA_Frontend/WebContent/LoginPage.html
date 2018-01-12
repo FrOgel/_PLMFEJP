@@ -18,6 +18,21 @@ function userLogin2(){
 		});
 	
 }
+function resetPassword(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#reset').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/resetPassword',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully logged in";
+				}
+		});
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -29,6 +44,12 @@ function userLogin2(){
 		<button onclick="userLogin2(); return false;">Login</button>
 	</form>
 	<p id="authorized"></p>
+	
+	<p>Reset:
+	<form name="reset" id="reset">
+		<p>Mail: <input type="text" name="mailAddress" id="mailAddress"/>
+		<button onclick="resetPassword(); return false;">Login</button>
+	</form>
 
 </body>
 

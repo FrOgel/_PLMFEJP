@@ -7,14 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedQuery;
 
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Superclass for the necessary attributes for the account verification and password reset
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@NamedQuery(query = "Select count(s) FROM SecurityValidation s WHERE s.userID = :userID", name = "check if validation exists")
 @DiscriminatorColumn(name="VALIDATION_TYPE")
 public class SecurityValidation {
 		
-	//Attribute decleration
+	//Attribute declaration
 		@Id
 		private int userID;
 		private String checkSum;

@@ -5,6 +5,11 @@ import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Model for the contact person 0f a company user
+ */
 @Entity
 @XmlRootElement
 public class ContactPerson{

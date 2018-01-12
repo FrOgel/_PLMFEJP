@@ -5,8 +5,11 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+/**
+ * @author 		frank.vogel
+ * created on: 	06.01.2018
+ * purpose:		Child for the model of private user specific details
+ */
 @Entity
 @PrimaryKeyJoinColumn(referencedColumnName="userID")
 @XmlRootElement

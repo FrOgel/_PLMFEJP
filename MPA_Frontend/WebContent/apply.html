@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function applyForContract(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	$.ajax({
+		type: 'POST',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/' + contractId + "/candidates",
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});
+	
+}
+function pickCandidate(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#accept').serializeArray();
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidates/" + candidateId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("accepted").innerHTML = "Successfully applied ";
+				}
+		});
+	
+}
+function makeOffer(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#basicCondition').serializeArray();
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidate/" + candidateId + "/offers",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});makeOffer
+	
+}
+function getOffers(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var candidateId = $('#candidateId').val();
+	$.ajax({
+		type: 'GET',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidate/" + candidateId + "/offers",
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});makeOffer
+	
+}
+</script>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<p id="authorized"></p>
+	<button onclick="applyForContract(); return false;">Apply for contract</button>"
+
+	<form name="apply" id="apply">
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
+	</form>
+	
+	
+	Accept candidate for contract
+	<p id="accepted"></p>
+	<button onclick="pickCandidate(); return false;">Accept for contract</button>"
+	<form name="accept" id="accept">
+		<p>Contract id: <input type="text" name="contractId" id="contractId" value="1"/>
+		<p>Candidate id: <input type="text" name="candidateId" id="candidateId" value="1"/>
+		<p>Acceptance: <input type="text" name="candidateAccepted" id="candidateAccepted" value="true"/>
+	</form>
+	
+	<p>Make your offer</p>
+	<form name="basicCondition" id="basicCondition">
+		<input type="hidden" name="candidateId" id="candidateId" value="1"/>
+		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		<p>startDate <input type="date" name="startDate" id="startDate"/>
+ 		<p>endDate <input type="date" name="endDate" id="endDate"/>
+		<p>location <input type="text" name="location" id="location"/>
+		<p>radius <input type="text" name="radius" id="radius"/>
+		<p>Workload <input type="text" name="workload" id="workload"/>
+		<p>Fee <input type="text" name="fee" id="fee"/>
+		<button onclick="makeOffer(); return false;">Offer!</button>
+		<button onclick="getOffers(); return false;">Get offers!</button>
+	</form>
+</body>
+
+
+</html>
