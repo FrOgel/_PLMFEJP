@@ -90,6 +90,20 @@ public class PersistanceContract {
 		}
 	}
 
+	public List<Contract> searchContract(String searchString) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		Query q = entitymanager.createNamedQuery("search contracts");
+		q.setParameter("searchString", "%" + searchString + "%");
+		@SuppressWarnings("unchecked")
+		List<Contract> list = (List<Contract>) q.getResultList();
+		
+		entitymanager.close();
+		emfactory.close();
+
+		return list;
+	}
+	
 	public Contract persistContract(Contract c) {
 		return (Contract) this.addObjectToPersistance(c);
 	}
@@ -146,9 +160,9 @@ public class PersistanceContract {
 		entitymanager.getTransaction().begin();
 		c = entitymanager.merge(c);
 
-		List<Term> list = (List<Term>) c.getTermId();
+		List<Term> list = (List<Term>) c.getContractTerms();
 		list.add(s);
-		c.setTermId(list);
+		c.setContractTerms(list);
 
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
@@ -242,7 +256,7 @@ public class PersistanceContract {
 		entitymanager.getTransaction().begin();
 		Contract c = entitymanager.find(Contract.class, contractId);
 		Term s = entitymanager.find(Term.class, conditionId);
-		List<Term> list = (List<Term>) c.getTermId();
+		List<Term> list = (List<Term>) c.getContractTerms();
 		list.remove(s);
 		entitymanager.remove(s);
 		entitymanager.getTransaction().commit();

@@ -292,6 +292,21 @@ function getSC(){
 		});
 	
 }
+function searchContracts(){
+	document.getElementById("authorized").innerHTML = "";
+	var formData = $('#search').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contracts/searches',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully deleted condition";
+				}
+		});
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -299,6 +314,13 @@ function getSC(){
 <body>
 	<p id="authorized"></p>
 	<button onclick="getContracts(); return false;">Get all contracts</button>"
+	<form name="search" id="search">
+		<input type="text" name="searchText" id="searchText"/>
+		<input type="text" name="country" id="country"/>
+		<input type="text" name="zipCode" id="zipCode"/>
+		
+		<button onclick="searchContracts(); return false;">Search</button>
+	</form>
 	<form name="contractId">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 	</form>

@@ -19,12 +19,11 @@ public class BasicCondition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int basicConditionId;
-	private String location;
 	private int radius;
-	private LocalDate startDate;
-	private LocalDate endDate;
 	private int estimatedWorkload;
 	private double fee;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private LocalDate timestamp;
 	// ---------------------
 
@@ -36,14 +35,6 @@ public class BasicCondition {
 	// --------------------------------------
 
 	// Setter and getter
-	@XmlElement
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
-	}
 
 	@XmlElement
 	public int getRadius() {

@@ -19,43 +19,67 @@ import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 @Entity
 @XmlRootElement
 @NamedQueries({
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.principalID = :principalID", name = "find user contracts"),
 		@NamedQuery(query = "SELECT COUNT(c.principalID) FROM Contract c WHERE c.contractID = :contractId AND "
-				+ "c.principalID = :requesterId", name = "check requesterId"), })
+				+ "c.principalID = :requesterId", name = "check requesterId"),
+		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.searchString LIKE :searchString", name = "search contracts") })
 public class Contract {
 
+	public static class Public {
+	}
+
+	public static class Internal {
+	}
+
 	// Attribute declaration
+	@JsonView(Contract.Internal.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int contractID;
+	@JsonView(Contract.Internal.class)
 	private int clientID;
+	@JsonView(Contract.Internal.class)
 	private int principalID;
+	@JsonView(Contract.Public.class)
 	private String name;
+	@JsonView(Contract.Public.class)
 	private String subject;
+	@JsonView(Contract.Internal.class)
 	private LocalDateTime creationDate;
 	@OneToOne(cascade = CascadeType.ALL)
+	@JsonView(Contract.Internal.class)
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
+	@JsonView(Contract.Public.class)
 	private List<Task> taskDescription = new ArrayList<Task>();
 	@OneToMany(cascade = CascadeType.ALL)
+	@JsonView(Contract.Internal.class)
 	private List<Term> contractTerms = new ArrayList<Term>();
-
+	@OneToOne(cascade = CascadeType.ALL)
+	private PlaceOfPerformance placeOfPerformance;
 	@Enumerated(EnumType.STRING)
-	private ContractType type;
+	@JsonView(Contract.Public.class)
+	private ContractType type = null;
 	@Enumerated(EnumType.STRING)
-	private ContractState contractState;
+	@JsonView(Contract.Internal.class)
+	private ContractState contractState = null;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CONTRACTID")
+	@JsonView(Contract.Internal.class)
 	private List<Candidate> candidates = new ArrayList<Candidate>();
-
 	@OneToMany(cascade = CascadeType.ALL)
+	@JsonView(Contract.Public.class)
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
-
 	@OneToMany(cascade = CascadeType.ALL)
+	@JsonView(Contract.Internal.class)
 	private List<Rank> ranking = new ArrayList<Rank>();
+	@JsonView(Contract.Internal.class)
+	private String searchString = "";
 	// ---------------------
 
 	// Constructor to build a contract object
@@ -82,7 +106,16 @@ public class Contract {
 	}
 
 	public void setName(String name) {
+		if (this.searchString != null) {
+			if (!(this.searchString.equals(""))) {
+				this.removeFromSearchString(this.name);
+			}
+
+			this.setSearchString(name);
+		}
+
 		this.name = name;
+
 	}
 
 	@XmlElement
@@ -91,7 +124,15 @@ public class Contract {
 	}
 
 	public void setType(ContractType type) {
+		if (this.searchString != null) {
+			if (this.type != null) {
+				this.removeFromSearchString(this.type.toString());
+			}
+			this.setSearchString(type.toString());
+		}
+
 		this.type = type;
+
 	}
 
 	@XmlElement
@@ -100,6 +141,13 @@ public class Contract {
 	}
 
 	public void setSubject(String subject) {
+		if (this.searchString != null) {
+			if ((!(this.searchString.equals(""))) && (this.subject != null)) {
+				this.removeFromSearchString(this.subject);
+			}
+
+			this.setSearchString(subject);
+		}
 		this.subject = subject;
 	}
 
@@ -163,15 +211,6 @@ public class Contract {
 	}
 
 	@XmlElement
-	public List<Term> getTermId() {
-		return this.contractTerms;
-	}
-
-	public void setTermId(List<Term> contractTerms) {
-		this.contractTerms = contractTerms;
-	}
-
-	@XmlElement
 	public List<Rank> getRanking() {
 		return ranking;
 	}
@@ -195,6 +234,38 @@ public class Contract {
 
 	public void setContractTerms(List<Term> contractTerms) {
 		this.contractTerms = contractTerms;
+	}
+
+	public String getSearchString() {
+		return searchString;
+	}
+
+	private void setSearchString(String addString) {
+		if (this.searchString != null) {
+			this.searchString = this.searchString + addString;
+		} else {
+			this.searchString = addString;
+		}
+
+	}
+
+	private void removeFromSearchString(String removeString) {
+		if ((this.searchString != null) && (!(this.searchString.equals(""))) && (removeString != null)) {
+			System.out.println(this.searchString);
+			this.searchString = this.searchString.replace(removeString, "");
+			System.out.println("ok");
+		}
+	}
+
+	
+	@XmlElement
+	public PlaceOfPerformance getPlaceOfPerformance() {
+		return placeOfPerformance;
+	}
+	
+
+	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
+		this.placeOfPerformance = placeOfPerformance;
 	}
 
 }

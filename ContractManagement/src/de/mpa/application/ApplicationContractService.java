@@ -1,6 +1,7 @@
 package de.mpa.application;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -18,6 +19,10 @@ import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
@@ -120,20 +125,62 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response getContract(String token, int contractId) {
-		
+
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		
+
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		
-		if(c!=null) {
+
+		if (c != null) {
 			return Response.ok(c, MediaType.APPLICATION_JSON).build();
-		}else {
+		} else {
 			return Response.status(Status.BAD_REQUEST).entity("Not contract found").build();
 		}
 
 	}
-	
+
+	public Response createContractSearch(String token, String searchText, String country, String zipCode, int radius) {
+
+		if (searchText == null)
+			return Response.status(Status.BAD_REQUEST).entity("No searchString handed").build();
+
+		if (searchText.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No seaarchString").build();
+
+		if (!(country.equals("")) && (!(zipCode.equals("")))) {
+			String latLng1 = this.getLocationGeometryData(country, zipCode);
+			String latLng2 = this.getLocationGeometryData("germany", "70806");
+
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+
+				JsonNode geo1 = mapper.readTree(latLng1);
+				double lat1 = geo1.get("results").get(0).get("geometry").get("location").get("lat").asDouble();
+				double lng1 = geo1.get("results").get(0).get("geometry").get("location").get("lng").asDouble();
+
+				System.out.println(latLng2);
+				JsonNode geo2 = mapper.readTree(latLng2);
+				double lat2 = geo2.get("results").get(0).get("geometry").get("location").get("lat").asDouble();
+				double lng2 = geo2.get("results").get(0).get("geometry").get("location").get("lng").asDouble();
+
+				double distance = this.getDisstance(lng1, lat1, lng2, lat2);
+
+				System.out.println(distance);
+			} catch (JsonProcessingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
+		List<Contract> searchResult = pc.searchContract(searchText);
+
+		return Response.ok(searchResult, MediaType.APPLICATION_JSON).build();
+	}
+
 	@Override
 	public Response saveTask(String token, String description, String type, String subType, int contractId) {
 
@@ -241,7 +288,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setEndDate(endDate);
 		b_new.setStartDate(startDate);
 		b_new.setRadius(radius);
-		b_new.setLocation(location);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 
@@ -284,9 +330,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (estimatedWorkload != 0)
 			b_new.setEstimatedWorkload(estimatedWorkload);
-
-		if (!(endDate.equals("")))
-			b_new.setLocation(location);
 
 		if (radius != 0)
 			b_new.setRadius(radius);
@@ -453,8 +496,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (termId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not conditionId").build();
 
-		Term s_old = (Term) pc.getObjectFromPersistanceById(Term.class,
-				termId);
+		Term s_old = (Term) pc.getObjectFromPersistanceById(Term.class, termId);
 
 		if (s_old == null)
 			return Response.status(Status.BAD_REQUEST).entity("Term doesn't exist").build();
@@ -467,8 +509,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 		} else {
 			s_new.setDescription(description);
 		}
-		
-		if(termType.equals("")) {
+
+		if (termType.equals("")) {
 			s_new.setTermType(s_old.getTermType());
 		} else {
 			s_new.setTermType(TermType.valueOf(termType.toUpperCase()));
@@ -488,8 +530,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (termId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
 
-		Term sc = (Term) pc.getObjectFromPersistanceById(Term.class,
-				termId);
+		Term sc = (Term) pc.getObjectFromPersistanceById(Term.class, termId);
 
 		if (sc != null) {
 			return Response.ok(sc, MediaType.APPLICATION_JSON).build();
@@ -545,23 +586,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 		} else {
 			c_new.setCandidateAccepted(candidateAccepted);
 		}
-		
+
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		
+
 		String candidateMail = this.getUserMailAddress(candidateId);
-		
-		
-		
+
 		if (candidateAccepted) {
 			String canMailHTML = this.getCandidateAcceptMail("accepted", c.getName(), contractId);
-			this.sendCandidateAcceptMail(candidateMail, "You were accepted as a candidate!",canMailHTML);
+			this.sendCandidateAcceptMail(candidateMail, "You were accepted as a candidate!", canMailHTML);
 		} else {
 			String canMailHTML = this.getCandidateAcceptMail("declined", c.getName(), contractId);
-			this.sendCandidateAcceptMail(candidateMail,"You were declined as a candidate...", canMailHTML);
+			this.sendCandidateAcceptMail(candidateMail, "You were declined as a candidate...", canMailHTML);
 		}
 
 		c_new = (Candidate) pc.updateExistingObject(c_new);
-		
+
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
@@ -621,7 +660,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setEndDate(endDate);
 		b_new.setStartDate(startDate);
 		b_new.setRadius(radius);
-		b_new.setLocation(location);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 
@@ -668,7 +706,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
 		URL url;
 		try {
-			url = new URL("https://localhost:8443/ContractManagement/CandidateAcceptMail.jsp?accept=" + accept + "&id=" + contractId + "&name=" + contractName);
+			url = new URL("https://localhost:8443/ContractManagement/CandidateAcceptMail.jsp?accept=" + accept + "&id="
+					+ contractId + "&name=" + contractName);
 			System.out.println(url);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
@@ -696,33 +735,65 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-	
+
 	private String getUserMailAddress(int userId) {
 
 		Client client = ClientBuilder.newClient();
 
-		WebTarget webTarget = client.target("https://localhost:8443/IdentityManagement/rest/user").path("getUserMail/" + userId);
-		
+		WebTarget webTarget = client.target("https://localhost:8443/IdentityManagement/rest/user")
+				.path("getUserMail/" + userId);
+
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
-				
+
 		Response response = invocationBuilder.get();
-		
+
 		return (String) response.readEntity(String.class);
-		
+
 	}
-	
+
+	private String getLocationGeometryData(String country, String zipCode) {
+
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client
+				.target("http://maps.googleapis.com/maps/api/geocode/json?address=" + country + "+" + zipCode);
+
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
+
+		Response response = invocationBuilder.get();
+
+		return (String) response.readEntity(String.class);
+
+	}
+
 	private String sendCandidateAcceptMail(String mail, String subject, String html) {
 		Client client = ClientBuilder.newClient();
 
-		WebTarget webTarget = client.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
-		
+		WebTarget webTarget = client
+				.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
+
 		Form form = new Form();
 		form.param("html", html);
 		form.param("subject", subject);
-				
-		Response response = webTarget.request(MediaType.TEXT_PLAIN).post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
-		
+
+		Response response = webTarget.request(MediaType.TEXT_PLAIN)
+				.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
 		return (String) response.readEntity(String.class);
+	}
+
+	private double getDisstance(double lng1, double lat1, double lng2, double lat2) {
+		double earthRadius = 6371;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLng = Math.toRadians(lng2 - lng1);
+		double sindLat = Math.sin(dLat / 2);
+		double sindLng = Math.sin(dLng / 2);
+		double a = Math.pow(sindLat, 2)
+				+ Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double dist = earthRadius * c;
+
+		return dist;
 	}
 
 }

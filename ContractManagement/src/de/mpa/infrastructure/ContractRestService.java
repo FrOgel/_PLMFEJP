@@ -13,7 +13,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import com.fasterxml.jackson.annotation.JsonView;
+
 import de.mpa.application._ApplicationContractService;
+import de.mpa.domain.Contract;
 
 @Path("/contract")
 @Produces(MediaType.APPLICATION_JSON)
@@ -100,6 +104,16 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getContract(token, contractId);
 	}
 
+	@UserAuthorization
+	@Override
+	@POST
+	@Path("contracts/searches")
+	@JsonView(Contract.Public.class)
+	public Response createContractSearch(@CookieParam("token") String token, @FormParam("searchText") String searchText,
+			@FormParam("country") String country, @FormParam("zipCode") String zipCode, @FormParam("radius") int radius) {
+		return ac.createContractSearch(token, searchText, country, zipCode, radius);
+	}
+	
 	@UserAuthorization
 	@Override
 	@POST

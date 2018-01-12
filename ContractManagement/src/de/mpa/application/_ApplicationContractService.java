@@ -16,6 +16,11 @@ public interface _ApplicationContractService {
 	public Response getContracts(String token);
 	
 	public Response getContract(String token, int contractId);
+	
+	// Sub section search for contracts ==> Additional resource which won't be persisted
+	
+	public Response createContractSearch(String token, String searchText, String country, String zipCode, int radius);
+	
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Task in contract

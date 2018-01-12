@@ -1,14 +1,11 @@
 package de.mpa.infrastructure;
 
 import java.io.IOException;
-import java.util.List;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
@@ -19,7 +16,6 @@ import javax.ws.rs.ext.Provider;
 public class RestTokenAuthenticator implements ContainerRequestFilter {
 
 	private SecurityService ss = new SecurityService();
-	private PersistanceContract pc = new PersistanceContract();
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
