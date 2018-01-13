@@ -12,13 +12,11 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.Term;
 import de.mpa.domain.Task;
-import de.mpa.domain.TaskType;
 
 @Stateless
 public class PersistanceContract {

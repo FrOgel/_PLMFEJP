@@ -249,7 +249,6 @@ public class Contract {
 		}
 	}
 
-	
 	@XmlElement
 	public PlaceOfPerformance getPlaceOfPerformance() {
 		return placeOfPerformance;

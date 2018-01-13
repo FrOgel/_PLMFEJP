@@ -66,13 +66,14 @@ public class ApplicationContractService implements _ApplicationContractService {
 		c_new.setSubject(contractSubject);
 		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		c_new.setName(designation);
-		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token))); 
-		
+		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
+
 		c_new = (Contract) pc.addObjectToPersistance(c_new);
 
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 
 	}
+
 	@Override
 	public Response deleteContract(String token, int contractId) {
 
@@ -85,6 +86,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Contract not deleted.").build();
 		}
 	}
+
 	@Override
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
 			String contractState, int contractId) {
@@ -122,6 +124,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
+
 	@Override
 	public Response getContract(String token, int contractId) {
 
@@ -147,21 +150,19 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (searchText.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No seaarchString").build();
-		
+
 		List<Contract> contractList = pc.searchContract(searchText);
 		List<Contract> searchResult = new ArrayList<Contract>();
-		
+
 		if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
-			for(Contract c : contractList) {
+			for (Contract c : contractList) {
 				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
-				
-				if(this.getDistance(p_old.getCountry(), 
-						p_old.getZipCode(), 
-						p_old.getPlace(), 
-						country, zipCode, city)<=radius) {
+
+				if (this.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
+						city) <= radius) {
 					searchResult.add(c);
 				}
-				
+
 			}
 		}
 
@@ -172,13 +173,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode,
 			int contractId) {
-		
+
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		
+
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		
-		if(c.getPlaceOfPerformance()!=null) {
+
+		if (c.getPlaceOfPerformance() != null) {
 			return this.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
 		}
 
@@ -197,10 +198,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 		p_new.setZipCode(zipCode);
 
 		String location = this.getLocationGeometryData(country, place, zipCode);
-		
+
 		p_new.setLatitude(this.getLatFromJson(location));
 		p_new.setLongitude(this.getLngFromJson(location));
-		
+
 		p_new = pc.persistPoPInContract(p_new, contractId);
 
 		return Response.ok(p_new, MediaType.APPLICATION_JSON).build();
@@ -223,15 +224,16 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (!(zipCode.equals("")))
 			p_new.setZipCode(zipCode);
-		
+
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		
+
 		PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 		p_new.setPlaceId(p_old.getPlaceId());
-		
-		if((!(p_new.getCountry().equals(p_old.getCountry()))) || (!(p_new.getPlace().equals(p_old.getPlace()))) || (!(p_new.getZipCode().equals(p_old.getZipCode())))){
+
+		if ((!(p_new.getCountry().equals(p_old.getCountry()))) || (!(p_new.getPlace().equals(p_old.getPlace())))
+				|| (!(p_new.getZipCode().equals(p_old.getZipCode())))) {
 			String location = this.getLocationGeometryData(country, place, zipCode);
-			
+
 			p_new.setLatitude(this.getLatFromJson(location));
 			p_new.setLongitude(this.getLngFromJson(location));
 		} else {
@@ -323,7 +325,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-	
+
 	// Methods for CRUD operations on the basic conditions for a contract
 
 	@Override
@@ -425,7 +427,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-	
+
 	// Methods for CRUD operations on the requirements for a contract
 
 	@Override
@@ -517,7 +519,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No requirement found").build();
 		}
 	}
-	
+
 	// Methods for CRUD operations on the terms for a contract
 
 	@Override
@@ -606,8 +608,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No requirement found").build();
 		}
 	}
-	
-	// Methods for CRUD operations on the candidates (potential clients) for a contract
+
+	// Methods for CRUD operations on the candidates (potential clients) for a
+	// contract
 
 	@Override
 	public Response saveCandidate(String token, int contractId) {
@@ -694,9 +697,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-	
-	// Methods for CRUD operations on the offers during the contract negotiations
 
+	// Methods for CRUD operations on the offers during the contract negotiations
 	@Override
 	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
 			String startDate, String endDate, int estimatedWorkload, double fee) {
@@ -823,6 +825,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 
 	}
+
 	private String sendCandidateAcceptMail(String mail, String subject, String html) {
 		Client client = ClientBuilder.newClient();
 
@@ -839,27 +842,29 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	// Methods for retrieving the longitude and latitude values of a specific (country, postal code, city)
+	// Methods for retrieving the longitude and latitude values of a specific
+	// (country, postal code, city)
 	private String getLocationGeometryData(String country, String city, String zipCode) {
 
 		Client client = ClientBuilder.newClient();
-		
+
 		country = country.replace(" ", "%20");
 		zipCode = "+" + zipCode.replace(" ", "%20");
 		city = "+" + city.replace(" ", "%20");
 
 		WebTarget webTarget = client
 				.target("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
-		
+
 		System.out.println("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
-		
+
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
 
 		Response response = invocationBuilder.get();
-		
+
 		return (String) response.readEntity(String.class);
 
 	}
+
 	private double getLatFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -874,10 +879,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 			e.printStackTrace();
 		}
 		double lat = geo1.get(0).get("lat").asDouble();
-		
+
 		return lat;
 	}
-	private double getLngFromJson(String json){
+
+	private double getLngFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
 		System.out.println(json);
@@ -891,9 +897,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 			e.printStackTrace();
 		}
 		double lng = geo1.get(0).get("lon").asDouble();
-		
+
 		return lng;
 	}
+
 	private double getDistance(String country1, String zipCode1, String city1, String country2, String zipCode2,
 			String city2) {
 
@@ -901,12 +908,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		String latLng1 = this.getLocationGeometryData(country1, zipCode1, city1);
 		String latLng2 = this.getLocationGeometryData(country2, zipCode2, city2);
-		
+
 		lng1 = getLngFromJson(latLng1);
 		lat1 = getLatFromJson(latLng1);
 		lng2 = getLngFromJson(latLng2);
 		lat2 = getLatFromJson(latLng2);
-		
+
 		double earthRadius = 6371;
 		double dLat = Math.toRadians(lat2 - lat1);
 		double dLng = Math.toRadians(lng2 - lng1);
