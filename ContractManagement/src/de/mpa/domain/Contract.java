@@ -81,6 +81,8 @@ public class Contract {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
 	private PlaceOfPerformance placeOfPerformance;
+	
+	
 	// ---------------------
 
 	// Constructor to build a contract object

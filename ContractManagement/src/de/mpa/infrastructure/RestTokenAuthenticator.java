@@ -5,6 +5,8 @@ import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -17,6 +19,9 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 
 	private SecurityService ss = new SecurityService();
 
+	@Context
+	ResourceInfo resourceInfo;
+	
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
@@ -34,6 +39,8 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 		} catch (Exception e) {
 			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
 		}
+		
+	
 
 		/*MultivaluedMap<String, String> pathparam = requestContext.getUriInfo().getPathParameters();
 

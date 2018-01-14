@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Calendar;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
+import javax.persistence.RollbackException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -67,7 +68,14 @@ public class ApplicationUserService implements _ApplicationUserService {
 		Address uAddress = new Address(country, state, zipCode, city, street, houseNumber);
 		PrivateUser user = new PrivateUser(mail, pw, phoneNumber, uAddress, firstName, surName, birthday);
 
-		user = (PrivateUser) pu.addObjectToPersistance(user);
+		try {
+			user = (PrivateUser) pu.addObjectToPersistance(user);
+		} catch (RollbackException e) {
+			e.printStackTrace();
+			if(e.getMessage().contains("Duplicate entry"))
+				return Response.status(Status.CONFLICT).entity("Mail address already in use").build();
+			throw e;
+		}
 
 		this.createAccountVerification(user.getUserID(), mail);
 
