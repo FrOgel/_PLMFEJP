@@ -38,14 +38,14 @@ public class UserRestService implements _ApplicationUserService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/registerCompanyUser")
-	public Response registerCompanyUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw,
+	public Response createPrivateUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw,
 			@FormParam("phoneNumber") String phoneNumber, @FormParam("companyName") String companyName,
 			@FormParam("country") String country, @FormParam("state") String state,
 			@FormParam("zipCode") String zipCode, @FormParam("city") String city, @FormParam("street") String street,
 			@FormParam("houseNumber") String houseNumber, @FormParam("firstName") String firstName,
 			@FormParam("surName") String surName, @FormParam("cpPhone") String cpPhone,
 			@FormParam("cpMail") String mailAddress, @FormParam("department") String department) {
-		return as.registerCompanyUser(mail, pw, phoneNumber, companyName, country, state, zipCode, city, street,
+		return as.createPrivateUser(mail, pw, phoneNumber, companyName, country, state, zipCode, city, street,
 				houseNumber, firstName, surName, cpPhone, mailAddress, department);
 	}
 
@@ -59,7 +59,7 @@ public class UserRestService implements _ApplicationUserService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("registerPrivateUser")
-	public Response registerPrivateUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw,
+	public Response createCompanyUser(@FormParam("mailAddress") String mail, @FormParam("password") String pw,
 			@FormParam("phoneNumber") String phoneNumber, @FormParam("country") String country,
 			@FormParam("state") String state, @FormParam("zipCode") String zipCode, @FormParam("city") String city,
 			@FormParam("street") String street, @FormParam("houseNumber") String houseNumber,
@@ -69,7 +69,7 @@ public class UserRestService implements _ApplicationUserService {
 		System.out.println(mail);
 		System.out.println(country);
 
-		return as.registerPrivateUser(mail, pw, phoneNumber, country, state, zipCode, city, street, houseNumber,
+		return as.createCompanyUser(mail, pw, phoneNumber, country, state, zipCode, city, street, houseNumber,
 				firstName, surName, birthday);
 
 	}

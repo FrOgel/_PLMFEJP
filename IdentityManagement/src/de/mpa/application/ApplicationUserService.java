@@ -37,7 +37,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	// Persists the company user for registration purposes
 	@Override
-	public Response registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response createPrivateUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department) {
 
@@ -59,7 +59,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	// Persists the private user for registration purposes
 	@Override
-	public Response registerPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
+	public Response createCompanyUser(String mail, String pw, String phoneNumber, String country, String state,
 			String zipCode, String city, String street, String houseNumber, String firstName, String surName,
 			String birthday) {
 

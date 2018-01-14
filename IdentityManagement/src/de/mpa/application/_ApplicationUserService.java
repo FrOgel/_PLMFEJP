@@ -11,11 +11,11 @@ import javax.ws.rs.core.Response;
 @Local
 public interface _ApplicationUserService {
 	
-	public Response registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response createPrivateUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department);
 		
-	public Response registerPrivateUser(String mail, String pw, String phoneNumber, 
+	public Response createCompanyUser(String mail, String pw, String phoneNumber, 
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
 	
