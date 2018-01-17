@@ -37,7 +37,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	// Persists the company user for registration purposes
 	@Override
-	public Response createPrivateUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response createCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department) {
 
@@ -47,19 +47,27 @@ public class ApplicationUserService implements _ApplicationUserService {
 		ContactPerson cp = new ContactPerson(firstName, surName, cpPhone, mailAddress, department);
 		CompanyUser user = new CompanyUser(mail, pw, phoneNumber, companyName, uAddress, cp);
 
-		System.out.println("User object generated...");
-
-		user = (CompanyUser) pu.addObjectToPersistance(user);
-
+		
+		try {
+			user = (CompanyUser) pu.addObjectToPersistance(user);
+		} catch (RollbackException e) {
+			e.printStackTrace();
+			if(e.getMessage().contains("Duplicate entry"))
+				return Response.status(Status.CONFLICT).entity("Mail address already in use").build();
+			throw e;
+		}
+		
+	
 		this.createAccountVerification(user.getUserID(), mail);
 
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 
 	}
 
+	
 	// Persists the private user for registration purposes
 	@Override
-	public Response createCompanyUser(String mail, String pw, String phoneNumber, String country, String state,
+	public Response createPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
 			String zipCode, String city, String street, String houseNumber, String firstName, String surName,
 			String birthday) {
 
@@ -81,7 +89,8 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
-
+	
+	
 	/*
 	 * Handles the mail and password based user authentication After successful
 	 * authentication a token for state transfer purposes is returned to the client

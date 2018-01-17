@@ -43,6 +43,20 @@ function userLogin3(){
 		});
 	
 }
+function updateUser(){	
+	var formData = $('#userData2').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/updateCompanyUser',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
 </script>
 </head>
 <body>
@@ -80,6 +94,7 @@ function userLogin3(){
 		<p>Mail cp: <input type="text" name="cpMail" id="cpMail" value="fv@web.de">
 		<p>Department: <input type="text" name="department" id="department" value="fv@web.de">
 		<button onclick="userLogin3(); return false;">Register company user</button>
+		<button onclick="updateUser(); return false;">Update user profile</button>
 	</form>
 	
 	

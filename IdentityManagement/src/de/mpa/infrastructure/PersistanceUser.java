@@ -41,6 +41,17 @@ public class PersistanceUser {
 		return o;
 	}
 
+	public Object updateExistingObject(Object o) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		Object attached = entitymanager.merge(o);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return attached;
+	}
+	
 	public User persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
