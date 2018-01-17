@@ -82,23 +82,17 @@ public class SecurityService {
 	}
 
 	//Checks if the client sends the correct authentication token
-	public int authenticateToken(String token) {
-		
+	public String authenticateToken(String token) {
+
 		try {
 			Algorithm algorithm = Algorithm.HMAC256("ThisIsOurOwn");
-			JWTVerifier verifier = JWT.require(algorithm)
-					.withIssuer("mpa")
-					.build();
+			JWTVerifier verifier = JWT.require(algorithm).withIssuer("mpa").build();
 			DecodedJWT jwt = verifier.verify(token);
-				return Integer.parseInt(jwt.getSubject());
-			} catch(UnsupportedEncodingException e) {
-				e.printStackTrace();
-				return 0;
-			} catch(JWTVerificationException e) {
-				e.printStackTrace();
-				return 0;
-			}
-		
+			return jwt.getSubject();
+		} catch (JWTVerificationException | IllegalArgumentException | UnsupportedEncodingException exception) {
+			throw new JWTVerificationException(token);
+		}
+
 	}
 	
 }

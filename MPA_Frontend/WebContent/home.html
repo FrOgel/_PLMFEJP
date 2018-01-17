@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -57,6 +57,20 @@ function updateUser(){
 		});
 	
 }
+function setConditionDesire(){	
+	var formData = $('#conditionDesire').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/conditiondesire',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
 </script>
 </head>
 <body>
@@ -96,7 +110,17 @@ function updateUser(){
 		<button onclick="userLogin3(); return false;">Register company user</button>
 		<button onclick="updateUser(); return false;">Update user profile</button>
 	</form>
-	
+	<form name="conditionDesire" id="conditionDesire">
+		<p>Min startDate <input type="date" name="startDate" id="startDate"/>
+ 		<p>Max endDate <input type="date" name="endDate" id="endDate"/>
+		<p>Workload <input type="text" name="estimatedWorkload" id="estimatedWorkload"/>
+		<p>Fee <input type="text" name="fee" id="fee"/>
+		<p>Country <input type="text" name="country" id="country"/>
+ 		<p>City <input type="text" name="place" id="place"/>
+		<p>Zipcode <input type="text" name="zipCode" id="zipCode"/>
+		<p>radius <input type="text" name="radius" id="radius"/>
+		<button onclick="setConditionDesire(); return false">Save condition desire</button>
+	</form>
 	
 	
 </body>

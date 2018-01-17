@@ -33,6 +33,7 @@ import de.mpa.domain.CriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
+import de.mpa.domain.Task;
 import de.mpa.domain.Term;
 import de.mpa.domain.TermType;
 import de.mpa.domain.DevelopmentTask;
@@ -57,7 +58,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (contractType.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
-		
+
 		if (contractSubject.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
 
@@ -258,24 +259,28 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		
-		DevelopmentTask t_new = new DevelopmentTask();
-		t_new.setDescription(description);
-		
-		if(c.getType().equals(ContractType.DEVELOPMENT)) {
+
+		if (c.getType().equals(ContractType.DEVELOPMENT)) {
+
 			if (type.equals(""))
 				return Response.status(Status.BAD_REQUEST).entity("No type").build();
 
 			if (subType.equals(""))
 				return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
-			
+
+			DevelopmentTask t_new = new DevelopmentTask();
+			t_new.setDescription(description);
 			t_new.setType(TaskType.valueOf(type.toUpperCase()));
 			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			t_new = (DevelopmentTask) pc.persistTaskInContract(c, t_new);
+			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
+		} else {
+			Task t_new = new Task();
+			t_new.setDescription(description);
+			t_new = pc.persistTaskInContract(c, t_new);
+			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 		}
-	
-		t_new = pc.persistTaskInContract(c, t_new);
 
-		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
@@ -300,19 +305,30 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (taskId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No taskId").build();
 
-		DevelopmentTask t_new = new DevelopmentTask();
-		t_new.setTaskID(taskId);
+		Task t = (Task) pc.getObjectFromPersistanceById(Task.class, taskId);
 
-		if (!(description.equals("")))
-			t_new.setDescription(description);
-		if (!(type.equals("")))
-			t_new.setType(TaskType.valueOf(type.toUpperCase()));
-		if (!(subType.equals("")))
-			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+		if (t instanceof DevelopmentTask) {
+			DevelopmentTask t_new = new DevelopmentTask();
+			t_new.setTaskID(taskId);
+			if (!(description.equals("")))
+				t_new.setDescription(description);
+			if (!(type.equals("")))
+				t_new.setType(TaskType.valueOf(type.toUpperCase()));
+			if (!(subType.equals("")))
+				t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			t_new = (DevelopmentTask) pc.updateExistingObject(t_new);
 
-		t_new = (DevelopmentTask) pc.updateExistingObject(t_new);
+			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
+		} else {
+			Task t_new = new Task();
+			t_new.setTaskID(taskId);
+			if (!(description.equals("")))
+				t_new.setDescription(description);
+			t_new = (Task) pc.updateExistingObject(t_new);
 
-		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
+			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
+		}
+
 	}
 
 	@Override

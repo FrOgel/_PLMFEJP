@@ -145,4 +145,15 @@ public class UserRestService implements _ApplicationUserService {
 		return as.getUserMailAddress(userId);
 	}
 
+	@Override
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/user/conditiondesire")
+	public Response createConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate, 
+			@FormParam("endDate") String endDate, @FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
+			@FormParam("country") String country, @FormParam("city") String city, @FormParam("zipCode") String zipCode,
+			@FormParam("radius") int radius) {
+		return as.createConditionDesire(token, startDate, endDate, maxWorkload, fee, country, city, zipCode, radius);
+	}
 }

@@ -34,4 +34,7 @@ public interface _ApplicationUserService {
 	public Response changePassword(String uuid, String newPassword);
 
 	public Response getUserMailAddress(int userId);
+	
+	public Response createConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+			String country, String city, String zipCode, int radius);
 }

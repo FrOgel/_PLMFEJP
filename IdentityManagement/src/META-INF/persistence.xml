@@ -10,6 +10,8 @@
       <class>de.mpa.domain.SecurityValidation</class>
       <class>de.mpa.domain.PasswordChange</class>
       <class>de.mpa.domain.Qualification</class>
+      <class>de.mpa.domain.ConditionDesire</class>
+      <class>de.mpa.domain.GeographicalCondition</class>
       <exclude-unlisted-classes>false</exclude-unlisted-classes>
       <properties>
          <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mpa_identitymanagement"/>
