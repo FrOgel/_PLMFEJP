@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.RollbackException;
@@ -97,6 +99,16 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
 
+	public Response getUsers(String token) {
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
+		
+	}
+	
 	/*
 	 * Handles the mail and password based user authentication After successful
 	 * authentication a token for state transfer purposes is returned to the client
@@ -279,23 +291,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 	}
 
 	@Override
-	public Response saveQualificaation(String token, int qualificationId, String designation) {
-
-		Qualification q_new = new Qualification();
-		q_new.setDescription(designation);
-
-		if (qualificationId != 0) {
-			Qualification q_old = (Qualification) pu.getObjectFromPersistanceById(Qualification.class, qualificationId);
-			q_new = pu.updateQualification(q_old, q_new);
-
-		} else {
-			q_new = (Qualification) pu.addObjectToPersistance(q_new);
-		}
-
-		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
-	}
-
-	@Override
 	public Response getUserMailAddress(int userId) {
 
 		String mail = pu.findUserMailById(userId);
@@ -310,9 +305,11 @@ public class ApplicationUserService implements _ApplicationUserService {
 	}
 
 	@Override
-	public Response createConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+	public Response saveConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
 			String country, String city, String zipCode, int radius) {
 		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+				
 		ConditionDesire cd = new ConditionDesire();
 		
 		if(!(startDate.equals("")))
@@ -335,13 +332,78 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 		gc.setRadius(radius);
 		
+		String location = this.getLocationGeometryData(country, city, zipCode);
+		
+		gc.setLatitude(this.getLatFromJson(location));
+		gc.setLongitude(this.getLngFromJson(location));
+		
 		cd.setPlace(gc);
 		
-		cd = (ConditionDesire) pu.addObjectToPersistance(cd);
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		user.setCd(cd);
+		
+		user = (User) pu.updateExistingObject(user);
 		
 		return Response.ok(cd, MediaType.APPLICATION_JSON).build();
 	}
+
+	@Override
+	public Response saveQualification(String token, String description) {
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		if(description.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No description").build();
+		
+		Qualification q_new = new Qualification();
+		q_new.setDescription(description);
+		
+		q_new = pu.persistQualificationInContract(userId, q_new);
+		
+		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
+	}
 	
+	public Response updateQualification(String token, String description, int qId) {
+			
+		Qualification q_new = new Qualification();
+		
+		if(qId!=0)
+			q_new.setQualificationId(qId);
+		
+		if(description!=null)
+			q_new.setDescription(description);
+		
+		pu.updateExistingObject(q_new);
+		
+		return Response.ok(q_new).build();
+	}
+	
+	public Response deleteQualification(String token, int qualiId) {
+		
+		System.out.println(qualiId);
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		if(qualiId==0) return Response.status(Status.BAD_REQUEST).entity("No qualification id").build();
+		
+		pu.deleteQualificationFromUser(userId, qualiId);
+		
+		return Response.ok().build();
+		
+	}
+	
+	public Response getQualifications(String token) {
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		List<Qualification> list = (List<Qualification>) user.getQualificationProfile();
+		
+		return Response.ok(list, MediaType.APPLICATION_JSON).build();
+		
+	}
 	// Methods for retrieving the longitude and latitude values of a specific
 	// (country, postal code, city)
 	private String getLocationGeometryData(String country, String city, String zipCode) {
@@ -399,32 +461,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 		double lng = geo1.get(0).get("lon").asDouble();
 
 		return lng;
-	}
-
-	private double getDistance(String country1, String zipCode1, String city1, String country2, String zipCode2,
-			String city2) {
-
-		double lng1 = 0, lat1 = 0, lng2 = 0, lat2 = 0;
-
-		String latLng1 = this.getLocationGeometryData(country1, zipCode1, city1);
-		String latLng2 = this.getLocationGeometryData(country2, zipCode2, city2);
-
-		lng1 = getLngFromJson(latLng1);
-		lat1 = getLatFromJson(latLng1);
-		lng2 = getLngFromJson(latLng2);
-		lat2 = getLatFromJson(latLng2);
-
-		double earthRadius = 6371;
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLng = Math.toRadians(lng2 - lng1);
-		double sindLat = Math.sin(dLat / 2);
-		double sindLng = Math.sin(dLng / 2);
-		double a = Math.pow(sindLat, 2)
-				+ Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		double dist = earthRadius * c;
-
-		return dist;
 	}
 
 }

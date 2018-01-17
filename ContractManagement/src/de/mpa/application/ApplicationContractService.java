@@ -28,6 +28,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
+import de.mpa.domain.Contract.Viewer;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
@@ -114,12 +115,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
 	}
 
+	// Returns all contracts of a user
 	@Override
 	public Response getContracts(String token) {
 
 		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
 		if (contracts != null) {
-			return Response.ok(contracts, MediaType.APPLICATION_JSON).build();
+			int userId = Integer.parseInt(ss.authenticateToken(token));
+			List<String> contractList = new ArrayList<String>();
+			for (Contract c : contracts) {
+				contractList.add(this.processJsonViewForContract(c, userId));
+			}
+			return Response.ok(contractList, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.noContent().build();
 		}
@@ -134,8 +141,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
+		String result = this.processJsonViewForContract(c, Integer.parseInt(ss.authenticateToken(token)));
+
 		if (c != null) {
-			return Response.ok(c, MediaType.APPLICATION_JSON).build();
+			return Response.ok(result, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("Not contract found").build();
 		}
@@ -152,16 +161,20 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (searchText.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No seaarchString").build();
 
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+
 		List<Contract> contractList = pc.searchContract(searchText);
-		List<Contract> searchResult = new ArrayList<Contract>();
+		List<String> searchResult = new ArrayList<String>();
 
 		if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
 			for (Contract c : contractList) {
 				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 
-				if (this.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
-						city) <= radius) {
-					searchResult.add(c);
+				if (p_old != null) {
+					if (this.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
+							city) <= radius) {
+						searchResult.add(this.processJsonViewForContract(c, userId));
+					}
 				}
 
 			}
@@ -789,13 +802,43 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 	}
 
+	// Private json view processing depending on the user - contract relationship
+	private String processJsonViewForContract(Contract c, int userId) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		Class<?> viewClass = Contract.Viewer.class;
+
+		if (c.getPrincipalID() == userId) {
+			viewClass = Contract.PrincipalView.class;
+		} else {
+			for (Candidate cd : c.getCandidates()) {
+				if (cd.getCandidateId().getCandidateId() == userId) {
+					viewClass = Contract.CandidateView.class;
+				}
+			}
+		}
+
+		if (c.getClientID() == userId) {
+			viewClass = Contract.ContractorView.class;
+		}
+
+		String result;
+		try {
+			result = mapper.writerWithView(viewClass).writeValueAsString(c);
+		} catch (JsonProcessingException e) {
+			result = "Error in view processing";
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
 	// Methods for mail sending
 	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
 		URL url;
 		try {
 			url = new URL("https://localhost:8443/ContractManagement/CandidateAcceptMail.jsp?accept=" + accept + "&id="
 					+ contractId + "&name=" + contractName);
-			System.out.println(url);
 			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -913,6 +956,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return lng;
 	}
 
+	// Distance calculation with Haversine formula
 	private double getDistance(String country1, String zipCode1, String city1, String country2, String zipCode2,
 			String city2) {
 

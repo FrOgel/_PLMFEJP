@@ -221,7 +221,7 @@ public class PersistanceContract {
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		Contract c = entitymanager.find(Contract.class, contractId);
-		DevelopmentTask t = entitymanager.find(DevelopmentTask.class, taskId);
+		Task t = entitymanager.find(Task.class, taskId);
 		List<Task> list = (List<Task>) c.getTaskDescription();
 		list.remove(t);
 		entitymanager.remove(t);

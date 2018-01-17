@@ -19,14 +19,14 @@ public interface _ApplicationUserService {
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
 	
+	public Response getUsers(String token);
+	
 	public Response verifyAccount(int id, String uuid);
 	
 	public Response userLogin(String mail, String pw);
 	
 	public Response authenticateViaToken(String token);
 	
-	public Response saveQualificaation(String token, int qualificationId, String designation);
-
 	public Response requestPasswordReset(String mail);
 
 	public Response passwordResetAuthentication(String uuid);
@@ -35,6 +35,14 @@ public interface _ApplicationUserService {
 
 	public Response getUserMailAddress(int userId);
 	
-	public Response createConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+	public Response saveConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
 			String country, String city, String zipCode, int radius);
+
+	public Response saveQualification(String token, String description);
+	
+	public Response updateQualification(String token, String description, int qId);
+
+	public Response deleteQualification(String token, int qualiId);
+	
+	public Response getQualifications(String token);
 }

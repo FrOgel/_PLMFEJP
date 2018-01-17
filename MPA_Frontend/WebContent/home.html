@@ -71,11 +71,76 @@ function setConditionDesire(){
 		});
 	
 }
+function saveQualification(){	
+	var formData = $('#qualification').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function updateQualification(){	
+	var formData = $('#qualification').serializeArray();
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications/' + qId,
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function deleteQualification(){	
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'DELETE',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications/' + qId,
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function getQualifications(){	
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function getUser(){	
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
 </script>
 </head>
 <body>
 
 <p id="test">Hello World</p>
+	<p>Get user data</p><button onclick="getUser(); return false">Get user data</button>
 	<form name="userData" id="userData">
 		<p>Mail: <input type="text" name="mailAddress" id="mailAddress" value="frankvogel2@web.de">
 		<p>Password: <input type="password" name="password" id="password" value="testPW">
@@ -116,12 +181,19 @@ function setConditionDesire(){
 		<p>Workload <input type="text" name="estimatedWorkload" id="estimatedWorkload"/>
 		<p>Fee <input type="text" name="fee" id="fee"/>
 		<p>Country <input type="text" name="country" id="country"/>
- 		<p>City <input type="text" name="place" id="place"/>
+ 		<p>City <input type="text" name="city" id="city"/>
 		<p>Zipcode <input type="text" name="zipCode" id="zipCode"/>
 		<p>radius <input type="text" name="radius" id="radius"/>
 		<button onclick="setConditionDesire(); return false">Save condition desire</button>
 	</form>
-	
+	<form name="qualification" id="qualification">
+		<input type="hidden" name="qId" id="qId" value="2"/>
+		<p>Qualification description: <input type="text" name="description" id="description"/>
+		<button onclick="saveQualification(); return false">Save qualification</button>
+		<button onclick="deleteQualification(); return false">Delete qualification</button>
+		<button onclick="updateQualification(); return false">Update qualification</button>
+		<button onclick="getQualifications(); return false">Get qualification</button>
+	</form>
 	
 </body>
 </html>

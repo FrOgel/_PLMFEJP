@@ -31,12 +31,12 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class Contract {
 	
 	
-	//Different declined views on the contract based on the user relationship to the contract
+	//Different defined views on the contract based on the user relationship to the contract
 	//Not fully implemented
 	public static class InternalView extends PrincipalView{}
 	public static class PrincipalView extends ContractorView{}
-	public static class ContractorView {}
-	public static class CandidateView {}
+	public static class ContractorView extends CandidateView{}
+	public static class CandidateView extends Viewer{}
 	public static class Viewer {}
 
 	// Attribute declaration
@@ -55,23 +55,23 @@ public class Contract {
 	@JsonView(Contract.InternalView.class)
 	private LocalDateTime creationDate;
 	@OneToOne(cascade = CascadeType.ALL)
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.Viewer.class)
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
 	private List<Task> taskDescription = new ArrayList<Task>();
 	@OneToMany(cascade = CascadeType.ALL)
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.CandidateView.class)
 	private List<Term> contractTerms = new ArrayList<Term>();
 	@Enumerated(EnumType.STRING)
 	@JsonView(Contract.Viewer.class)
 	private ContractType type = null;
 	@Enumerated(EnumType.STRING)
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.Viewer.class)
 	private ContractState contractState = null;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "CONTRACTID")
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.PrincipalView.class)
 	private List<Candidate> candidates = new ArrayList<Candidate>();
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)

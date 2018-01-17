@@ -41,23 +41,7 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 		} catch (Exception e) {
 			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
 		}
-		
 	
-
-		/*MultivaluedMap<String, String> pathparam = requestContext.getUriInfo().getPathParameters();
-
-		List<String> contractIds = pathparam.get("contractId");
-		if (contractIds != null) {
-
-			String contractId = contractIds.get(0);
-			if(contractId.equals(""))
-				requestContext.abortWith(Response.status(Status.BAD_REQUEST).entity("Contract id expected. None founde.").build());
-		
-
-			if (!(pc.checkIfContractIdMatchesRequester(Integer.parseInt(contractId), requesterId)))
-				requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
-		}*/
-
 		System.out.println("User with id " + requesterId + " authorized.");
 
 	}

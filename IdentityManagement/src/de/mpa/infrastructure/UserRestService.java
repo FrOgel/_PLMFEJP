@@ -3,9 +3,11 @@ package de.mpa.infrastructure;
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,6 +76,14 @@ public class UserRestService implements _ApplicationUserService {
 
 	}
 
+	@Override
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("user")
+	public Response getUsers(@CookieParam("token") String token) {
+		return as.getUsers(token);
+	}
+	
 	/*
 	 * TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/login/frankvogel2@web.de/
@@ -101,16 +111,6 @@ public class UserRestService implements _ApplicationUserService {
 	@Path("verify/{id}/{uuid}")
 	public Response verifyAccount(@PathParam("id") int id, @PathParam("uuid") String creationTime) {
 		return as.verifyAccount(id, creationTime);
-	}
-
-	@Override
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path("saveQualification")
-	public Response saveQualificaation(@CookieParam("token") String token,
-			@FormParam("qualificationId") int qualificationId, @FormParam("designation") String designation) {
-		return as.saveQualificaation(token, qualificationId, designation);
 	}
 
 	@Override
@@ -145,15 +145,54 @@ public class UserRestService implements _ApplicationUserService {
 		return as.getUserMailAddress(userId);
 	}
 
+	@UserAuthentication
 	@Override
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/user/conditiondesire")
-	public Response createConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate, 
+	public Response saveConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate, 
 			@FormParam("endDate") String endDate, @FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
 			@FormParam("country") String country, @FormParam("city") String city, @FormParam("zipCode") String zipCode,
 			@FormParam("radius") int radius) {
-		return as.createConditionDesire(token, startDate, endDate, maxWorkload, fee, country, city, zipCode, radius);
+		return as.saveConditionDesire(token, startDate, endDate, maxWorkload, fee, country, city, zipCode, radius);
+	}
+
+	@UserAuthentication
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/qualifications")
+	public Response saveQualification(@CookieParam("token") String token, @FormParam("description") String description) {
+		return as.saveQualification(token, description);
+	}
+	
+	@UserAuthentication
+	@Override
+	@DELETE
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/qualifications/{qId}")
+	public Response deleteQualification(@CookieParam("token") String token, @PathParam("qId") int qualiId) {
+		System.out.println(qualiId);
+		return as.deleteQualification(token, qualiId);
+	}
+	
+	@UserAuthentication
+	@Override
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/qualifications/{qId}")
+	public Response updateQualification(@CookieParam("token") String token, @FormParam("description") String description, 
+			@PathParam("qId") int qId) {
+		return as.updateQualification(token, description, qId);
+	}
+	
+	@UserAuthentication
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/qualifications")
+	public Response getQualifications(@CookieParam("token") String token) {
+		return as.getQualifications(token);
 	}
 }

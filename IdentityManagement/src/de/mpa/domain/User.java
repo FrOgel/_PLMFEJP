@@ -46,6 +46,8 @@ public class User {
 	private List<Qualification> qualificationProfile;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
+	@OneToOne(cascade = CascadeType.ALL)
+	private ConditionDesire cd;
 	private boolean verified;
 	// -------------------------
 
@@ -133,4 +135,15 @@ public class User {
 		this.qualificationProfile = qualificationProfile;
 	}
 
+	
+	@XmlElement
+	public ConditionDesire getCd() {
+		return cd;
+	}
+
+	public void setCd(ConditionDesire cd) {
+		this.cd = cd;
+	}
+
+	
 }
