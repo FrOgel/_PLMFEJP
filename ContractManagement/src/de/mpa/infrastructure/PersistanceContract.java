@@ -16,7 +16,7 @@ import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.Term;
-import de.mpa.domain.Task;
+import de.mpa.domain.DevelopmentTask;
 
 @Stateless
 public class PersistanceContract {
@@ -118,13 +118,13 @@ public class PersistanceContract {
 		return p_new;
 	}
 	
-	public Task persistTaskInContract(Contract c, Task t) {
+	public DevelopmentTask persistTaskInContract(Contract c, DevelopmentTask t) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		c = entitymanager.merge(c);
 
-		List<Task> list = (List<Task>) c.getTaskDescription();
+		List<DevelopmentTask> list = (List<DevelopmentTask>) c.getTaskDescription();
 		list.add(t);
 		c.setTaskDescription(list);
 
@@ -220,8 +220,8 @@ public class PersistanceContract {
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 		Contract c = entitymanager.find(Contract.class, contractId);
-		Task t = entitymanager.find(Task.class, taskId);
-		List<Task> list = (List<Task>) c.getTaskDescription();
+		DevelopmentTask t = entitymanager.find(DevelopmentTask.class, taskId);
+		List<DevelopmentTask> list = (List<DevelopmentTask>) c.getTaskDescription();
 		list.remove(t);
 		entitymanager.remove(t);
 		entitymanager.getTransaction().commit();

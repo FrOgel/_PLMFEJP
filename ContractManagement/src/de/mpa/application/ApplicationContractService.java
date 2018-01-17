@@ -35,7 +35,7 @@ import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.Term;
 import de.mpa.domain.TermType;
-import de.mpa.domain.Task;
+import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
 import de.mpa.infrastructure.PersistanceContract;
@@ -57,7 +57,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (contractType.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract type").build();
-
+		
 		if (contractSubject.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No contract subject").build();
 
@@ -257,18 +257,22 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (description.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
 
-		if (type.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No type").build();
-
-		if (subType.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
-
-		Task t_new = new Task();
-		t_new.setDescription(description);
-		t_new.setType(TaskType.valueOf(type.toUpperCase()));
-		t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
-
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		
+		DevelopmentTask t_new = new DevelopmentTask();
+		t_new.setDescription(description);
+		
+		if(c.getType().equals(ContractType.DEVELOPMENT)) {
+			if (type.equals(""))
+				return Response.status(Status.BAD_REQUEST).entity("No type").build();
+
+			if (subType.equals(""))
+				return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
+			
+			t_new.setType(TaskType.valueOf(type.toUpperCase()));
+			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+		}
+	
 		t_new = pc.persistTaskInContract(c, t_new);
 
 		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
@@ -296,7 +300,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (taskId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No taskId").build();
 
-		Task t_new = new Task();
+		DevelopmentTask t_new = new DevelopmentTask();
 		t_new.setTaskID(taskId);
 
 		if (!(description.equals("")))
@@ -306,7 +310,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (!(subType.equals("")))
 			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
 
-		t_new = (Task) pc.updateExistingObject(t_new);
+		t_new = (DevelopmentTask) pc.updateExistingObject(t_new);
 
 		return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -329,14 +333,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic conditions for a contract
 
 	@Override
-	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int radius,
+	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId,
 			int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-
-		if (radius == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
 
 		if (estimatedWorkload == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
@@ -353,7 +354,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		BasicCondition b_new = new BasicCondition();
 		b_new.setEndDate(endDate);
 		b_new.setStartDate(startDate);
-		b_new.setRadius(radius);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 
@@ -378,7 +378,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId,
-			int basicConditionId, int radius, int estimatedWorkload, double fee) {
+			int basicConditionId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -387,9 +387,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No conditionId").build();
 
 		BasicCondition b_new = new BasicCondition();
-
-		if (radius != 0)
-			b_new.setRadius(radius);
 
 		if (fee != 0)
 			b_new.setFee(fee);
@@ -733,7 +730,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		BasicCondition b_new = new BasicCondition();
 		b_new.setEndDate(endDate);
 		b_new.setStartDate(startDate);
-		b_new.setRadius(radius);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 

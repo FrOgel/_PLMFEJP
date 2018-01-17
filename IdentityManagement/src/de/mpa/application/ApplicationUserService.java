@@ -64,7 +64,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
-	
 	// Persists the private user for registration purposes
 	@Override
 	public Response createPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
@@ -89,7 +88,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
-	
 	
 	/*
 	 * Handles the mail and password based user authentication After successful

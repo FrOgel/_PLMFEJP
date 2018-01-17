@@ -20,7 +20,6 @@ public class BasicCondition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int basicConditionId;
-	private int radius;
 	private int estimatedWorkload;
 	private double fee;
 	private LocalDate startDate;
@@ -36,16 +35,6 @@ public class BasicCondition {
 	// --------------------------------------
 
 	// Setter and getter
-
-	@XmlElement
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
-	}
-
 	@XmlElement
 	public int getBasicConditionId() {
 		return basicConditionId;

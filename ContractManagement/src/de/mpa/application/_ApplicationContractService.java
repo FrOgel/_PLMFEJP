@@ -42,11 +42,11 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Basic condition in contract
-	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int radius, int estimatedWorkload, double fee);
+	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int estimatedWorkload, double fee);
 
 	public Response deleteBasicCondition(String token, int contractId);
 
-	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee);
+	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId, int basicConditionId, int estimatedWorkload, double fee);
 
 	public Response getBasicCondition(String token, int contractId, int basicConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -1,36 +1,22 @@
 package de.mpa.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement
 public class Task {
-
-	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int taskID;
 	private String description;
-	@Enumerated(EnumType.STRING)
-	private TaskType type;
-	@Enumerated(EnumType.STRING)
-	private TaskSubType subType;
-	// ---------------------
 
-	// Constructor to build a task
-	public Task() {
-		super();
-	}
-	// ---------------------------
-
-	// Setter and getter
 	@XmlElement
 	public int getTaskID() {
 		return taskID;
@@ -49,21 +35,4 @@ public class Task {
 		this.description = description;
 	}
 
-	@XmlElement
-	public TaskType getType() {
-		return type;
-	}
-
-	public void setType(TaskType type) {
-		this.type = type;
-	}
-
-	@XmlElement
-	public TaskSubType getSubType() {
-		return subType;
-	}
-
-	public void setSubType(TaskSubType subType) {
-		this.subType = subType;
-	}
 }

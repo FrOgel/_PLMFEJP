@@ -120,21 +120,23 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/places")
-	public Response createPlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country, @FormParam("place") String place, 
-			@FormParam("zipCode") String zipCode, @FormParam("contractId")  int contractId) {
+	public Response createPlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
+			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
+			@FormParam("contractId") int contractId) {
 		return ac.createPlaceOfPerformance(token, country, place, zipCode, contractId);
 	}
-	
+
 	@UserAuthorization
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/places")
-	public Response updatePlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country, @FormParam("place") String place, 
-			@FormParam("zipCode") String zipCode, @FormParam("contractId")  int contractId) {
+	public Response updatePlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
+			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
+			@FormParam("contractId") int contractId) {
 		return ac.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
 	}
-	
+
 	@UserAuthorization
 	@Override
 	@POST
@@ -183,10 +185,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}/basicconditions")
 	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @PathParam("contractId") int contractId,
-			@FormParam("radius") int radius, @FormParam("estimatedWorkload") int estimatedWorkload,
-			@FormParam("fee") double fee) {
+			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, startDate, endDate, contractId, radius, estimatedWorkload, fee);
+		return ac.saveBasicCondition(token, startDate, endDate, contractId, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization
@@ -205,10 +206,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
 	public Response updateBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @PathParam("contractId") int contractId,
-			@PathParam("basicConditionId") int basicConditionId, @FormParam("radius") int radius,
-			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
-		return ac.updateBasicCondition(token, startDate, endDate, contractId, basicConditionId, radius,
-				estimatedWorkload, fee);
+			@PathParam("basicConditionId") int basicConditionId, @FormParam("estimatedWorkload") int estimatedWorkload,
+			@FormParam("fee") double fee) {
+		return ac.updateBasicCondition(token, startDate, endDate, contractId, basicConditionId, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization

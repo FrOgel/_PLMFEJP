@@ -59,7 +59,7 @@ public class Contract {
 	private BasicCondition basicConditions;
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
-	private List<Task> taskDescription = new ArrayList<Task>();
+	private List<DevelopmentTask> taskDescription = new ArrayList<DevelopmentTask>();
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.InternalView.class)
 	private List<Term> contractTerms = new ArrayList<Term>();
@@ -187,11 +187,11 @@ public class Contract {
 	}
 
 	@XmlElement
-	public List<Task> getTaskDescription() {
+	public List<DevelopmentTask> getTaskDescription() {
 		return taskDescription;
 	}
 
-	public void setTaskDescription(List<Task> taskDescription) {
+	public void setTaskDescription(List<DevelopmentTask> taskDescription) {
 		this.taskDescription = taskDescription;
 	}
 
