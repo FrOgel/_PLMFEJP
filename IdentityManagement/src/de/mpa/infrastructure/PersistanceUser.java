@@ -58,8 +58,6 @@ public class PersistanceUser {
 		}
 	}
 	
-	
-	
 	public Object updateExistingObject(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -114,8 +112,6 @@ public class PersistanceUser {
 		emfactory.close();
 		return user;
 	}
-
-	
 	
 	public User checkUserCredentials(String mail, String password) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");

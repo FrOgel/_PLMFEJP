@@ -14,10 +14,20 @@ public interface _ApplicationUserService {
 	public Response createCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department);
-		
+	
+	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName);
+	
+	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber);
+	
+	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone, String mailAddress, String department);
+	
 	public Response createPrivateUser(String mail, String pw, String phoneNumber, 
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
+		
+	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName, String birthday);
+	
+	public Response deleteUser(String token, String pw);
 	
 	public Response getUsers(String token);
 	

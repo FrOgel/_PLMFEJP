@@ -51,6 +51,16 @@ public class UserRestService implements _ApplicationUserService {
 				houseNumber, firstName, surName, cpPhone, mailAddress, department);
 	}
 
+	@UserAuthentication
+	@Override
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("companyuser")
+	public Response updateCompanyUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail, 
+			@FormParam("phoneNumber") String phoneNumber, @FormParam("companyName") String companyName) {
+		return as.updateCompanyUser(token, mail, phoneNumber, companyName);
+	}
+	
 	/*
 	 * TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/registerPrivateUser/
@@ -76,6 +86,46 @@ public class UserRestService implements _ApplicationUserService {
 
 	}
 
+	@Override
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("privateuser")
+	public Response updatePrivateUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail, 
+			@FormParam("phoneNumber") String phoneNumber, @FormParam("firstName") String firstName, @FormParam("surName") String surName, 
+		    @FormParam("birthday") String birthday) {
+		return as.updatePrivateUser(token, mail, phoneNumber, firstName, surName, birthday);
+	}
+	
+	// Methods for manipulating / retrieving users
+	@Override
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/address")
+	public Response updateAddress(@CookieParam("token") String token, @FormParam("country") String country, @FormParam("state") String state, 
+			@FormParam("zipCode") String zipCode, @FormParam("city") String city, @FormParam("street") String street, 
+			@FormParam("houseNumber") String houseNumber) {
+		return as.updateAddress(token, country, state, zipCode, city, street, houseNumber);
+	}
+	
+	@Override
+	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/maincontactperson")
+	public Response updateMainContactPerson(@CookieParam("token") String token, @FormParam("firstName") String firstName, 
+			@FormParam("surName") String surName, @FormParam("cpPhone") String cpPhone, @FormParam("cpMail") String mailAddress, 
+			@FormParam("department") String department) {
+		return as.updateMainContactPerson(token, firstName, surName, cpPhone, mailAddress, department);
+	}
+	
+	@UserAuthentication
+	@Override
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/delete")
+	public Response deleteUser(@CookieParam("token") String token, @FormParam("pw") String pw){
+		return as.deleteUser(token, pw);
+	}
+	
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

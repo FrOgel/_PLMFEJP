@@ -74,6 +74,31 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
+	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName) {
+		
+		if(mail==null || phoneNumber==null || companyName==null)
+			return Response.status(Status.BAD_REQUEST).entity("Missing parameter").build();
+		
+		if(mail.equals("") || phoneNumber.equals("") || companyName.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		System.out.println(userId);
+		
+		CompanyUser user = (CompanyUser) pu.getObjectFromPersistanceById(CompanyUser.class, userId);
+		
+		user.setCompanyName(companyName);
+		user.setPhoneNumber(phoneNumber);
+		user.setMailAddress(mail);
+		
+		user = (CompanyUser) pu.updateExistingObject(user);
+		
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
+
+		
+	}
+	
 	// Persists the private user for registration purposes
 	@Override
 	public Response createPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
@@ -99,6 +124,102 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
 
+	@Override
+	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName, String birthday) {
+		
+		if(mail==null || phoneNumber==null)
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+		
+		if(mail.equals("") || phoneNumber.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		PrivateUser user = (PrivateUser) pu.getObjectFromPersistanceById(PrivateUser.class, userId);
+		
+		user.setBirthday(birthday);
+		user.setFirstName(firstName);
+		user.setPhoneNumber(phoneNumber);
+		user.setSurName(surName);
+		user.setMailAddress(mail);
+		
+		user = (PrivateUser) pu.updateExistingObject(user);
+		
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
+		
+	}
+	
+	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber) {
+		
+		if(country==null || state==null || zipCode==null || city==null || street==null || houseNumber==null)
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+		
+		if(country.equals("") || state.equals("") || zipCode.equals("") || city.equals("") || street.equals("") || houseNumber.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		Address userAddress = user.getUserAddress();
+		userAddress.setCountry(country);
+		userAddress.setState(state);
+		userAddress.setZipCode(zipCode);
+		userAddress.setCity(city);
+		userAddress.setStreet(street);
+		userAddress.setHouseNumber(houseNumber);
+		
+		userAddress = (Address) pu.updateExistingObject(userAddress);
+		
+		return Response.ok(userAddress, MediaType.APPLICATION_JSON).build();
+		
+	}
+	
+	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone, String mailAddress, String department) {
+		
+		if(firstName==null || surName==null || cpPhone==null || mailAddress==null || department==null)
+			return Response.status(Status.BAD_REQUEST).entity("Incomplete parameter").build();
+		
+		if(firstName.equals("") || surName.equals("") || cpPhone.equals("") || mailAddress.equals("") || department.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Incomplete parameter").build();
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		CompanyUser user = (CompanyUser) pu.getObjectFromPersistanceById(CompanyUser.class, userId);
+		
+		ContactPerson cp = user.getMainContactPerson();
+		cp.setDepartment(department);
+		cp.setFirstName(firstName);
+		cp.setMailAddress(mailAddress);
+		cp.setPhoneNumber(cpPhone);
+		cp.setSurName(surName);
+		
+		cp = (ContactPerson) pu.updateExistingObject(cp);
+		
+		return Response.ok(cp, MediaType.APPLICATION_JSON).build();
+		
+	}
+	
+	public Response deleteUser(String token, String pw){
+		
+		int userId = Integer.parseInt(ss.authenticateToken(token));
+		
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		if(user.getPassword().equals(ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD))) {
+			
+			if(pu.deleteObjectFromPersistance(User.class, userId)) {
+				return Response.ok("Deleted").build();
+			} else {
+				return Response.status(Status.BAD_REQUEST).entity("Not deleted - PW valid").build();
+			}
+
+		}
+		
+		return Response.status(Status.FORBIDDEN).entity("Invalid pw").build();
+		
+	}
+	
 	public Response getUsers(String token) {
 		
 		int userId = Integer.parseInt(ss.authenticateToken(token));
