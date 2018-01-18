@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.client.Client;
@@ -28,7 +29,6 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
-import de.mpa.domain.Contract.Viewer;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
@@ -47,7 +47,8 @@ import de.mpa.infrastructure.SecurityService;
 public class ApplicationContractService implements _ApplicationContractService {
 
 	// Objects for handling security and persistence related topics
-	private PersistanceContract pc = new PersistanceContract();
+	//private PersistanceContract pc = new PersistanceContract();
+	@EJB private PersistanceContract pc;
 	private SecurityService ss = new SecurityService();
 
 	// Methods for CRUD operations on the basic contract
@@ -454,6 +455,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
+	public List<BasicCondition> getAllBasicConditions(String token) {
+		return pc.getAllBasicConditions();
+	}
+	
 	// Methods for CRUD operations on the requirements for a contract
 
 	@Override
@@ -832,7 +837,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return result;
 	}
-
+	
 	// Methods for mail sending
 	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
 		URL url;
@@ -865,7 +870,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-
 	private String getUserMailAddress(int userId) {
 
 		Client client = ClientBuilder.newClient();

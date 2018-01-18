@@ -2,6 +2,7 @@ package de.mpa.infrastructure;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -17,9 +18,9 @@ import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
 import de.mpa.domain.Task;
 import de.mpa.domain.Term;
-import de.mpa.domain.DevelopmentTask;
 
 @Stateless
+@LocalBean
 public class PersistanceContract {
 
 	public Object addObjectToPersistance(Object o) {
@@ -341,4 +342,18 @@ public class PersistanceContract {
 		return nc;
 	}
 
+	public List<BasicCondition> getAllBasicConditions(){
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		
+		Query q = entitymanager.createNamedQuery("get all conditions");
+		List<BasicCondition> list = (List<BasicCondition>) q.getResultList();
+		
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		
+		return list;
+	}
 }

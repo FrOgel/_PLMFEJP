@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -13,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * condition desire of a possible client.
  */
 @Entity
+@NamedQuery(query = "SELECT b FROM BasicCondition b", name = "get all conditions")
 @XmlRootElement
 public class BasicCondition {
 

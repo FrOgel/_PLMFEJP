@@ -86,6 +86,7 @@ public class UserRestService implements _ApplicationUserService {
 
 	}
 
+	@UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)

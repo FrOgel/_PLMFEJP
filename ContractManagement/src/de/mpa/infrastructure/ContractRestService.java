@@ -1,5 +1,7 @@
 package de.mpa.infrastructure;
 
+import java.util.List;
+
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -17,6 +19,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import de.mpa.application._ApplicationContractService;
+import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 
 @Path("/contract")
@@ -221,6 +224,13 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getBasicCondition(token, contractId, basicConditionId);
 	}
 
+	@Override
+	@GET
+	@Path("contracts/basicconditions/all")
+	public List<BasicCondition> getAllBasicConditions(String token) {
+		return ac.getAllBasicConditions(token);
+	}
+	
 	@UserAuthorization
 	@Override
 	@POST

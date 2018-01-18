@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.persistence.RollbackException;
@@ -44,7 +45,8 @@ import de.mpa.infrastructure.ToBeEncrypted;
 @Stateless
 public class ApplicationUserService implements _ApplicationUserService {
 
-	private PersistanceUser pu = new PersistanceUser();
+	//private PersistanceUser pu = new PersistanceUser();
+	@EJB private PersistanceUser pu;
 	private SecurityService ss = new SecurityService();
 
 	// Persists the company user for registration purposes
