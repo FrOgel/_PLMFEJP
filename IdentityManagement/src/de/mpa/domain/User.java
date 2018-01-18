@@ -71,6 +71,14 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	
+	public boolean isConditionNull() {
+		if(cd==null)
+			return true;
+					
+		return false;
+	}
+	
 	// Setter and getter
 	@XmlElement
 	public boolean getVerified() {

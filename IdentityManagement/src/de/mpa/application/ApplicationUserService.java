@@ -432,8 +432,21 @@ public class ApplicationUserService implements _ApplicationUserService {
 			String country, String city, String zipCode, int radius) {
 		
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-				
-		ConditionDesire cd = new ConditionDesire();
+			
+		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		
+		if(user==null)
+			return Response.status(Status.BAD_REQUEST).entity("No user found").build();
+		
+		ConditionDesire cd = null;
+		
+		if(user.getCd()==null) {
+			cd = new ConditionDesire();
+		} else {
+			cd = user.getCd();
+		}
+		
+		System.out.println(cd);
 		
 		if(!(startDate.equals("")))
 			cd.setStartDate(startDate);
@@ -462,11 +475,14 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 		cd.setPlace(gc);
 		
-		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
+		if(user.getCd()==null) {
+			user.setCd(cd);
+			user = (User) pu.updateExistingObject(user);
+			cd = user.getCd();
+		} else {
+			cd = (ConditionDesire) pu.updateExistingObject(cd);
+		}
 		
-		user.setCd(cd);
-		
-		user = (User) pu.updateExistingObject(user);
 		
 		return Response.ok(cd, MediaType.APPLICATION_JSON).build();
 	}

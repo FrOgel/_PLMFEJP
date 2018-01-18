@@ -40,15 +40,16 @@ import de.mpa.domain.TermType;
 import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
-import de.mpa.infrastructure.PersistanceContract;
+import de.mpa.infrastructure.PersistenceContract;
 import de.mpa.infrastructure.SecurityService;
 
 @Stateless
 public class ApplicationContractService implements _ApplicationContractService {
 
 	// Objects for handling security and persistence related topics
-	//private PersistanceContract pc = new PersistanceContract();
-	@EJB private PersistanceContract pc;
+	// private PersistanceContract pc = new PersistanceContract();
+	@EJB
+	private PersistenceContract pc;
 	private SecurityService ss = new SecurityService();
 
 	// Methods for CRUD operations on the basic contract
@@ -381,14 +382,24 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (startDate.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
 
-		BasicCondition b_new = new BasicCondition();
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		BasicCondition b_new;
+		if (c == null) {
+			b_new = new BasicCondition();
+		} else {
+			b_new = c.getBasicConditions();
+		}
+
 		b_new.setEndDate(endDate);
 		b_new.setStartDate(startDate);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-		b_new = pc.persistBasicConditionInContract(c, b_new);
+		if (c == null) {
+			b_new = pc.persistBasicConditionInContract(c, b_new);
+		} else {
+			b_new = (BasicCondition) pc.updateExistingObject(b_new);
+		}
 
 		return Response.ok(b_new, MediaType.APPLICATION_JSON).build();
 	}
@@ -458,7 +469,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public List<BasicCondition> getAllBasicConditions(String token) {
 		return pc.getAllBasicConditions();
 	}
-	
+
 	// Methods for CRUD operations on the requirements for a contract
 
 	@Override
@@ -837,7 +848,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return result;
 	}
-	
+
 	// Methods for mail sending
 	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
 		URL url;
@@ -870,6 +881,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
+
 	private String getUserMailAddress(int userId) {
 
 		Client client = ClientBuilder.newClient();

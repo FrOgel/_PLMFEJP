@@ -1,5 +1,6 @@
 package de.mpa.infrastructure;
 
+import java.sql.*;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -21,7 +22,7 @@ import de.mpa.domain.Term;
 
 @Stateless
 @LocalBean
-public class PersistanceContract {
+public class PersistenceContract {
 
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
@@ -98,28 +99,28 @@ public class PersistanceContract {
 		q.setParameter("searchString", "%" + searchString + "%");
 		@SuppressWarnings("unchecked")
 		List<Contract> list = (List<Contract>) q.getResultList();
-		
+
 		entitymanager.close();
 		emfactory.close();
 
 		return list;
 	}
-	
+
 	public PlaceOfPerformance persistPoPInContract(PlaceOfPerformance p_new, int contractId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 
 		Contract c = entitymanager.find(Contract.class, contractId);
-		
+
 		c.setPlaceOfPerformance(p_new);
-	
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 		return p_new;
 	}
-	
+
 	public Task persistTaskInContract(Contract c, Task t) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -342,18 +343,89 @@ public class PersistanceContract {
 		return nc;
 	}
 
-	public List<BasicCondition> getAllBasicConditions(){
+	public List<BasicCondition> getAllBasicConditions() {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
-		
+
 		Query q = entitymanager.createNamedQuery("get all conditions");
+		@SuppressWarnings("unchecked")
 		List<BasicCondition> list = (List<BasicCondition>) q.getResultList();
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
-		
+
 		return list;
+	}
+
+	public static void main(String[] args) {
+		PersistenceContract pc = new PersistenceContract();
+		
+		pc.getContractUserMatches();
+	}
+	
+	
+	// DB connection with jdbc ==> reason: JPA is entity bounded
+	public void getContractUserMatches() {
+
+		// JDBC driver name and database URL
+		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+		final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
+
+		// Database credentials
+		final String USER = "root";
+		final String PASS = "";
+
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			// STEP 2: Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// STEP 3: Open a connection
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+			// STEP 4: Execute a query
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT * FROM mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c "
+					+ "WHERE b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 AND b.FEE >= c.MINFEE*0.7";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// STEP 5: Extract data from result set
+			while (rs.next()) {
+				// Retrieve by column name
+				int id = rs.getInt("basicConditionId");
+
+				// Display values
+				System.out.print("ID: " + id);
+			}
+			// STEP 6: Clean-up environment
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se2) {
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			} // end finally try
+		} // end try
 	}
 }

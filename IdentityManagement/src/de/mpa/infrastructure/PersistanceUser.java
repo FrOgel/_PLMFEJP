@@ -21,6 +21,7 @@ import de.mpa.domain.User;
 @Stateless
 @LocalBean
 public class PersistanceUser {
+		
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 
