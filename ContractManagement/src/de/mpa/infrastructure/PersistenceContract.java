@@ -369,6 +369,24 @@ public class PersistenceContract {
 		return list;
 	}
 	
+	public List<Contract> getUserContractRelationship(int clientId, CandidateId candidateId){
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		Query q = entitymanager.createNamedQuery("user contract relationship");
+		q.setParameter("userId", clientId);
+		q.setParameter("userCandidateId", candidateId);
+		@SuppressWarnings("unchecked")
+		List<Contract> list = (List<Contract>) q.getResultList();
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return list;	
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		PersistenceContract pc = new PersistenceContract();

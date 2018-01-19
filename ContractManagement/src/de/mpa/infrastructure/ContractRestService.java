@@ -23,7 +23,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 
 @Path("/contract")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
 
 public class ContractRestService implements _ApplicationContractService {
 
@@ -109,8 +109,8 @@ public class ContractRestService implements _ApplicationContractService {
 
 	@Override
 	@GET
-	@Path("contracts/{id}/relationship/{userId}")
-	public Response getUserContractRelationship(@PathParam("id") int contractId, @PathParam("userId") int userId) {
+	@Path("contracts/{principalId}/relationship/{userId}")
+	public Response getUserContractRelationship(@PathParam("principalId") int contractId, @PathParam("userId") int userId) {
 		return ac.getUserContractRelationship(contractId, userId);
 	}
 	

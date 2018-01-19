@@ -21,7 +21,7 @@ public interface _ApplicationContractService {
 
 	public Response getContract(String token, int contractId);
 	
-	public Response getUserContractRelationship(int contractId, int userId);
+	public Response getUserContractRelationship(int principalId, int userId);
 
 	// Sub section search for contracts ==> Additional resource which won't be
 	// persisted

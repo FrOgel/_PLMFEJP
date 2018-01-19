@@ -26,11 +26,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
-import de.mpa.domain.Candidate;
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.ConditionDesire;
 import de.mpa.domain.ContactPerson;
-import de.mpa.domain.Contract;
 import de.mpa.domain.GeographicalCondition;
 import de.mpa.domain.PasswordChange;
 import de.mpa.domain.PrivateUser;
@@ -228,7 +226,11 @@ public class ApplicationUserService implements _ApplicationUserService {
 				
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
 		
-		return Response.ok(user, MediaType.APPLICATION_JSON).build();
+		int requesterId = Integer.parseInt(ss.authenticateToken(token));
+		
+		String userJson = this.processJsonViewForContract(user, requesterId);
+		
+		return Response.ok(userJson, MediaType.APPLICATION_JSON).build();
 		
 	}
 	
@@ -608,33 +610,51 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return lng;
 	}
 
+	
+	// Process user based json view for user objects
 	private String processJsonViewForContract(User u, int requesterId) {
 		ObjectMapper mapper = new ObjectMapper();
-
-		Class<?> viewClass = Contract.Viewer.class;
-
-		if (c.getPrincipalID() == userId) {
-			viewClass = Contract.PrincipalView.class;
+		
+		Class<?> viewClass = User.ViewerView.class;
+		
+		if(requesterId == u.getUserID()) {
+			viewClass = User.OwnerView.class;
 		} else {
-			for (Candidate cd : c.getCandidates()) {
-				if (cd.getCandidateId().getCandidateId() == userId) {
-					viewClass = Contract.CandidateView.class;
-				}
+			String relationship = this.getUserContractRelationship(requesterId, u.getUserID());
+
+			System.out.println(relationship);
+
+			switch (relationship) {
+			case "VIEWER":
+				viewClass = User.ViewerView.class;
+			case "CANDIDATE":
+				viewClass = User.PartnerView.class;
+			case "CLIENT":
+				viewClass = User.PartnerView.class;
 			}
 		}
-
-		if (c.getClientID() == userId) {
-			viewClass = Contract.ContractorView.class;
-		}
-
+				
 		String result;
 		try {
-			result = mapper.writerWithView(viewClass).writeValueAsString(c);
+			result = mapper.writerWithView(viewClass).writeValueAsString(u);
 		} catch (JsonProcessingException e) {
 			result = "Error in view processing";
 			e.printStackTrace();
 		}
 
 		return result;
+	}
+	
+	private String getUserContractRelationship(int contractId, int userId) {
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client
+				.target("https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/relationship/" + userId);
+		
+		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
+
+		Response response = invocationBuilder.get();
+
+		return (String) response.readEntity(String.class);
 	}
 }

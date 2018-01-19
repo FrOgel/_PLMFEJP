@@ -8,8 +8,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -25,7 +23,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpa.domain.BasicCondition;
@@ -51,8 +48,7 @@ import de.mpa.infrastructure.SecurityService;
 @Stateless
 public class ApplicationContractService implements _ApplicationContractService {
 
-	// Objects for handling security and persistence related topics
-	// private PersistanceContract pc = new PersistanceContract();
+	// DI for handling security and persistence related topics
 	@EJB
 	LocationService ls;
 	@EJB
@@ -160,21 +156,26 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
-	public Response getUserContractRelationship(int contractId, int userId) {
-		if(contractId == 0 || userId == 0)
+	public Response getUserContractRelationship(int principalId, int userId) {
+		if(principalId == 0 || userId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Missing id").build();
 		
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		List<Contract> contracts = pc.findUserContracts(principalId);
 		
-		List<Candidate> candidates = c.getCandidates();
+		if(contracts==null)
+			return Response.ok("VIEWER", MediaType.TEXT_PLAIN).build();
 		
-		if(c.getClientID()==userId)
-			return Response.ok("CLIENT").build();
-		
-		if(candidates!=null) {
-			for(Candidate can : candidates) {
-				if(can.getCandidateId().getCandidateId()==userId)
-					return Response.ok("CANDIDATE").build();
+		for(Contract c : contracts) {
+			List<Candidate> candidates = c.getCandidates();
+			
+			if(c.getClientID()==userId)
+				return Response.ok("CLIENT", MediaType.TEXT_PLAIN).build();
+			
+			if(candidates!=null) {
+				for(Candidate can : candidates) {
+					if(can.getCandidateId().getCandidateId()==userId)
+						return Response.ok("CANDIDATE", MediaType.TEXT_PLAIN).build();
+				}
 			}
 		}
 		
@@ -1012,7 +1013,19 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 	private String sendUserSuggestionMail(String mail, String subject, String html) {
-		return null;
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client
+				.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
+
+		Form form = new Form();
+		form.param("html", html);
+		form.param("subject", subject);
+
+		Response response = webTarget.request(MediaType.TEXT_PLAIN)
+				.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
+		return (String) response.readEntity(String.class);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1020,6 +1033,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 		Collections.sort(matches, new UserMatchComparator());
-
+		
+		// matches auseinander bauen nach den einzelnen Ids ==> Liste geordnet nacht principal id, dann nach contractId
 	}
 }

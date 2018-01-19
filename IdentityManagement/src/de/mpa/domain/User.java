@@ -36,25 +36,30 @@ import com.fasterxml.jackson.annotation.JsonView;
 public class User {
 	
 	public static class InternalView extends OwnerView{}
-	public static class OwnerView extends PrincipalView{}
-	public static class PrincipalView {}
+	public static class OwnerView extends PartnerView{}
+	public static class PartnerView extends ViewerView{}
+	public static class ViewerView{};
 
 	
 	// Attribute declaration
+	@JsonView(User.ViewerView.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userID;
 	@Column(unique = true)
-	@JsonView(User.PrincipalView.class)
+	@JsonView(User.PartnerView.class)
 	private String mailAddress;
 	@JsonView(User.InternalView.class)
 	private String password;
+	@JsonView(User.PartnerView.class)
 	private String phoneNumber;
+	@JsonView(User.ViewerView.class)
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Qualification> qualificationProfile;
 	@JsonView(User.OwnerView.class)
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
+	@JsonView(User.ViewerView.class)
 	@OneToOne(cascade = CascadeType.ALL)
 	private ConditionDesire cd;
 	@JsonView(User.InternalView.class)
@@ -153,7 +158,6 @@ public class User {
 		this.qualificationProfile = qualificationProfile;
 	}
 
-	
 	@XmlElement
 	public ConditionDesire getCd() {
 		return cd;

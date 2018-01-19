@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 @XmlRootElement
 @NamedQueries({
+	@NamedQuery(query = "SELECT c FROM Contract c, Candidate can WHERE c.clientID = :userId OR can.candidateId = :userCandidateId", name = "user contract relationship"),
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.principalID = :principalID", name = "find user contracts"),
 		@NamedQuery(query = "SELECT COUNT(c.principalID) FROM Contract c WHERE c.contractID = :contractId AND "
 				+ "c.principalID = :requesterId", name = "check requesterId"),
