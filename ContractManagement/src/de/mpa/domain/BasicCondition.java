@@ -1,18 +1,27 @@
 package de.mpa.domain;
 
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 /*The main purpose of this class is to provide an uniform possibility to compare the conditions of a contract with the 
  * condition desire of a possible client.
  */
 @Entity
+@NamedQuery(query = "SELECT b FROM BasicCondition b", name = "get all conditions")
 @XmlRootElement
 public class BasicCondition {
 
@@ -20,12 +29,13 @@ public class BasicCondition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int basicConditionId;
-	private int radius;
 	private int estimatedWorkload;
 	private double fee;
-	private LocalDate startDate;
-	private LocalDate endDate;
+	private Date startDate;
+	private Date endDate;
 	private LocalDate timestamp;
+	@OneToOne(cascade = CascadeType.ALL)
+	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -36,44 +46,52 @@ public class BasicCondition {
 	// --------------------------------------
 
 	// Setter and getter
-
-	@XmlElement
-	public int getRadius() {
-		return radius;
-	}
-
-	public void setRadius(int radius) {
-		this.radius = radius;
-	}
-
 	@XmlElement
 	public int getBasicConditionId() {
 		return basicConditionId;
 	}
 	
 	@XmlElement
-	public LocalDate getStartDate() {
+	public Date getStartDate() {
 		return startDate;
 	}
 
 	public void setStartDate(String startDate) {
-		this.startDate = LocalDate.parse(startDate);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsed;
+		try {
+			parsed = format.parse(startDate);
+			java.sql.Date sql = new java.sql.Date(parsed.getTime());
+			this.startDate = sql;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void setStartDate(LocalDate startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 
 	@XmlElement
-	public LocalDate getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
 
 	public void setEndDate(String endDate) {
-		this.endDate = LocalDate.parse(endDate);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsed;
+		try {
+			parsed = format.parse(endDate);
+			java.sql.Date sql = new java.sql.Date(parsed.getTime());
+			this.endDate = sql;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void setEndDate(LocalDate endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
 
@@ -100,5 +118,13 @@ public class BasicCondition {
 		return timestamp;
 	}
 
+	@XmlElement
+	public PlaceOfPerformance getPlaceOfPerformance() {
+		return placeOfPerformance;
+	}
 	
+	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
+		this.placeOfPerformance = placeOfPerformance;
+	}
+
 }

@@ -70,7 +70,6 @@ public class ConditionOffer {
 		this.negotiationConditionId = negotiationConditionId;
 	}
 
-	
 	@XmlElement
 	public LocalDateTime getTimestamp() {
 		return timestamp;

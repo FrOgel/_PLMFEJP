@@ -1,7 +1,11 @@
 package de.mpa.application;
 
+import java.util.List;
+
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
+
+import de.mpa.domain.BasicCondition;
 
 @Local
 public interface _ApplicationContractService {
@@ -16,6 +20,8 @@ public interface _ApplicationContractService {
 	public Response getContracts(String token);
 
 	public Response getContract(String token, int contractId);
+	
+	public Response getUserContractRelationship(int principalId, int userId);
 
 	// Sub section search for contracts ==> Additional resource which won't be
 	// persisted
@@ -42,13 +48,15 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Basic condition in contract
-	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int radius, int estimatedWorkload, double fee);
+	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId, int estimatedWorkload, double fee);
 
 	public Response deleteBasicCondition(String token, int contractId);
 
-	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId, int basicConditionId, int radius, int estimatedWorkload, double fee);
+	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId, int basicConditionId, int estimatedWorkload, double fee);
 
 	public Response getBasicCondition(String token, int contractId, int basicConditionId);
+	
+	public List<BasicCondition> getAllBasicConditions(String token); // Might be used for the matching engine
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Requirement in contract

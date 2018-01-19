@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * @author frank.vogel created on: 06.01.2018 purpose: Superclass for the
@@ -33,19 +34,35 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlRootElement
 public class User {
+	
+	public static class InternalView extends OwnerView{}
+	public static class OwnerView extends PartnerView{}
+	public static class PartnerView extends ViewerView{}
+	public static class ViewerView{};
 
+	
 	// Attribute declaration
+	@JsonView(User.ViewerView.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userID;
 	@Column(unique = true)
+	@JsonView(User.PartnerView.class)
 	private String mailAddress;
+	@JsonView(User.InternalView.class)
 	private String password;
+	@JsonView(User.PartnerView.class)
 	private String phoneNumber;
+	@JsonView(User.ViewerView.class)
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Qualification> qualificationProfile;
+	@JsonView(User.OwnerView.class)
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
+	@JsonView(User.ViewerView.class)
+	@OneToOne(cascade = CascadeType.ALL)
+	private ConditionDesire cd;
+	@JsonView(User.InternalView.class)
 	private boolean verified;
 	// -------------------------
 
@@ -69,6 +86,14 @@ public class User {
 		this.phoneNumber = phoneNumber;
 	}
 
+	
+	public boolean isConditionNull() {
+		if(cd==null)
+			return true;
+					
+		return false;
+	}
+	
 	// Setter and getter
 	@XmlElement
 	public boolean getVerified() {
@@ -133,4 +158,14 @@ public class User {
 		this.qualificationProfile = qualificationProfile;
 	}
 
+	@XmlElement
+	public ConditionDesire getCd() {
+		return cd;
+	}
+
+	public void setCd(ConditionDesire cd) {
+		this.cd = cd;
+	}
+
+	
 }

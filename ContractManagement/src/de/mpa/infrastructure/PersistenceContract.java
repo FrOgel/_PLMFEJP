@@ -1,27 +1,38 @@
 package de.mpa.infrastructure;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.ejb.EJB;
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import de.mpa.application.LocationService;
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
-import de.mpa.domain.ContractState;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
-import de.mpa.domain.Term;
 import de.mpa.domain.Task;
-import de.mpa.domain.TaskType;
+import de.mpa.domain.Term;
+import de.mpa.domain.UserMatch;
+import de.mpa.domain.UserMatchComparator;
 
 @Stateless
-public class PersistanceContract {
+@LocalBean
+public class PersistenceContract {
+	
+	@EJB LocationService ls;
 
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
@@ -98,28 +109,28 @@ public class PersistanceContract {
 		q.setParameter("searchString", "%" + searchString + "%");
 		@SuppressWarnings("unchecked")
 		List<Contract> list = (List<Contract>) q.getResultList();
-		
+
 		entitymanager.close();
 		emfactory.close();
 
 		return list;
 	}
-	
+
 	public PlaceOfPerformance persistPoPInContract(PlaceOfPerformance p_new, int contractId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
 
 		Contract c = entitymanager.find(Contract.class, contractId);
-		
-		c.setPlaceOfPerformance(p_new);
-	
+
+		c.getBasicConditions().setPlaceOfPerformance(p_new);
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 		return p_new;
 	}
-	
+
 	public Task persistTaskInContract(Contract c, Task t) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -342,4 +353,195 @@ public class PersistanceContract {
 		return nc;
 	}
 
+	public List<BasicCondition> getAllBasicConditions() {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		Query q = entitymanager.createNamedQuery("get all conditions");
+		@SuppressWarnings("unchecked")
+		List<BasicCondition> list = (List<BasicCondition>) q.getResultList();
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return list;
+	}
+	
+	public List<Contract> getUserContractRelationship(int clientId, CandidateId candidateId){
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		Query q = entitymanager.createNamedQuery("user contract relationship");
+		q.setParameter("userId", clientId);
+		q.setParameter("userCandidateId", candidateId);
+		@SuppressWarnings("unchecked")
+		List<Contract> list = (List<Contract>) q.getResultList();
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return list;	
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void main(String[] args) {
+		PersistenceContract pc = new PersistenceContract();
+		
+		List<UserMatch> matches = pc.getContractUserMatches();
+		
+		Collections.sort(matches, new UserMatchComparator());
+		
+		StringBuilder urlStringBuilder = new StringBuilder()
+				.append("https://localhost:8443/ContractManagement/UserSuggestionsMail.jsp?");
+
+		UserMatch first = matches.get(0);
+		
+		int oldContractId = 0;
+		int userIterator = 1;
+		int contractIterator = 0;
+		boolean firstRun = true;
+
+		for (UserMatch m : matches) {
+			int newContractId = m.getContractId();
+			if (newContractId != oldContractId) {
+				contractIterator++;
+				userIterator = 1;
+				oldContractId = m.getContractId();
+				if(firstRun) {
+					urlStringBuilder.append("contractId" + contractIterator + "=" + m.getContractId());
+					firstRun = false;
+				} else {
+					urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
+				}
+				urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
+			}			
+			
+			urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
+			
+		}
+		
+		System.out.println(urlStringBuilder);
+		
+		for(UserMatch m : matches) {
+			System.out.println("Subject: " + m.getContractSubject() + " PrincipalId: " + m.getPrincipalId() + " UserId: " + m.getUserId()  + " ContractId: " + m.getContractId());
+		}
+		
+	}
+	
+	// DB connection with jdbc ==> reason: JPA is entity bounded
+	public List<UserMatch> getContractUserMatches() {
+
+		// JDBC driver name and database URL
+		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+		final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
+
+		// Database credentials
+		final String USER = "root";
+		final String PASS = "";
+
+		Connection conn = null;
+		Statement stmt = null;
+		
+		List<UserMatch> result = new ArrayList<UserMatch>();
+		
+		try {
+			// STEP 2: Register JDBC driver
+			Class.forName("com.mysql.jdbc.Driver");
+
+			// STEP 3: Open a connection
+			System.out.println("Connecting to database...");
+			conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+			// STEP 4: Execute a query
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT b.*, c.*, (SELECT u.userId FROM mpa_identitymanagement.user u WHERE CD_DESIREID = c.desireId) userid, "
+					+ "(SELECT con.SUBJECT FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) contractSubject, "
+					+ "(SELECT con.CONTRACTID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) contractId, "
+					+ "(SELECT con.PRINCIPALID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) principalId, "
+					+ "(SELECT g.LATITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLatitude, "
+					+ "(SELECT g.LONGITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLongitude, " 
+					+ "(SELECT g.RADIUS FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) radius, " 
+					+ "(SELECT p.LATITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLatitude," 
+					+ "(SELECT p.LONGITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLongitude "
+					+ "FROM mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c "
+					+ "WHERE b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 "
+					+ "AND b.FEE >= c.MINFEE*0.7 "
+					+ "AND b.ENDDATE <= c.EARLIESTENDDATE "
+					+ "AND b.STARTDATE >= c.EARLIESTSTARTDATE ";
+			
+			System.out.println(sql);
+			
+			ResultSet rs = stmt.executeQuery(sql);
+			
+			// STEP 5: Extract data from result set
+			while (rs.next()) {
+				// Retrieve by column name
+				int princiaplId = rs.getInt("principalId");
+				int userId = rs.getInt("userId");
+				int contractId = rs.getInt("contractId");
+				String contractSubject = rs.getString("contractSubject");
+				double lat1 = rs.getDouble("gLatitude");
+				double lng1 = rs.getDouble("gLongitude");
+				double lat2 = rs.getDouble("pLatitude");
+				double lng2 = rs.getDouble("pLongitude");
+				int radius = rs.getInt("radius");
+				
+				double distance = this.getDistance(lat1, lng1, lat2, lng2);
+				
+				if(distance<=radius && userId != princiaplId) {
+					UserMatch um = new UserMatch(princiaplId, contractId, contractSubject, userId);
+					result.add(um);
+				}
+				
+			}
+			
+			// STEP 6: Clean-up environment
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (SQLException se) {
+			// Handle errors for JDBC
+			se.printStackTrace();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se2) {
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se) {
+				se.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return result;
+	}
+	
+	private double getDistance(double lat1, double lng1, double lat2, double lng2) {
+
+		double earthRadius = 6371;
+		double dLat = Math.toRadians(lat2 - lat1);
+		double dLng = Math.toRadians(lng2 - lng1);
+		double sindLat = Math.sin(dLat / 2);
+		double sindLng = Math.sin(dLng / 2);
+		double a = Math.pow(sindLat, 2)
+				+ Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		double dist = earthRadius * c;
+
+		return dist;
+	}
+	
 }

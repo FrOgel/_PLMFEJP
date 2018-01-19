@@ -2,6 +2,7 @@ package de.mpa.infrastructure;
 
 import java.util.List;
 
+import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -18,7 +19,9 @@ import de.mpa.domain.User;
  *         deleting, updating and retrieving user related details
  */
 @Stateless
+@LocalBean
 public class PersistanceUser {
+		
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 
@@ -41,6 +44,66 @@ public class PersistanceUser {
 		return o;
 	}
 
+	public boolean deleteObjectFromPersistance(Class<?> c, Object id) {
+		try {
+			EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+			EntityManager entitymanager = emfactory.createEntityManager();
+			entitymanager.getTransaction().begin();
+			Object o = entitymanager.find(c, id);
+			entitymanager.remove(o);
+			entitymanager.getTransaction().commit();
+			entitymanager.close();
+			emfactory.close();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public Object updateExistingObject(Object o) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		Object attached = entitymanager.merge(o);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return attached;
+	}
+	
+	public Qualification persistQualificationInContract(int userId, Qualification q_new) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		
+		User user = entitymanager.find(User.class, userId);
+		List<Qualification> list = (List<Qualification>) user.getQualificationProfile();
+		list.add(q_new);
+		user.setQualificationProfile(list);
+		
+		
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return q_new;
+	}
+	
+	public boolean deleteQualificationFromUser(int userId, int qualiId) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		User u = entitymanager.find(User.class, userId);
+		Qualification q = entitymanager.find(Qualification.class, qualiId);
+		List<Qualification> list = (List<Qualification>) u.getQualificationProfile();
+		list.remove(q);
+		entitymanager.remove(q);
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return true;
+	}
+	
 	public User persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -52,7 +115,7 @@ public class PersistanceUser {
 		emfactory.close();
 		return user;
 	}
-
+	
 	public User checkUserCredentials(String mail, String password) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();

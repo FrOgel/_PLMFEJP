@@ -11,13 +11,25 @@ import javax.ws.rs.core.Response;
 @Local
 public interface _ApplicationUserService {
 	
-	public Response registerCompanyUser(String mail, String pw, String phoneNumber, String companyName,
+	public Response createCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department);
-		
-	public Response registerPrivateUser(String mail, String pw, String phoneNumber, 
+	
+	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName);
+	
+	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber);
+	
+	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone, String mailAddress, String department);
+	
+	public Response createPrivateUser(String mail, String pw, String phoneNumber, 
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String birthday);
+		
+	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName, String birthday);
+	
+	public Response deleteUser(String token, String pw);
+	
+	public Response getUser(String token, int userId);
 	
 	public Response verifyAccount(int id, String uuid);
 	
@@ -25,8 +37,6 @@ public interface _ApplicationUserService {
 	
 	public Response authenticateViaToken(String token);
 	
-	public Response saveQualificaation(String token, int qualificationId, String designation);
-
 	public Response requestPasswordReset(String mail);
 
 	public Response passwordResetAuthentication(String uuid);
@@ -34,4 +44,15 @@ public interface _ApplicationUserService {
 	public Response changePassword(String uuid, String newPassword);
 
 	public Response getUserMailAddress(int userId);
+	
+	public Response saveConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+			String country, String city, String zipCode, int radius);
+
+	public Response saveQualification(String token, String description);
+	
+	public Response updateQualification(String token, String description, int qId);
+
+	public Response deleteQualification(String token, int qualiId);
+	
+	public Response getQualifications(String token);
 }

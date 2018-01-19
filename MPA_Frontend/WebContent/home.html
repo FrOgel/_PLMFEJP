@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -43,11 +43,165 @@ function userLogin3(){
 		});
 	
 }
+function updateUser(){	
+	var formData = $('#userData2').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/updateCompanyUser',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function setConditionDesire(){	
+	var formData = $('#conditionDesire').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/conditiondesire',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function saveQualification(){	
+	var formData = $('#qualification').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function updateQualification(){	
+	var formData = $('#qualification').serializeArray();
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications/' + qId,
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function deleteQualification(){	
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'DELETE',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications/' + qId,
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function getQualifications(){	
+	var qId = $('#qId').val();
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/qualifications',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function getUser(){	
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function deleteUser(){	
+	var formData = $('#delUser').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/delete',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function updateUser(){	
+	var formData = $('#userData2').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/companyuser',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function updateAddress(){	
+	var formData = $('#userData2').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/address',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
+function updateContactPerson(){	
+	var formData = $('#userData2').serializeArray();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/maincontactperson',
+	    contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "http://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("test").innerHTML = "Successfully registered";
+				}
+		});
+	
+}
 </script>
 </head>
 <body>
 
 <p id="test">Hello World</p>
+	<p>Get user data</p><button onclick="getUser(); return false">Get user data</button>
+	<form name="delUser" id="delUser">
+		<p>Password: <input type="password" name="pw" id="pw">
+		<button onclick="deleteUser(); return false;">Delete user</button>
+	</form>
+	<p>Delete user data</p><button onclick="getUser(); return false">Get user data</button>
 	<form name="userData" id="userData">
 		<p>Mail: <input type="text" name="mailAddress" id="mailAddress" value="frankvogel2@web.de">
 		<p>Password: <input type="password" name="password" id="password" value="testPW">
@@ -80,9 +234,29 @@ function userLogin3(){
 		<p>Mail cp: <input type="text" name="cpMail" id="cpMail" value="fv@web.de">
 		<p>Department: <input type="text" name="department" id="department" value="fv@web.de">
 		<button onclick="userLogin3(); return false;">Register company user</button>
+		<button onclick="updateUser(); return false;">Update user profile</button>
+		<button onclick="updateAddress(); return false;">Update address</button>
+		<button onclick="updateContactPerson(); return false;">Update contact person</button>
 	</form>
-	
-	
+	<form name="conditionDesire" id="conditionDesire">
+		<p>Min startDate <input type="date" name="startDate" id="startDate"/>
+ 		<p>Max endDate <input type="date" name="endDate" id="endDate"/>
+		<p>Workload <input type="text" name="maxWorkload" id="maxWorkload"/>
+		<p>Fee <input type="text" name="fee" id="fee"/>
+		<p>Country <input type="text" name="country" id="country"/>
+ 		<p>City <input type="text" name="city" id="city"/>
+		<p>Zipcode <input type="text" name="zipCode" id="zipCode"/>
+		<p>radius <input type="text" name="radius" id="radius"/>
+		<button onclick="setConditionDesire(); return false">Save condition desire</button>
+	</form>
+	<form name="qualification" id="qualification">
+		<p>ID: <input type="text" name="qId" id="qId" value="2"/>
+		<p>Qualification description: <input type="text" name="description" id="description"/>
+		<button onclick="saveQualification(); return false">Save qualification</button>
+		<button onclick="deleteQualification(); return false">Delete qualification</button>
+		<button onclick="updateQualification(); return false">Update qualification</button>
+		<button onclick="getQualifications(); return false">Get qualification</button>
+	</form>
 	
 </body>
 </html>
