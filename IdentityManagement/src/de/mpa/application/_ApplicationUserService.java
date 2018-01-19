@@ -29,7 +29,7 @@ public interface _ApplicationUserService {
 	
 	public Response deleteUser(String token, String pw);
 	
-	public Response getUsers(String token);
+	public Response getUser(String token, int userId);
 	
 	public Response verifyAccount(int id, String uuid);
 	

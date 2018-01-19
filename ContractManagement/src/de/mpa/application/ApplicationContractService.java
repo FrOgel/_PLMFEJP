@@ -6,9 +6,12 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.client.Client;
@@ -37,6 +40,8 @@ import de.mpa.domain.Requirement;
 import de.mpa.domain.Task;
 import de.mpa.domain.Term;
 import de.mpa.domain.TermType;
+import de.mpa.domain.UserMatch;
+import de.mpa.domain.UserMatchComparator;
 import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
@@ -48,6 +53,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Objects for handling security and persistence related topics
 	// private PersistanceContract pc = new PersistanceContract();
+	@EJB
+	LocationService ls;
 	@EJB
 	private PersistenceContract pc;
 	private SecurityService ss = new SecurityService();
@@ -153,6 +160,28 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
+	public Response getUserContractRelationship(int contractId, int userId) {
+		if(contractId == 0 || userId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("Missing id").build();
+		
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		
+		List<Candidate> candidates = c.getCandidates();
+		
+		if(c.getClientID()==userId)
+			return Response.ok("CLIENT").build();
+		
+		if(candidates!=null) {
+			for(Candidate can : candidates) {
+				if(can.getCandidateId().getCandidateId()==userId)
+					return Response.ok("CANDIDATE").build();
+			}
+		}
+		
+		return Response.ok("VIEWER", MediaType.TEXT_PLAIN).build();
+		
+	}
+	
 	@Override
 	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city,
 			int radius) {
@@ -170,10 +199,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
 			for (Contract c : contractList) {
-				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
+				PlaceOfPerformance p_old = c.getBasicConditions().getPlaceOfPerformance();
 
 				if (p_old != null) {
-					if (this.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
+					if (ls.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
 							city) <= radius) {
 						searchResult.add(this.processJsonViewForContract(c, userId));
 					}
@@ -195,7 +224,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		if (c.getPlaceOfPerformance() != null) {
+		if (c.getBasicConditions() == null)
+			return Response.status(Status.BAD_REQUEST).entity("No conditions defined").build();
+
+		if (c.getBasicConditions().getPlaceOfPerformance() != null) {
 			return this.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
 		}
 
@@ -213,10 +245,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 		p_new.setPlace(place);
 		p_new.setZipCode(zipCode);
 
-		String location = this.getLocationGeometryData(country, place, zipCode);
+		String location = ls.getLocationGeometryData(country, place, zipCode);
 
-		p_new.setLatitude(this.getLatFromJson(location));
-		p_new.setLongitude(this.getLngFromJson(location));
+		p_new.setLatitude(ls.getLatFromJson(location));
+		p_new.setLongitude(ls.getLngFromJson(location));
 
 		p_new = pc.persistPoPInContract(p_new, contractId);
 
@@ -243,15 +275,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		PlaceOfPerformance p_old = c.getPlaceOfPerformance();
+		PlaceOfPerformance p_old = c.getBasicConditions().getPlaceOfPerformance();
 		p_new.setPlaceId(p_old.getPlaceId());
 
 		if ((!(p_new.getCountry().equals(p_old.getCountry()))) || (!(p_new.getPlace().equals(p_old.getPlace())))
 				|| (!(p_new.getZipCode().equals(p_old.getZipCode())))) {
-			String location = this.getLocationGeometryData(country, place, zipCode);
+			String location = ls.getLocationGeometryData(country, place, zipCode);
 
-			p_new.setLatitude(this.getLatFromJson(location));
-			p_new.setLongitude(this.getLngFromJson(location));
+			p_new.setLatitude(ls.getLatFromJson(location));
+			p_new.setLongitude(ls.getLngFromJson(location));
 		} else {
 			p_new.setLatitude(p_old.getLatitude());
 			p_new.setLongitude(p_old.getLongitude());
@@ -384,7 +416,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		BasicCondition b_new;
-		if (c == null) {
+		if (c.getBasicConditions() == null) {
 			b_new = new BasicCondition();
 		} else {
 			b_new = c.getBasicConditions();
@@ -395,7 +427,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
 
-		if (c == null) {
+		if (c.getBasicConditions() == null) {
 			b_new = pc.persistBasicConditionInContract(c, b_new);
 		} else {
 			b_new = (BasicCondition) pc.updateExistingObject(b_new);
@@ -882,6 +914,72 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
+	private String getUserSuggestionMail(List<UserMatch> matches) {
+		URL url;
+		try {
+
+			StringBuilder urlStringBuilder = new StringBuilder()
+					.append("https://localhost:8443/ContractManagement/UserSuggestionsMail.jsp?");
+
+			UserMatch first = matches.get(0);
+
+			if (first == null)
+				return "No match";
+
+			int oldContractId = 0;
+			int userIterator = 1;
+			int contractIterator = 0;
+			boolean firstRun = true;
+
+			for (UserMatch m : matches) {
+				int newContractId = m.getContractId();
+				if (newContractId != oldContractId) {
+					contractIterator++;
+					userIterator = 1;
+					oldContractId = m.getContractId();
+					if(firstRun) {
+						urlStringBuilder.append("contractId" + contractIterator + "=" + m.getContractId());
+						firstRun = false;
+					} else {
+						urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
+					}
+					urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
+				}			
+				
+				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
+				
+			}
+
+			String urlString = urlStringBuilder.toString();
+
+			url = new URL(urlString);
+			HttpsURLConnection con = (HttpsURLConnection) url.openConnection();
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+			String inputline;
+			StringBuffer html = new StringBuffer();
+
+			while ((inputline = in.readLine()) != null) {
+				html.append(inputline);
+			}
+
+			in.close();
+
+			return html.toString();
+
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Wrong URL";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "Not available";
+		}
+
+	}
+
 	private String getUserMailAddress(int userId) {
 
 		Client client = ClientBuilder.newClient();
@@ -897,6 +995,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
+	
 	private String sendCandidateAcceptMail(String mail, String subject, String html) {
 		Client client = ClientBuilder.newClient();
 
@@ -912,91 +1011,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
-
-	// Methods for retrieving the longitude and latitude values of a specific
-	// (country, postal code, city)
-	private String getLocationGeometryData(String country, String city, String zipCode) {
-
-		Client client = ClientBuilder.newClient();
-
-		country = country.replace(" ", "%20");
-		zipCode = "+" + zipCode.replace(" ", "%20");
-		city = "+" + city.replace(" ", "%20");
-
-		WebTarget webTarget = client
-				.target("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
-
-		System.out.println("https://nominatim.openstreetmap.org/search?q=" + country + zipCode + city + "&format=json");
-
-		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
-
-		Response response = invocationBuilder.get();
-
-		return (String) response.readEntity(String.class);
+	private String sendUserSuggestionMail(String mail, String subject, String html) {
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Schedule(hour = "0", minute = "0")
+	private void processMatches() {
+		List<UserMatch> matches = pc.getContractUserMatches();
+		Collections.sort(matches, new UserMatchComparator());
 
 	}
-
-	private double getLatFromJson(String json) {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode geo1 = null;
-		System.out.println(json);
-		try {
-			geo1 = mapper.readTree(json);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		double lat = geo1.get(0).get("lat").asDouble();
-
-		return lat;
-	}
-
-	private double getLngFromJson(String json) {
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode geo1 = null;
-		System.out.println(json);
-		try {
-			geo1 = mapper.readTree(json);
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		double lng = geo1.get(0).get("lon").asDouble();
-
-		return lng;
-	}
-
-	// Distance calculation with Haversine formula
-	private double getDistance(String country1, String zipCode1, String city1, String country2, String zipCode2,
-			String city2) {
-
-		double lng1 = 0, lat1 = 0, lng2 = 0, lat2 = 0;
-
-		String latLng1 = this.getLocationGeometryData(country1, zipCode1, city1);
-		String latLng2 = this.getLocationGeometryData(country2, zipCode2, city2);
-
-		lng1 = getLngFromJson(latLng1);
-		lat1 = getLatFromJson(latLng1);
-		lng2 = getLngFromJson(latLng2);
-		lat2 = getLatFromJson(latLng2);
-
-		double earthRadius = 6371;
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLng = Math.toRadians(lng2 - lng1);
-		double sindLat = Math.sin(dLat / 2);
-		double sindLng = Math.sin(dLng / 2);
-		double a = Math.pow(sindLat, 2)
-				+ Math.pow(sindLng, 2) * Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2));
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		double dist = earthRadius * c;
-
-		return dist;
-	}
-
 }

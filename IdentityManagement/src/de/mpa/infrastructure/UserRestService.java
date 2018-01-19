@@ -130,9 +130,9 @@ public class UserRestService implements _ApplicationUserService {
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("user")
-	public Response getUsers(@CookieParam("token") String token) {
-		return as.getUsers(token);
+	@Path("user/{userId}")
+	public Response getUser(@CookieParam("token") String token, @PathParam("userId") int userId) {
+		return as.getUser(token, userId);
 	}
 	
 	/*

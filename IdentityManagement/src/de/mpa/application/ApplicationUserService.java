@@ -26,9 +26,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
+import de.mpa.domain.Candidate;
 import de.mpa.domain.CompanyUser;
 import de.mpa.domain.ConditionDesire;
 import de.mpa.domain.ContactPerson;
+import de.mpa.domain.Contract;
 import de.mpa.domain.GeographicalCondition;
 import de.mpa.domain.PasswordChange;
 import de.mpa.domain.PrivateUser;
@@ -222,10 +224,8 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
-	public Response getUsers(String token) {
-		
-		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+	public Response getUser(String token, int userId) {
+				
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
 		
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
@@ -457,7 +457,13 @@ public class ApplicationUserService implements _ApplicationUserService {
 		if(fee!=0)
 			cd.setMinFee(fee);
 		
-		GeographicalCondition gc = new GeographicalCondition();
+		GeographicalCondition gc;
+		
+		if(cd.getPlace()==null) {
+			gc = new GeographicalCondition();
+		} else {
+			gc = cd.getPlace();
+		}
 		
 		if(!(country.equals("")))
 			gc.setCountry(country);
@@ -471,7 +477,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		String location = this.getLocationGeometryData(country, city, zipCode);
 		
 		gc.setLatitude(this.getLatFromJson(location));
-		gc.setLongitude(this.getLngFromJson(location));
+		gc.setLongitude(this.getLngFromJson(location));	
 		
 		cd.setPlace(gc);
 		
@@ -602,4 +608,33 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return lng;
 	}
 
+	private String processJsonViewForContract(User u, int requesterId) {
+		ObjectMapper mapper = new ObjectMapper();
+
+		Class<?> viewClass = Contract.Viewer.class;
+
+		if (c.getPrincipalID() == userId) {
+			viewClass = Contract.PrincipalView.class;
+		} else {
+			for (Candidate cd : c.getCandidates()) {
+				if (cd.getCandidateId().getCandidateId() == userId) {
+					viewClass = Contract.CandidateView.class;
+				}
+			}
+		}
+
+		if (c.getClientID() == userId) {
+			viewClass = Contract.ContractorView.class;
+		}
+
+		String result;
+		try {
+			result = mapper.writerWithView(viewClass).writeValueAsString(c);
+		} catch (JsonProcessingException e) {
+			result = "Error in view processing";
+			e.printStackTrace();
+		}
+
+		return result;
+	}
 }

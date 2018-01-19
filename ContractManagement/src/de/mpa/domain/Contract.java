@@ -78,9 +78,6 @@ public class Contract {
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
 	@JsonView(Contract.InternalView.class)
 	private String searchString = "";
-	@OneToOne(cascade = CascadeType.ALL)
-	@JsonView(Contract.Viewer.class)
-	private PlaceOfPerformance placeOfPerformance;
 	
 	
 	// ---------------------
@@ -250,14 +247,5 @@ public class Contract {
 			System.out.println("ok");
 		}
 	}
-
-	@XmlElement
-	public PlaceOfPerformance getPlaceOfPerformance() {
-		return placeOfPerformance;
-	}
 	
-	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
-		this.placeOfPerformance = placeOfPerformance;
-	}
-
 }

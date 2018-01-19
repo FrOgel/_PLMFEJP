@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * @author frank.vogel created on: 06.01.2018 purpose: Superclass for the
@@ -33,21 +34,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @XmlRootElement
 public class User {
+	
+	public static class InternalView extends OwnerView{}
+	public static class OwnerView extends PrincipalView{}
+	public static class PrincipalView {}
 
+	
 	// Attribute declaration
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userID;
 	@Column(unique = true)
+	@JsonView(User.PrincipalView.class)
 	private String mailAddress;
+	@JsonView(User.InternalView.class)
 	private String password;
 	private String phoneNumber;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Qualification> qualificationProfile;
+	@JsonView(User.OwnerView.class)
 	@OneToOne(cascade = CascadeType.ALL)
 	private Address userAddress;
 	@OneToOne(cascade = CascadeType.ALL)
 	private ConditionDesire cd;
+	@JsonView(User.InternalView.class)
 	private boolean verified;
 	// -------------------------
 

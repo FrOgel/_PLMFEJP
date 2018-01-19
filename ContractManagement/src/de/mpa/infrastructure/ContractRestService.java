@@ -107,6 +107,13 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getContract(token, contractId);
 	}
 
+	@Override
+	@GET
+	@Path("contracts/{id}/relationship/{userId}")
+	public Response getUserContractRelationship(@PathParam("id") int contractId, @PathParam("userId") int userId) {
+		return ac.getUserContractRelationship(contractId, userId);
+	}
+	
 	@UserAuthorization
 	@Override
 	@POST

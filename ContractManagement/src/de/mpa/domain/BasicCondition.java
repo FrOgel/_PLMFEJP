@@ -5,13 +5,17 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 /*The main purpose of this class is to provide an uniform possibility to compare the conditions of a contract with the 
  * condition desire of a possible client.
@@ -30,6 +34,8 @@ public class BasicCondition {
 	private Date startDate;
 	private Date endDate;
 	private LocalDate timestamp;
+	@OneToOne(cascade = CascadeType.ALL)
+	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -112,5 +118,13 @@ public class BasicCondition {
 		return timestamp;
 	}
 
+	@XmlElement
+	public PlaceOfPerformance getPlaceOfPerformance() {
+		return placeOfPerformance;
+	}
 	
+	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
+		this.placeOfPerformance = placeOfPerformance;
+	}
+
 }

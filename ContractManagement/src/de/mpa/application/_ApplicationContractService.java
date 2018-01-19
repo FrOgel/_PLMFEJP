@@ -20,6 +20,8 @@ public interface _ApplicationContractService {
 	public Response getContracts(String token);
 
 	public Response getContract(String token, int contractId);
+	
+	public Response getUserContractRelationship(int contractId, int userId);
 
 	// Sub section search for contracts ==> Additional resource which won't be
 	// persisted
