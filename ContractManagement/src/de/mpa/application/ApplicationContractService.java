@@ -1031,7 +1031,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Schedule(hour = "16", minute = "34")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();

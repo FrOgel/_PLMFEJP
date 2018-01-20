@@ -3,10 +3,7 @@ package de.mpa.infrastructure;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -387,7 +384,6 @@ public class PersistenceContract {
 		return list;	
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		PersistenceContract pc = new PersistenceContract();
 		
