@@ -398,7 +398,7 @@ public class PersistenceContract {
 		StringBuilder urlStringBuilder = new StringBuilder()
 				.append("https://localhost:8443/ContractManagement/UserSuggestionsMail.jsp?");
 
-		UserMatch first = matches.get(0);
+		matches.get(0);
 		
 		int oldContractId = 0;
 		int userIterator = 1;
@@ -435,8 +435,6 @@ public class PersistenceContract {
 	// DB connection with jdbc ==> reason: JPA is entity bounded
 	public List<UserMatch> getContractUserMatches() {
 
-		// JDBC driver name and database URL
-		final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 		final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
 
 		// Database credentials

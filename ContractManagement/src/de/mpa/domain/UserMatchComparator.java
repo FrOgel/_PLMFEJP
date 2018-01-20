@@ -2,7 +2,7 @@ package de.mpa.domain;
 
 import java.util.Comparator;
 
-public class UserMatchComparator implements Comparator{
+public class UserMatchComparator implements Comparator<Object>{
 
 	@Override
 	public int compare(Object o1, Object o2) {

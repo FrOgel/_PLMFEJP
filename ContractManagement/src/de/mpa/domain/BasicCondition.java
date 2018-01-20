@@ -15,8 +15,6 @@ import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
 /*The main purpose of this class is to provide an uniform possibility to compare the conditions of a contract with the 
  * condition desire of a possible client.
  */

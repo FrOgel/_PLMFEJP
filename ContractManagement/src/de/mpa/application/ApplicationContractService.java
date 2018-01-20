@@ -8,6 +8,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -157,32 +160,32 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	public Response getUserContractRelationship(int principalId, int userId) {
-		if(principalId == 0 || userId == 0)
+		if (principalId == 0 || userId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Missing id").build();
-		
+
 		List<Contract> contracts = pc.findUserContracts(principalId);
-		
-		if(contracts==null)
+
+		if (contracts == null)
 			return Response.ok("VIEWER", MediaType.TEXT_PLAIN).build();
-		
-		for(Contract c : contracts) {
+
+		for (Contract c : contracts) {
 			List<Candidate> candidates = c.getCandidates();
-			
-			if(c.getClientID()==userId)
+
+			if (c.getClientID() == userId)
 				return Response.ok("CLIENT", MediaType.TEXT_PLAIN).build();
-			
-			if(candidates!=null) {
-				for(Candidate can : candidates) {
-					if(can.getCandidateId().getCandidateId()==userId)
+
+			if (candidates != null) {
+				for (Candidate can : candidates) {
+					if (can.getCandidateId().getCandidateId() == userId)
 						return Response.ok("CANDIDATE", MediaType.TEXT_PLAIN).build();
 				}
 			}
 		}
-		
+
 		return Response.ok("VIEWER", MediaType.TEXT_PLAIN).build();
-		
+
 	}
-	
+
 	@Override
 	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city,
 			int radius) {
@@ -938,17 +941,17 @@ public class ApplicationContractService implements _ApplicationContractService {
 					contractIterator++;
 					userIterator = 1;
 					oldContractId = m.getContractId();
-					if(firstRun) {
+					if (firstRun) {
 						urlStringBuilder.append("contractId" + contractIterator + "=" + m.getContractId());
 						firstRun = false;
 					} else {
 						urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
 					}
 					urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
-				}			
-				
+				}
+
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
-				
+
 			}
 
 			String urlString = urlStringBuilder.toString();
@@ -996,7 +999,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
-	
 	private String sendCandidateAcceptMail(String mail, String subject, String html) {
 		Client client = ClientBuilder.newClient();
 
@@ -1012,6 +1014,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
+
 	private String sendUserSuggestionMail(String mail, String subject, String html) {
 		Client client = ClientBuilder.newClient();
 
@@ -1027,13 +1030,27 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	@Schedule(hour = "0", minute = "0")
+	@Schedule(hour = "16", minute = "34")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 		Collections.sort(matches, new UserMatchComparator());
-		
-		// matches auseinander bauen nach den einzelnen Ids ==> Liste geordnet nacht principal id, dann nach contractId
+
+		Map<Integer, List<UserMatch>> groupedMatches = matches.stream()
+				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
+
+		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
+
+		int i = 0;
+
+		for (List<UserMatch> m : principalMatches) {
+			String html = this.getUserSuggestionMail(m);
+			String mail = this.getUserMailAddress(m.get(i).getPrincipalId());
+			this.sendUserSuggestionMail(mail, "Your current matches for your active contract!", html);
+			i++;
+		}
+
 	}
+
 }
