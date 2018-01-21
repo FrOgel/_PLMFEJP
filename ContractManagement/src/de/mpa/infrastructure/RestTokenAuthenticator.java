@@ -26,7 +26,7 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
 		String token = null;
-		int requesterId = 0;
+		String requesterId = "";
 
 		for (Cookie c : requestContext.getCookies().values()) {
 			if (c.getName().equals("token")) {
@@ -35,13 +35,12 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 		}
 
 		try {
-			requesterId = Integer.parseInt(ss.authenticateToken(token));
+			requesterId = ss.authenticateToken(token);
+			requestContext.getHeaders().add("httpRequesterId", requesterId);
 		} catch (Exception e) {
 			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
 		}
 		
-	
-
 		/*MultivaluedMap<String, String> pathparam = requestContext.getUriInfo().getPathParameters();
 
 		List<String> contractIds = pathparam.get("contractId");
@@ -49,7 +48,7 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 
 			String contractId = contractIds.get(0);
 			if(contractId.equals(""))
-				requestContext.abortWith(Response.status(Status.BAD_REQUEST).entity("Contract id expected. None founde.").build());
+				requestContext.abortWith(Response.status(Status.BAD_REQUEST).entity("Contract id expected. None found.").build());
 		
 
 			if (!(pc.checkIfContractIdMatchesRequester(Integer.parseInt(contractId), requesterId)))

@@ -30,8 +30,6 @@ public class Candidate {
 	 * false if the principal declines the candidate during the negotiation
 	 */
 	private Boolean candidateAccepted;
-	@OneToOne(cascade = CascadeType.ALL)
-	private BasicCondition acceptedCondition;
 	@OneToMany(cascade = CascadeType.ALL)
 	@OrderBy("timestamp DESC")
 	private List<ConditionOffer> negotiatedConditions = new ArrayList<ConditionOffer>();
@@ -67,14 +65,4 @@ public class Candidate {
 	public void setNegotiatedConditions(List<ConditionOffer> negotiatedConditions) {
 		this.negotiatedConditions = negotiatedConditions;
 	}
-
-	@XmlElement
-	public BasicCondition getAcceptedCondition() {
-		return acceptedCondition;
-	}
-
-	public void setAcceptedCondition(BasicCondition acceptedCondition) {
-		this.acceptedCondition = acceptedCondition;
-	}
-
 }

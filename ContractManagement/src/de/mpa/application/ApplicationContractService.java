@@ -9,11 +9,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+import javax.ejb.AsyncResult;
+import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -57,7 +64,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@EJB
 	private PersistenceContract pc;
 	private SecurityService ss = new SecurityService();
-	
+	@Resource
+	private ManagedExecutorService managedExecutorService;
+
 	// Methods for CRUD operations on the basic contract
 	@Override
 	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
@@ -85,7 +94,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteContract(String token, int contractId) {
+	public Response deleteContract(String token, Integer contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -99,7 +108,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	@Override
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
-			String contractState, int contractId) {
+			String contractState, Integer contractId) {
 
 		Contract c_new = new Contract();
 
@@ -142,7 +151,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getContract(String token, int contractId) {
+	public Response getContract(String token, Integer contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -159,7 +168,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
-	public Response getUserContractRelationship(int principalId, int userId) {
+	public Response getUserContractRelationship(Integer principalId, Integer userId) {
 		if (principalId == 0 || userId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Missing id").build();
 
@@ -227,9 +236,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
-
-		if (c.getBasicConditions() == null)
-			return Response.status(Status.BAD_REQUEST).entity("No conditions defined").build();
 
 		if (c.getPlaceOfPerformance() != null) {
 			return this.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
@@ -400,8 +406,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic conditions for a contract
 
 	@Override
-	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId,
-			int estimatedWorkload, double fee) {
+	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+			int contractId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -455,8 +461,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId,
-			int basicConditionId, int estimatedWorkload, double fee) {
+	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+			int contractId, int basicConditionId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -477,7 +483,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (estimatedWorkload != 0)
 			b_new.setEstimatedWorkload(estimatedWorkload);
-		
+
 		b_new.setTeleWorkPossible(teleWorkPossible);
 
 		b_new = (BasicCondition) pc.updateExistingObject(b_new);
@@ -716,13 +722,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateCandidate(String token, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
-			int candidateId) {
+	public Response updateCandidate(String httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined,
+			int contractId, int candidateId) {
 
-		if (contractId == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-		if (candidateId == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+
+		int requesterId = Integer.parseInt(httpRequesterId);
+
+		if (c.getPrincipalID() != requesterId)
+			return Response.status(Status.UNAUTHORIZED).entity("You are not authorized to do this").build();
+
+		if (contractId == 0 || candidateId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No contract or candidate Id").build();
 
 		CandidateId candidateID = new CandidateId(contractId, candidateId);
 		Candidate c_old = (Candidate) pc.getObjectFromPersistanceById(Candidate.class, candidateID);
@@ -730,32 +741,38 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (c_old == null)
 			return Response.status(Status.BAD_REQUEST).entity("Candidate doesn't exist").build();
 
-		Candidate c_new = new Candidate();
-		c_new.setCandidateId(candidateID);
+		if (candidateAccepted == null)
+			return Response.status(Status.BAD_REQUEST).entity("No acceptance retrieved").build();
 
-		if (candidateAccepted == null) {
-			if (c_old.isCandidateAccepted() != null) {
-				c_new.setCandidateAccepted(c_old.isCandidateAccepted());
-			}
-		} else {
-			c_new.setCandidateAccepted(candidateAccepted);
-		}
-
-		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+		c_old.setCandidateAccepted(candidateAccepted);
 
 		String candidateMail = this.getUserMailAddress(candidateId);
 
-		if (candidateAccepted) {
-			String canMailHTML = this.getCandidateAcceptMail("accepted", c.getName(), contractId);
-			this.sendCandidateAcceptMail(candidateMail, "You were accepted as a candidate!", canMailHTML);
-		} else {
-			String canMailHTML = this.getCandidateAcceptMail("declined", c.getName(), contractId);
-			this.sendCandidateAcceptMail(candidateMail, "You were declined as a candidate...", canMailHTML);
-		}
+		Callable<?> sendMail = new Callable<Object>() {
 
-		c_new = (Candidate) pc.updateExistingObject(c_new);
+			@Override
+			public Object call() throws Exception {
+				if (candidateAccepted) {
+					String canMailHTML = ApplicationContractService.getCandidateAcceptMail("accepted", c.getName(),
+							contractId);
+					ApplicationContractService.sendCandidateAcceptMail(candidateMail,
+							"You were accepted as a candidate!", canMailHTML);
+				} else {
+					String canMailHTML = ApplicationContractService.getCandidateAcceptMail("declined", c.getName(),
+							contractId);
+					ApplicationContractService.sendCandidateAcceptMail(candidateMail,
+							"You were declined as a candidate...", canMailHTML);
+				}
+				return null;
+			}
 
-		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
+		};
+
+		managedExecutorService.submit(sendMail);
+
+		c_old = (Candidate) pc.updateExistingObject(c_old);
+
+		return Response.ok(c_old, MediaType.APPLICATION_JSON).build();
 	}
 
 	@Override
@@ -781,17 +798,14 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Methods for CRUD operations on the offers during the contract negotiations
 	@Override
-	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
-			String startDate, String endDate, int estimatedWorkload, double fee) {
+	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible,
+			int contractId, int estimatedWorkload, double fee, Integer candidateId) {
+
+		if (candidateId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Missing candidateid").build();
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-
-		if (candidateId == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No candidateId").build();
-
-		if (radius == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No radius").build();
 
 		if (fee == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
@@ -805,22 +819,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (startDate.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
 
-		if (location.equals(""))
-			return Response.status(Status.BAD_REQUEST).entity("No location").build();
-
-		int tokenSubjectId = Integer.parseInt(ss.authenticateToken(token));
+		int requesterId = Integer.parseInt(ss.authenticateToken(token));
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		BasicCondition b_new = new BasicCondition();
-		b_new.setEndDate(endDate);
-		b_new.setStartDate(startDate);
-		b_new.setFee(fee);
-		b_new.setEstimatedWorkload(estimatedWorkload);
+		ConditionOffer new_offer = new ConditionOffer();
+		new_offer.setEndDate(endDate);
+		new_offer.setStartDate(startDate);
+		new_offer.setFee(fee);
+		new_offer.setEstimatedWorkload(estimatedWorkload);
+		new_offer.setCommentary(comment);
+		new_offer.setTeleWorkPossible(teleWorkPossible);
 
 		int senderId;
 		int receiverId;
 
-		if (tokenSubjectId == candidateId) {
+		if (requesterId == candidateId) {
 			senderId = candidateId;
 			receiverId = c.getPrincipalID();
 		} else {
@@ -828,13 +841,46 @@ public class ApplicationContractService implements _ApplicationContractService {
 			receiverId = candidateId;
 		}
 
-		ConditionOffer nc = new ConditionOffer();
-		nc.setReceiverId(receiverId);
-		nc.setSenderId(senderId);
+		new_offer.setSenderId(senderId);
+		new_offer.setReceiverId(receiverId);
 
-		nc = pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), b_new, nc);
+		new_offer = pc.addOfferToCandidateContract(new CandidateId(contractId, candidateId), new_offer);
 
-		return Response.ok(nc, MediaType.APPLICATION_JSON).build();
+		return Response.ok(new_offer, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response acceptOffer(String httpRequesterId, Integer offerId, Integer contractId) {
+
+		System.out.println(httpRequesterId);
+		System.out.println(contractId);
+		System.out.println(offerId);
+		
+		if (httpRequesterId == null || contractId == null || offerId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Missing parameters requester, contract or candidate id")
+					.build();
+
+		ConditionOffer co = (ConditionOffer) pc.getObjectFromPersistanceById(ConditionOffer.class, offerId);
+
+		if (co == null)
+			return Response.status(Status.BAD_REQUEST).entity("Offer doesn't exist").build();
+
+		int requesterId = Integer.parseInt(httpRequesterId);
+		
+		if(co.getReceiverId()!=requesterId)
+			return Response.status(Status.FORBIDDEN).entity("You are not able to accept this offer.").build();
+		
+		co.setAccepted(true);
+		
+		co = (ConditionOffer) pc.updateExistingObject(co);
+		
+		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
+
+		c.setBasicConditions((BasicCondition) co);
+		
+		pc.updateExistingObject(c);
+		
+		return Response.ok(co, MediaType.APPLICATION_JSON).build();
+
 	}
 
 	@Override
@@ -889,7 +935,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	// Methods for mail sending
-	private String getCandidateAcceptMail(String accept, String contractName, int contractId) {
+	private static String getCandidateAcceptMail(String accept, String contractName, int contractId) {
 		URL url;
 		try {
 			url = new URL("https://localhost:8443/ContractManagement/CandidateAcceptMail.jsp?accept=" + accept + "&id="
@@ -916,9 +962,25 @@ public class ApplicationContractService implements _ApplicationContractService {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return "Not available";
+			return "IO Exception";
 		}
 
+	}
+
+	private static String sendCandidateAcceptMail(String mail, String subject, String html) {
+		Client client = ClientBuilder.newClient();
+
+		WebTarget webTarget = client
+				.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
+
+		Form form = new Form();
+		form.param("html", html);
+		form.param("subject", subject);
+
+		Response response = webTarget.request(MediaType.TEXT_PLAIN)
+				.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
+
+		return (String) response.readEntity(String.class);
 	}
 
 	private String getUserSuggestionMail(List<UserMatch> matches) {
@@ -950,7 +1012,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 					} else {
 						urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
 					}
-					urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject().replace(" ", "%20"));
+					urlStringBuilder
+							.append("&subject" + contractIterator + "=" + m.getContractSubject().replace(" ", "%20"));
 				}
 
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
@@ -1000,22 +1063,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 
-	}
-
-	private String sendCandidateAcceptMail(String mail, String subject, String html) {
-		Client client = ClientBuilder.newClient();
-
-		WebTarget webTarget = client
-				.target("https://localhost:8443/MailingService/rest/mailing/candidateAccept/" + mail);
-
-		Form form = new Form();
-		form.param("html", html);
-		form.param("subject", subject);
-
-		Response response = webTarget.request(MediaType.TEXT_PLAIN)
-				.post(Entity.entity(form, MediaType.APPLICATION_FORM_URLENCODED_TYPE));
-
-		return (String) response.readEntity(String.class);
 	}
 
 	private String sendUserSuggestionMail(String mail, String subject, String html) {

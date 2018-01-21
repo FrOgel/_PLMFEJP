@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @XmlRootElement
 @NamedQueries({
 		@NamedQuery(query = "SELECT c FROM Contract c, Candidate can WHERE c.clientID = :userId OR can.candidateId = :userCandidateId", name = "user contract relationship"),
+		@NamedQuery(query = "SELECT c.principalID FROM Contract c WHERE c.contractID = :contractId", name = "get principalId from contract"),
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.principalID = :principalID", name = "find user contracts"),
 		@NamedQuery(query = "SELECT COUNT(c.principalID) FROM Contract c WHERE c.contractID = :contractId AND "
 				+ "c.principalID = :requesterId", name = "check requesterId"),
@@ -88,6 +89,8 @@ public class Contract {
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
 	@JsonView(Contract.InternalView.class)
 	private String searchString = "";
+	@OneToOne(cascade = CascadeType.ALL)
+	@JsonView(Contract.Viewer.class)
 	private PlaceOfPerformance placeOfPerformance;
 
 	// ---------------------

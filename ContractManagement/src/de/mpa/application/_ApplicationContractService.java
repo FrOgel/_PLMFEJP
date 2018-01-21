@@ -13,27 +13,30 @@ public interface _ApplicationContractService {
 	public Response saveContract(String token, String designation, String contractType, String contractSubject);
 
 	public Response updateContract(String token, String designation, String contractType, String contractSubject,
-			String contractState, int contractId);
+			String contractState, Integer contractId);
 
-	public Response deleteContract(String token, int contractId);
+	public Response deleteContract(String token, Integer contractId);
 
 	public Response getContracts(String token);
 
-	public Response getContract(String token, int contractId);
-	
-	public Response getUserContractRelationship(int principalId, int userId);
+	public Response getContract(String token, Integer contractId);
+
+	public Response getUserContractRelationship(Integer principalId, Integer userId);
 
 	// Sub section search for contracts ==> Additional resource which won't be
 	// persisted
 
-	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city, int radius);
+	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city,
+			int radius);
 
 	// Place of performance
-	
-	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode, int contractId);
-	
-	public Response updatePlaceOfPerformance(String token, String country, String place, String zipCode, int contractId);
-	
+
+	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode,
+			int contractId);
+
+	public Response updatePlaceOfPerformance(String token, String country, String place, String zipCode,
+			int contractId);
+
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Task in contract
@@ -48,14 +51,16 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Basic condition in contract
-	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId, int estimatedWorkload, double fee);
+	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+			int contractId, int estimatedWorkload, double fee);
 
 	public Response deleteBasicCondition(String token, int contractId);
 
-	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId, int basicConditionId, int estimatedWorkload, double fee);
+	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+			int contractId, int basicConditionId, int estimatedWorkload, double fee);
 
 	public Response getBasicCondition(String token, int contractId, int basicConditionId);
-	
+
 	public List<BasicCondition> getAllBasicConditions(String token); // Might be used for the matching engine
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -84,15 +89,18 @@ public interface _ApplicationContractService {
 	// Candidate in contract
 	public Response saveCandidate(String token, int contractId);
 
-	public Response updateCandidate(String token, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
+	public Response updateCandidate(String httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
 			int candidateId);
 
 	public Response getCandidate(String token, int contractId, int candidateId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Condition offer in contract from candidate or principal
-	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible, int contractId, int estimatedWorkload, double fee);
+	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible,
+			int contractId, int estimatedWorkload, double fee, Integer candidateId);
 
+	public Response acceptOffer(String httpRequesterId, Integer offerId, Integer contractId);
+	
 	public Response getOffers(String token, int contractId, int candidateId);
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -8,6 +8,7 @@ import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -23,7 +24,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 
 @Path("/contract")
-@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN})
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
 
 public class ContractRestService implements _ApplicationContractService {
 
@@ -76,7 +77,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/")
-	public Response deleteContract(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
+	public Response deleteContract(@CookieParam("token") String token, @PathParam("contractId") Integer contractId) {
 		return ac.deleteContract(token, contractId);
 	}
 
@@ -87,7 +88,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}")
 	public Response updateContract(@CookieParam("token") String token, @FormParam("designation") String designation,
 			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject,
-			@FormParam("contractState") String contractState, @PathParam("contractId") int contractId) {
+			@FormParam("contractState") String contractState, @PathParam("contractId") Integer contractId) {
 		return ac.updateContract(token, designation, contractType, contractSubject, contractState, contractId);
 	}
 
@@ -103,17 +104,18 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@GET
 	@Path("contracts/{id}")
-	public Response getContract(@CookieParam("token") String token, @PathParam("id") int contractId) {
+	public Response getContract(@CookieParam("token") String token, @PathParam("id") Integer contractId) {
 		return ac.getContract(token, contractId);
 	}
 
 	@Override
 	@GET
 	@Path("contracts/{principalId}/relationship/{userId}")
-	public Response getUserContractRelationship(@PathParam("principalId") int contractId, @PathParam("userId") int userId) {
+	public Response getUserContractRelationship(@PathParam("principalId") Integer contractId,
+			@PathParam("userId") Integer userId) {
 		return ac.getUserContractRelationship(contractId, userId);
 	}
-	
+
 	@UserAuthorization
 	@Override
 	@POST
@@ -194,8 +196,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions")
 	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
-			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
+			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible,
+			@PathParam("contractId") int contractId, @FormParam("estimatedWorkload") int estimatedWorkload,
+			@FormParam("fee") double fee) {
 
 		return ac.saveBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, estimatedWorkload, fee);
 	}
@@ -215,10 +218,11 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
 	public Response updateBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
-			@PathParam("basicConditionId") int basicConditionId, @FormParam("estimatedWorkload") int estimatedWorkload,
-			@FormParam("fee") double fee) {
-		return ac.updateBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, basicConditionId, estimatedWorkload, fee);
+			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible,
+			@PathParam("contractId") int contractId, @PathParam("basicConditionId") int basicConditionId,
+			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
+		return ac.updateBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, basicConditionId,
+				estimatedWorkload, fee);
 	}
 
 	@UserAuthorization
@@ -237,7 +241,7 @@ public class ContractRestService implements _ApplicationContractService {
 	public List<BasicCondition> getAllBasicConditions(String token) {
 		return ac.getAllBasicConditions(token);
 	}
-	
+
 	@UserAuthorization
 	@Override
 	@POST
@@ -334,11 +338,11 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates/{candidateId}")
-	public Response updateCandidate(@CookieParam("token") String token,
+	public Response updateCandidate(@HeaderParam("httpRequesterId") String httpRequesterId,
 			@FormParam("candidateAccepted") Boolean candidateAccepted,
 			@FormParam("candidateDeclined") Boolean candidateDeclined, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
-		return ac.updateCandidate(token, candidateAccepted, candidateDeclined, contractId, candidateId);
+		return ac.updateCandidate(httpRequesterId, candidateAccepted, candidateDeclined, contractId, candidateId);
 	}
 
 	@UserAuthorization
@@ -356,16 +360,25 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
-	public Response saveOffer(@CookieParam("token") String token, @PathParam("contractId") int contractId,
-			@PathParam("candidateId") int candidateId, @FormParam("location") String location,
-			@FormParam("radius") int radius, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @FormParam("workload") int estimatedWorkload,
-			@FormParam("fee") double fee) {
+	public Response saveOffer(@CookieParam("token") String token, @FormParam("startDate") String startDate,
+			@FormParam("endDate") String endDate, @FormParam("comment") String comment,
+			@FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
+			@FormParam("workload") int estimatedWorkload, @FormParam("fee") double fee,
+			@PathParam("candidateId") Integer candidateId) {
 
-		return ac.saveOffer(token, contractId, candidateId, location, radius, startDate, endDate, estimatedWorkload,
-				fee);
+		return ac.saveOffer(token, startDate, endDate, comment, teleWorkPossible, contractId, estimatedWorkload, fee,
+				candidateId);
 	}
 
+	@UserAuthorization
+	@Override
+	@PUT
+	@Path("contracts/{contractId}/candidate/offers/{offerId}")
+	public Response acceptOffer(@HeaderParam("httpReqeusterId") String httpRequesterId, @PathParam("offerId") Integer offerId, 
+			@PathParam("contractId") Integer contractId) {
+		return ac.acceptOffer(httpRequesterId, offerId, contractId);
+	}
+	
 	@UserAuthorization
 	@Override
 	@GET

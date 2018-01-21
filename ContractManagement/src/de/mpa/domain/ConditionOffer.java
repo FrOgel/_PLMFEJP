@@ -2,9 +2,7 @@ package de.mpa.domain;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,16 +15,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class ConditionOffer extends BasicCondition{
 
-	@OneToOne(cascade = CascadeType.ALL)
-	private BasicCondition condition;
 	private String comment;
 	private int senderId;
 	private int receiverId;
-	private LocalDateTime offerTimestamp;
+	private boolean accepted;
 
 	public ConditionOffer() {
 		super();
-		this.offerTimestamp = LocalDateTime.now();
 	}
 
 	@XmlElement
@@ -48,21 +43,6 @@ public class ConditionOffer extends BasicCondition{
 	}
 
 	@XmlElement
-	public BasicCondition getCondition() {
-		return condition;
-	}
-
-	public void setCondition(BasicCondition condition) {
-		this.condition = condition;
-	}
-
-	@XmlElement
-	public LocalDateTime getOfferTimeStamp() {
-		return offerTimestamp;
-	}
-
-	
-	@XmlElement
 	public String getCommentary() {
 		return comment;
 	}
@@ -70,6 +50,16 @@ public class ConditionOffer extends BasicCondition{
 	
 	public void setCommentary(String commentary) {
 		this.comment = commentary;
+	}
+
+	
+	@XmlElement
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
 	}
 
 
