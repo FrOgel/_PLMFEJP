@@ -28,8 +28,9 @@ import de.mpa.domain.UserMatchComparator;
 @Stateless
 @LocalBean
 public class PersistenceContract {
-	
-	@EJB LocationService ls;
+
+	@EJB
+	LocationService ls;
 
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
@@ -365,8 +366,8 @@ public class PersistenceContract {
 
 		return list;
 	}
-	
-	public List<Contract> getUserContractRelationship(int clientId, CandidateId candidateId){
+
+	public List<Contract> getUserContractRelationship(int clientId, CandidateId candidateId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
@@ -381,21 +382,21 @@ public class PersistenceContract {
 		entitymanager.close();
 		emfactory.close();
 
-		return list;	
+		return list;
 	}
-	
+
 	public static void main(String[] args) {
 		PersistenceContract pc = new PersistenceContract();
-		
+
 		List<UserMatch> matches = pc.getContractUserMatches();
-		
+
 		Collections.sort(matches, new UserMatchComparator());
-		
+
 		StringBuilder urlStringBuilder = new StringBuilder()
 				.append("https://localhost:8443/ContractManagement/UserSuggestionsMail.jsp?");
 
 		matches.get(0);
-		
+
 		int oldContractId = 0;
 		int userIterator = 1;
 		int contractIterator = 0;
@@ -407,27 +408,28 @@ public class PersistenceContract {
 				contractIterator++;
 				userIterator = 1;
 				oldContractId = m.getContractId();
-				if(firstRun) {
+				if (firstRun) {
 					urlStringBuilder.append("contractId" + contractIterator + "=" + m.getContractId());
 					firstRun = false;
 				} else {
 					urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
 				}
 				urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
-			}			
-			
+			}
+
 			urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
-			
+
 		}
-		
+
 		System.out.println(urlStringBuilder);
-		
-		for(UserMatch m : matches) {
-			System.out.println("Subject: " + m.getContractSubject() + " PrincipalId: " + m.getPrincipalId() + " UserId: " + m.getUserId()  + " ContractId: " + m.getContractId());
+
+		for (UserMatch m : matches) {
+			System.out.println("Subject: " + m.getContractSubject() + " PrincipalId: " + m.getPrincipalId()
+					+ " UserId: " + m.getUserId() + " ContractId: " + m.getContractId());
 		}
-		
+
 	}
-	
+
 	// DB connection with jdbc ==> reason: JPA is entity bounded
 	public List<UserMatch> getContractUserMatches() {
 
@@ -439,9 +441,9 @@ public class PersistenceContract {
 
 		Connection conn = null;
 		Statement stmt = null;
-		
+
 		List<UserMatch> result = new ArrayList<UserMatch>();
-		
+
 		try {
 			// STEP 2: Register JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");
@@ -459,20 +461,18 @@ public class PersistenceContract {
 					+ "(SELECT con.CONTRACTID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) contractId, "
 					+ "(SELECT con.PRINCIPALID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) principalId, "
 					+ "(SELECT g.LATITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLatitude, "
-					+ "(SELECT g.LONGITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLongitude, " 
-					+ "(SELECT g.RADIUS FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) radius, " 
-					+ "(SELECT p.LATITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLatitude," 
+					+ "(SELECT g.LONGITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLongitude, "
+					+ "(SELECT g.RADIUS FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) radius, "
+					+ "(SELECT p.LATITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLatitude,"
 					+ "(SELECT p.LONGITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLongitude "
 					+ "FROM mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c "
-					+ "WHERE b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 "
-					+ "AND b.FEE >= c.MINFEE*0.7 "
-					+ "AND b.ENDDATE <= c.EARLIESTENDDATE "
-					+ "AND b.STARTDATE >= c.EARLIESTSTARTDATE ";
-			
+					+ "WHERE b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 " + "AND b.FEE >= c.MINFEE*0.7 "
+					+ "AND b.ENDDATE <= c.EARLIESTENDDATE " + "AND b.STARTDATE >= c.EARLIESTSTARTDATE ";
+
 			System.out.println(sql);
-			
+
 			ResultSet rs = stmt.executeQuery(sql);
-			
+
 			// STEP 5: Extract data from result set
 			while (rs.next()) {
 				// Retrieve by column name
@@ -485,16 +485,22 @@ public class PersistenceContract {
 				double lat2 = rs.getDouble("pLatitude");
 				double lng2 = rs.getDouble("pLongitude");
 				int radius = rs.getInt("radius");
-				
+				boolean teleWorkPossible = rs.getBoolean("teleWorkPossible");
+
 				double distance = this.getDistance(lat1, lng1, lat2, lng2);
-				
-				if(distance<=radius && userId != princiaplId) {
+
+				if (!teleWorkPossible) {
+					if (distance <= radius && userId != princiaplId) {
+						UserMatch um = new UserMatch(princiaplId, contractId, contractSubject, userId);
+						result.add(um);
+					}
+				} else {
 					UserMatch um = new UserMatch(princiaplId, contractId, contractSubject, userId);
 					result.add(um);
 				}
-				
+
 			}
-			
+
 			// STEP 6: Clean-up environment
 			rs.close();
 			stmt.close();
@@ -519,10 +525,10 @@ public class PersistenceContract {
 				se.printStackTrace();
 			} // end finally try
 		} // end try
-		
+
 		return result;
 	}
-	
+
 	private double getDistance(double lat1, double lng1, double lat2, double lng2) {
 
 		double earthRadius = 6371;
@@ -537,5 +543,5 @@ public class PersistenceContract {
 
 		return dist;
 	}
-	
+
 }

@@ -400,7 +400,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic conditions for a contract
 
 	@Override
-	public Response saveBasicCondition(String token, String startDate, String endDate, int contractId,
+	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId,
 			int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
@@ -430,6 +430,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		b_new.setStartDate(startDate);
 		b_new.setFee(fee);
 		b_new.setEstimatedWorkload(estimatedWorkload);
+		b_new.setTeleWorkPossible(teleWorkPossible);
 
 		if (c.getBasicConditions() == null) {
 			b_new = pc.persistBasicConditionInContract(c, b_new);
@@ -454,7 +455,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateBasicCondition(String token, String startDate, String endDate, int contractId,
+	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible, int contractId,
 			int basicConditionId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
@@ -476,6 +477,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (estimatedWorkload != 0)
 			b_new.setEstimatedWorkload(estimatedWorkload);
+		
+		b_new.setTeleWorkPossible(teleWorkPossible);
 
 		b_new = (BasicCondition) pc.updateExistingObject(b_new);
 

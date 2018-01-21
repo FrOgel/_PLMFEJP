@@ -132,7 +132,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}/places")
 	public Response createPlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
 			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
-			@FormParam("contractId") int contractId) {
+			@PathParam("contractId") int contractId) {
 		return ac.createPlaceOfPerformance(token, country, place, zipCode, contractId);
 	}
 
@@ -143,7 +143,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Path("contracts/{contractId}/places")
 	public Response updatePlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
 			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
-			@FormParam("contractId") int contractId) {
+			@PathParam("contractId") int contractId) {
 		return ac.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
 	}
 
@@ -194,10 +194,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions")
 	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @PathParam("contractId") int contractId,
+			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
 			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, startDate, endDate, contractId, estimatedWorkload, fee);
+		return ac.saveBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization
@@ -215,10 +215,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
 	public Response updateBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
-			@FormParam("endDate") String endDate, @PathParam("contractId") int contractId,
+			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
 			@PathParam("basicConditionId") int basicConditionId, @FormParam("estimatedWorkload") int estimatedWorkload,
 			@FormParam("fee") double fee) {
-		return ac.updateBasicCondition(token, startDate, endDate, contractId, basicConditionId, estimatedWorkload, fee);
+		return ac.updateBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, basicConditionId, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization

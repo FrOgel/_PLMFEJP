@@ -29,6 +29,7 @@ public class BasicCondition {
 	private int basicConditionId;
 	private int estimatedWorkload;
 	private double fee;
+	private boolean teleWorkPossible;
 	private Date startDate;
 	private Date endDate;
 	private LocalDate timestamp;
@@ -123,6 +124,17 @@ public class BasicCondition {
 	
 	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
 		this.placeOfPerformance = placeOfPerformance;
+	}
+
+	
+	@XmlElement
+	public boolean isTeleWorkPossible() {
+		return teleWorkPossible;
+	}
+
+	
+	public void setTeleWorkPossible(boolean teleWorkPossible) {
+		this.teleWorkPossible = teleWorkPossible;
 	}
 
 }
