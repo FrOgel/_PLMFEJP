@@ -10,13 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-import javax.ejb.AsyncResult;
-import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -53,7 +49,6 @@ import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
 import de.mpa.infrastructure.PersistenceContract;
-import de.mpa.infrastructure.SecurityService;
 
 @Stateless
 public class ApplicationContractService implements _ApplicationContractService {
@@ -63,13 +58,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 	LocationService ls;
 	@EJB
 	private PersistenceContract pc;
-	private SecurityService ss = new SecurityService();
 	@Resource
 	private ManagedExecutorService managedExecutorService;
 
 	// Methods for CRUD operations on the basic contract
 	@Override
-	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
+	public Response saveContract(Integer httpRequesterId,String designation, String contractType, String contractSubject) {
 
 		if (designation.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
@@ -85,7 +79,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		c_new.setSubject(contractSubject);
 		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		c_new.setName(designation);
-		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
+		c_new.setPrincipalID(httpRequesterId);
 
 		c_new = (Contract) pc.addObjectToPersistance(c_new);
 
@@ -94,7 +88,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteContract(String token, Integer contractId) {
+	public Response deleteContract(Integer httpRequesterId,Integer contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -107,7 +101,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateContract(String token, String designation, String contractType, String contractSubject,
+	public Response updateContract(Integer httpRequesterId,String designation, String contractType, String contractSubject,
 			String contractState, Integer contractId) {
 
 		Contract c_new = new Contract();
@@ -125,7 +119,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (!(contractSubject.equals("")))
 			c_new.setSubject(contractSubject);
 
-		c_new.setPrincipalID(Integer.parseInt(ss.authenticateToken(token)));
+		c_new.setPrincipalID(httpRequesterId);
 
 		c_new = (Contract) pc.updateExistingObject(c_new);
 
@@ -134,11 +128,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Returns all contracts of a user
 	@Override
-	public Response getContracts(String token) {
+	public Response getContracts(Integer httpRequesterId) {
 
-		List<Contract> contracts = pc.findUserContracts(Integer.parseInt(ss.authenticateToken(token)));
+		List<Contract> contracts = pc.findUserContracts(httpRequesterId);
 		if (contracts != null) {
-			int userId = Integer.parseInt(ss.authenticateToken(token));
+			int userId = httpRequesterId;
 			List<String> contractList = new ArrayList<String>();
 			for (Contract c : contracts) {
 				contractList.add(this.processJsonViewForContract(c, userId));
@@ -151,14 +145,14 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getContract(String token, Integer contractId) {
+	public Response getContract(Integer httpRequesterId,Integer contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		String result = this.processJsonViewForContract(c, Integer.parseInt(ss.authenticateToken(token)));
+		String result = this.processJsonViewForContract(c, httpRequesterId);
 
 		if (c != null) {
 			return Response.ok(result, MediaType.APPLICATION_JSON).build();
@@ -196,7 +190,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city,
+	public Response createContractSearch(Integer httpRequesterId,String searchText, String country, String zipCode, String city,
 			int radius) {
 
 		if (searchText == null)
@@ -204,8 +198,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (searchText.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No seaarchString").build();
-
-		int userId = Integer.parseInt(ss.authenticateToken(token));
 
 		List<Contract> contractList = pc.searchContract(searchText);
 		List<String> searchResult = new ArrayList<String>();
@@ -217,7 +209,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 				if (p_old != null) {
 					if (ls.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
 							city) <= radius) {
-						searchResult.add(this.processJsonViewForContract(c, userId));
+						searchResult.add(this.processJsonViewForContract(c, httpRequesterId));
 					}
 				}
 
@@ -229,7 +221,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Methods for CRUD operations on the place of performance for a contract
 	@Override
-	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode,
+	public Response createPlaceOfPerformance(Integer httpRequesterId,String country, String place, String zipCode,
 			int contractId) {
 
 		if (contractId == 0)
@@ -238,7 +230,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
 		if (c.getPlaceOfPerformance() != null) {
-			return this.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
+			return this.updatePlaceOfPerformance(httpRequesterId, country, place, zipCode, contractId);
 		}
 
 		if (country.equals(""))
@@ -266,7 +258,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updatePlaceOfPerformance(String token, String country, String place, String zipCode,
+	public Response updatePlaceOfPerformance(Integer httpRequesterId,String country, String place, String zipCode,
 			int contractId) {
 
 		if (contractId == 0)
@@ -307,7 +299,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Methods for CRUD operations on the tasks for a contract
 	@Override
-	public Response saveTask(String token, String description, String type, String subType, int contractId) {
+	public Response saveTask(Integer httpRequesterId,String description, String type, String subType, int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -341,7 +333,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteTask(String token, int contractId, int taskId) {
+	public Response deleteTask(Integer httpRequesterId,int contractId, int taskId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -356,7 +348,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateTask(String token, String description, String type, String subType, int contractId,
+	public Response updateTask(Integer httpRequesterId,String description, String type, String subType, int contractId,
 			int taskId) {
 
 		if (taskId == 0)
@@ -389,7 +381,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getTasks(String token, int contractId) {
+	public Response getTasks(Integer httpRequesterId,int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -406,7 +398,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic conditions for a contract
 
 	@Override
-	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+	public Response saveBasicCondition(Integer httpRequesterId,String startDate, String endDate, boolean teleWorkPossible,
 			int contractId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
@@ -448,7 +440,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteBasicCondition(String token, int contractId) {
+	public Response deleteBasicCondition(Integer httpRequesterId,int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -461,7 +453,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+	public Response updateBasicCondition(Integer httpRequesterId,String startDate, String endDate, boolean teleWorkPossible,
 			int contractId, int basicConditionId, int estimatedWorkload, double fee) {
 
 		if (contractId == 0)
@@ -493,7 +485,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getBasicCondition(String token, int contractId, int basicConditionId) {
+	public Response getBasicCondition(Integer httpRequesterId,int contractId, int basicConditionId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -511,14 +503,15 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	}
 
-	public List<BasicCondition> getAllBasicConditions(String token) {
+	@Override
+	public List<BasicCondition> getAllBasicConditions(Integer httpRequesterId) {
 		return pc.getAllBasicConditions();
 	}
 
 	// Methods for CRUD operations on the requirements for a contract
 
 	@Override
-	public Response saveRequirement(String token, String description, String criteriaType, int contractId) {
+	public Response saveRequirement(Integer httpRequesterId,String description, String criteriaType, int contractId) {
 
 		Requirement r_new = new Requirement();
 
@@ -544,11 +537,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteRequirement(String token, int contractId, int requirementId) {
+	public Response deleteRequirement(Integer httpRequesterId,int contractId, int requirementId) {
 
-		int requesterId = Integer.parseInt(ss.authenticateToken(token));
-
-		if (!(pc.checkIfContractIdMatchesRequester(contractId, requesterId)))
+		if (!(pc.checkIfContractIdMatchesRequester(contractId, httpRequesterId)))
 			return Response.status(Status.FORBIDDEN).entity("You are not allowed to change this resourcce.").build();
 
 		if (contractId == 0)
@@ -565,7 +556,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateRequirement(String token, String description, String criteriaType, int contractId,
+	public Response updateRequirement(Integer httpRequesterId,String description, String criteriaType, int contractId,
 			int requirementId) {
 
 		if (contractId == 0) {
@@ -590,7 +581,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getRequirements(String token, int contractId, int requirementId) {
+	public Response getRequirements(Integer httpRequesterId,int contractId, int requirementId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -610,7 +601,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the terms for a contract
 
 	@Override
-	public Response saveTerm(String token, String description, String termType, int contractId) {
+	public Response saveTerm(Integer httpRequesterId,String description, String termType, int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -631,7 +622,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response deleteTerm(String token, int contractId, int termId) {
+	public Response deleteTerm(Integer httpRequesterId,int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -646,7 +637,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateTerm(String token, String description, String termType, int contractId, int termId) {
+	public Response updateTerm(Integer httpRequesterId,String description, String termType, int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
@@ -679,7 +670,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getTerm(String token, int contractId, int termId) {
+	public Response getTerm(Integer httpRequesterId,int contractId, int termId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -700,14 +691,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// contract
 
 	@Override
-	public Response saveCandidate(String token, int contractId) {
+	public Response saveCandidate(Integer httpRequesterId,int contractId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		int requesterId = Integer.parseInt(ss.authenticateToken(token));
-
-		CandidateId candidateId = new CandidateId(contractId, requesterId);
+		CandidateId candidateId = new CandidateId(contractId, httpRequesterId);
 
 		if (pc.doesCandiateAlreadyExistInContract(candidateId)) {
 			Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
@@ -722,14 +711,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response updateCandidate(String httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined,
+	public Response updateCandidate(Integer httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined,
 			int contractId, int candidateId) {
-
+		
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		int requesterId = Integer.parseInt(httpRequesterId);
-
-		if (c.getPrincipalID() != requesterId)
+		if (c.getPrincipalID() != httpRequesterId)
 			return Response.status(Status.UNAUTHORIZED).entity("You are not authorized to do this").build();
 
 		if (contractId == 0 || candidateId == 0)
@@ -776,7 +763,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getCandidate(String token, int contractId, int candidateId) {
+	public Response getCandidate(Integer httpRequesterId,int contractId, int candidateId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -798,7 +785,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 	// Methods for CRUD operations on the offers during the contract negotiations
 	@Override
-	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible,
+	public Response saveOffer(Integer httpRequesterId,String startDate, String endDate, String comment, boolean teleWorkPossible,
 			int contractId, int estimatedWorkload, double fee, Integer candidateId) {
 
 		if (candidateId == null)
@@ -819,7 +806,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (startDate.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No start date").build();
 
-		int requesterId = Integer.parseInt(ss.authenticateToken(token));
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
 		ConditionOffer new_offer = new ConditionOffer();
@@ -833,7 +819,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		int senderId;
 		int receiverId;
 
-		if (requesterId == candidateId) {
+		if (httpRequesterId == candidateId) {
 			senderId = candidateId;
 			receiverId = c.getPrincipalID();
 		} else {
@@ -849,11 +835,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return Response.ok(new_offer, MediaType.APPLICATION_JSON).build();
 	}
 
-	public Response acceptOffer(String httpRequesterId, Integer offerId, Integer contractId) {
-
-		System.out.println(httpRequesterId);
-		System.out.println(contractId);
-		System.out.println(offerId);
+	@Override
+	public Response acceptOffer(Integer httpRequesterId, Integer offerId, Integer contractId) {
 		
 		if (httpRequesterId == null || contractId == null || offerId == null)
 			return Response.status(Status.BAD_REQUEST).entity("Missing parameters requester, contract or candidate id")
@@ -863,11 +846,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (co == null)
 			return Response.status(Status.BAD_REQUEST).entity("Offer doesn't exist").build();
-
-		int requesterId = Integer.parseInt(httpRequesterId);
 		
-		if(co.getReceiverId()!=requesterId)
-			return Response.status(Status.FORBIDDEN).entity("You are not able to accept this offer.").build();
+		if(co.getReceiverId()!=httpRequesterId && co.getSenderId()!=httpRequesterId)
+			return Response.status(Status.FORBIDDEN).entity("You are not allowed to change this offer!").build();
+		
+		if(co.getReceiverId()!=httpRequesterId)
+			return Response.status(Status.FORBIDDEN).entity("You are not able to accept this offer. It's your partners turn.").build();
 		
 		co.setAccepted(true);
 		
@@ -876,6 +860,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
 		c.setBasicConditions((BasicCondition) co);
+		if(co.getReceiverId()==c.getPrincipalID()) {
+			c.setClientID(co.getSenderId());
+		} else {
+			c.setClientID(co.getReceiverId());
+		}
 		
 		pc.updateExistingObject(c);
 		
@@ -884,7 +873,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	@Override
-	public Response getOffers(String token, int contractId, int candidateId) {
+	public Response getOffers(Integer httpRequesterId,int contractId, int candidateId) {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("Not contract id").build();
@@ -1101,5 +1090,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
+
 
 }

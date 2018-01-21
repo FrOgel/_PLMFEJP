@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -67,9 +66,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts")
-	public Response saveContract(@CookieParam("token") String token, @FormParam("designation") String designation,
+	public Response saveContract(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("designation") String designation,
 			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject) {
-		return ac.saveContract(token, designation, contractType, contractSubject);
+		return ac.saveContract(httpRequesterId, designation, contractType, contractSubject);
 	}
 
 	@UserAuthorization
@@ -77,8 +76,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/")
-	public Response deleteContract(@CookieParam("token") String token, @PathParam("contractId") Integer contractId) {
-		return ac.deleteContract(token, contractId);
+	public Response deleteContract(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") Integer contractId) {
+		return ac.deleteContract(httpRequesterId, contractId);
 	}
 
 	@UserAuthorization
@@ -86,26 +85,28 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}")
-	public Response updateContract(@CookieParam("token") String token, @FormParam("designation") String designation,
+	public Response updateContract(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("designation") String designation,
 			@FormParam("contractType") String contractType, @FormParam("contractSubject") String contractSubject,
 			@FormParam("contractState") String contractState, @PathParam("contractId") Integer contractId) {
-		return ac.updateContract(token, designation, contractType, contractSubject, contractState, contractId);
+		return ac.updateContract(httpRequesterId, designation, contractType, contractSubject, contractState, contractId);
 	}
 
 	@UserAuthorization
 	@Override
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts")
-	public Response getContracts(@CookieParam("token") String token) {
-		return ac.getContracts(token);
+	public Response getContracts(@HeaderParam("httpRequesterId") Integer httpRequesterId) {
+		return ac.getContracts(httpRequesterId);
 	}
 
 	@UserAuthorization
 	@Override
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{id}")
-	public Response getContract(@CookieParam("token") String token, @PathParam("id") Integer contractId) {
-		return ac.getContract(token, contractId);
+	public Response getContract(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("id") Integer contractId) {
+		return ac.getContract(httpRequesterId, contractId);
 	}
 
 	@Override
@@ -119,12 +120,13 @@ public class ContractRestService implements _ApplicationContractService {
 	@UserAuthorization
 	@Override
 	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/searches")
 	@JsonView(Contract.Viewer.class)
-	public Response createContractSearch(@CookieParam("token") String token, @FormParam("searchText") String searchText,
+	public Response createContractSearch(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("searchText") String searchText,
 			@FormParam("country") String country, @FormParam("zipCode") String zipCode, @FormParam("city") String city,
 			@FormParam("radius") int radius) {
-		return ac.createContractSearch(token, searchText, country, zipCode, city, radius);
+		return ac.createContractSearch(httpRequesterId, searchText, country, zipCode, city, radius);
 	}
 
 	@UserAuthorization
@@ -132,10 +134,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/places")
-	public Response createPlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
+	public Response createPlaceOfPerformance(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("country") String country,
 			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
 			@PathParam("contractId") int contractId) {
-		return ac.createPlaceOfPerformance(token, country, place, zipCode, contractId);
+		return ac.createPlaceOfPerformance(httpRequesterId, country, place, zipCode, contractId);
 	}
 
 	@UserAuthorization
@@ -143,10 +145,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/places")
-	public Response updatePlaceOfPerformance(@CookieParam("token") String token, @FormParam("country") String country,
+	public Response updatePlaceOfPerformance(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("country") String country,
 			@FormParam("place") String place, @FormParam("zipCode") String zipCode,
 			@PathParam("contractId") int contractId) {
-		return ac.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
+		return ac.updatePlaceOfPerformance(httpRequesterId, country, place, zipCode, contractId);
 	}
 
 	@UserAuthorization
@@ -154,10 +156,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks")
-	public Response saveTask(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response saveTask(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("taskType") String type, @FormParam("taskSubType") String subType,
 			@PathParam("contractId") int contractId) {
-		return ac.saveTask(token, description, type, subType, contractId);
+		return ac.saveTask(httpRequesterId, description, type, subType, contractId);
 	}
 
 	@UserAuthorization
@@ -165,10 +167,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks/{taskId}")
-	public Response updateTask(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response updateTask(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("taskType") String type, @FormParam("taskSubType") String subType,
 			@PathParam("contractId") int contractId, @PathParam("taskId") int taskId) {
-		return ac.updateTask(token, description, type, subType, contractId, taskId);
+		return ac.updateTask(httpRequesterId, description, type, subType, contractId, taskId);
 	}
 
 	@UserAuthorization
@@ -176,9 +178,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks/{taskId}")
-	public Response deleteTask(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response deleteTask(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("taskId") int taskId) {
-		return ac.deleteTask(token, contractId, taskId);
+		return ac.deleteTask(httpRequesterId, contractId, taskId);
 	}
 
 	@UserAuthorization
@@ -186,8 +188,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/tasks")
-	public Response getTasks(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
-		return ac.getTasks(token, contractId);
+	public Response getTasks(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId) {
+		return ac.getTasks(httpRequesterId, contractId);
 	}
 
 	@UserAuthorization
@@ -195,12 +197,12 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions")
-	public Response saveBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
+	public Response saveBasicCondition(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible,
 			@PathParam("contractId") int contractId, @FormParam("estimatedWorkload") int estimatedWorkload,
 			@FormParam("fee") double fee) {
 
-		return ac.saveBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, estimatedWorkload, fee);
+		return ac.saveBasicCondition(httpRequesterId, startDate, endDate, teleWorkPossible, contractId, estimatedWorkload, fee);
 	}
 
 	@UserAuthorization
@@ -208,8 +210,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
-	public Response deleteBasicCondition(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
-		return ac.deleteBasicCondition(token, contractId);
+	public Response deleteBasicCondition(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId) {
+		return ac.deleteBasicCondition(httpRequesterId, contractId);
 	}
 
 	@UserAuthorization
@@ -217,11 +219,11 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
-	public Response updateBasicCondition(@CookieParam("token") String token, @FormParam("startDate") String startDate,
+	public Response updateBasicCondition(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @FormParam("teleWorkPossible") boolean teleWorkPossible,
 			@PathParam("contractId") int contractId, @PathParam("basicConditionId") int basicConditionId,
 			@FormParam("estimatedWorkload") int estimatedWorkload, @FormParam("fee") double fee) {
-		return ac.updateBasicCondition(token, startDate, endDate, teleWorkPossible, contractId, basicConditionId,
+		return ac.updateBasicCondition(httpRequesterId, startDate, endDate, teleWorkPossible, contractId, basicConditionId,
 				estimatedWorkload, fee);
 	}
 
@@ -230,16 +232,18 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/basicconditions/{basicConditionId}")
-	public Response getBasicCondition(@CookieParam("token") String token, int contractId,
+	public Response getBasicCondition(@HeaderParam("httpRequesterId") Integer httpRequesterId,  int contractId,
 			@PathParam("basicConditionId") int basicConditionId) {
-		return ac.getBasicCondition(token, contractId, basicConditionId);
+		return ac.getBasicCondition(httpRequesterId, contractId, basicConditionId);
 	}
 
+	@UserAuthorization
 	@Override
 	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/basicconditions/all")
-	public List<BasicCondition> getAllBasicConditions(String token) {
-		return ac.getAllBasicConditions(token);
+	public List<BasicCondition> getAllBasicConditions(Integer httpRequesterId) {
+		return ac.getAllBasicConditions(httpRequesterId);
 	}
 
 	@UserAuthorization
@@ -247,9 +251,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/requirements")
-	public Response saveRequirement(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response saveRequirement(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("criteriaType") String criteriaType, @PathParam("contractId") int contractId) {
-		return ac.saveRequirement(token, description, criteriaType, contractId);
+		return ac.saveRequirement(httpRequesterId, description, criteriaType, contractId);
 	}
 
 	@UserAuthorization
@@ -257,9 +261,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/requirements/{requirementId}")
-	public Response deleteRequirement(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response deleteRequirement(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("requirementId") int requirementId) {
-		return ac.deleteRequirement(token, contractId, requirementId);
+		return ac.deleteRequirement(httpRequesterId, contractId, requirementId);
 	}
 
 	@UserAuthorization
@@ -267,10 +271,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/requirements/{requirementId}")
-	public Response updateRequirement(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response updateRequirement(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("criteriaType") String criteriaType, @PathParam("contractId") int contractID,
 			@PathParam("requirementId") int requirementId) {
-		return ac.updateRequirement(token, description, criteriaType, contractID, requirementId);
+		return ac.updateRequirement(httpRequesterId, description, criteriaType, contractID, requirementId);
 	}
 
 	@UserAuthorization
@@ -278,9 +282,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/requirements/{requirementId}")
-	public Response getRequirements(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response getRequirements(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("requirementId") int requirementId) {
-		return ac.getRequirements(token, contractId, requirementId);
+		return ac.getRequirements(httpRequesterId, contractId, requirementId);
 	}
 
 	@UserAuthorization
@@ -288,9 +292,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms")
-	public Response saveTerm(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response saveTerm(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("termType") String termType, @PathParam("contractId") int contractId) {
-		return ac.saveTerm(token, description, termType, contractId);
+		return ac.saveTerm(httpRequesterId, description, termType, contractId);
 	}
 
 	@UserAuthorization
@@ -298,9 +302,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@DELETE
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms/{termId}")
-	public Response deleteTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response deleteTerm(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("termId") int termId) {
-		return ac.deleteTerm(token, contractId, termId);
+		return ac.deleteTerm(httpRequesterId, contractId, termId);
 	}
 
 	@UserAuthorization
@@ -308,10 +312,10 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms/{termId}")
-	public Response updateTerm(@CookieParam("token") String token, @FormParam("description") String description,
+	public Response updateTerm(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("description") String description,
 			@FormParam("termType") String termType, @PathParam("contractId") int contractId,
 			@PathParam("termId") int termId) {
-		return ac.updateTerm(token, description, termType, contractId, termId);
+		return ac.updateTerm(httpRequesterId, description, termType, contractId, termId);
 	}
 
 	@UserAuthorization
@@ -319,9 +323,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/terms/{termId}")
-	public Response getTerm(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response getTerm(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("termId") int termId) {
-		return ac.getTerm(token, contractId, termId);
+		return ac.getTerm(httpRequesterId, contractId, termId);
 	}
 
 	@UserAuthorization
@@ -329,8 +333,8 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates")
-	public Response saveCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId) {
-		return ac.saveCandidate(token, contractId);
+	public Response saveCandidate(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId) {
+		return ac.saveCandidate(httpRequesterId, contractId);
 	}
 
 	@UserAuthorization
@@ -338,7 +342,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates/{candidateId}")
-	public Response updateCandidate(@HeaderParam("httpRequesterId") String httpRequesterId,
+	public Response updateCandidate(@HeaderParam("httpRequesterId") Integer httpRequesterId,
 			@FormParam("candidateAccepted") Boolean candidateAccepted,
 			@FormParam("candidateDeclined") Boolean candidateDeclined, @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
@@ -350,9 +354,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidates/{candidateId}")
-	public Response getCandidate(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response getCandidate(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
-		return ac.getCandidate(token, contractId, candidateId);
+		return ac.getCandidate(httpRequesterId, contractId, candidateId);
 	}
 
 	@UserAuthorization
@@ -360,21 +364,22 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
-	public Response saveOffer(@CookieParam("token") String token, @FormParam("startDate") String startDate,
+	public Response saveOffer(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @FormParam("startDate") String startDate,
 			@FormParam("endDate") String endDate, @FormParam("comment") String comment,
 			@FormParam("teleWorkPossible") boolean teleWorkPossible, @PathParam("contractId") int contractId,
 			@FormParam("workload") int estimatedWorkload, @FormParam("fee") double fee,
 			@PathParam("candidateId") Integer candidateId) {
 
-		return ac.saveOffer(token, startDate, endDate, comment, teleWorkPossible, contractId, estimatedWorkload, fee,
+		return ac.saveOffer(httpRequesterId, startDate, endDate, comment, teleWorkPossible, contractId, estimatedWorkload, fee,
 				candidateId);
 	}
 
 	@UserAuthorization
 	@Override
 	@PUT
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidate/offers/{offerId}")
-	public Response acceptOffer(@HeaderParam("httpReqeusterId") String httpRequesterId, @PathParam("offerId") Integer offerId, 
+	public Response acceptOffer(@HeaderParam("httpRequesterId") Integer httpRequesterId, @PathParam("offerId") Integer offerId, 
 			@PathParam("contractId") Integer contractId) {
 		return ac.acceptOffer(httpRequesterId, offerId, contractId);
 	}
@@ -384,9 +389,9 @@ public class ContractRestService implements _ApplicationContractService {
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
-	public Response getOffers(@CookieParam("token") String token, @PathParam("contractId") int contractId,
+	public Response getOffers(@HeaderParam("httpRequesterId") Integer httpRequesterId,  @PathParam("contractId") int contractId,
 			@PathParam("candidateId") int candidateId) {
-		return ac.getOffers(token, contractId, candidateId);
+		return ac.getOffers(httpRequesterId, contractId, candidateId);
 	}
 
 }

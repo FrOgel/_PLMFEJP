@@ -10,98 +10,98 @@ import de.mpa.domain.BasicCondition;
 @Local
 public interface _ApplicationContractService {
 	// Contract itself
-	public Response saveContract(String token, String designation, String contractType, String contractSubject);
+	public Response saveContract(Integer httpRequesterId,String designation, String contractType, String contractSubject);
 
-	public Response updateContract(String token, String designation, String contractType, String contractSubject,
+	public Response updateContract(Integer httpRequesterId,String designation, String contractType, String contractSubject,
 			String contractState, Integer contractId);
 
-	public Response deleteContract(String token, Integer contractId);
+	public Response deleteContract(Integer httpRequesterId,Integer contractId);
 
-	public Response getContracts(String token);
+	public Response getContracts(Integer httpRequesterId);
 
-	public Response getContract(String token, Integer contractId);
+	public Response getContract(Integer httpRequesterId,Integer contractId);
 
 	public Response getUserContractRelationship(Integer principalId, Integer userId);
 
 	// Sub section search for contracts ==> Additional resource which won't be
 	// persisted
 
-	public Response createContractSearch(String token, String searchText, String country, String zipCode, String city,
+	public Response createContractSearch(Integer httpRequesterId,String searchText, String country, String zipCode, String city,
 			int radius);
 
 	// Place of performance
 
-	public Response createPlaceOfPerformance(String token, String country, String place, String zipCode,
+	public Response createPlaceOfPerformance(Integer httpRequesterId,String country, String place, String zipCode,
 			int contractId);
 
-	public Response updatePlaceOfPerformance(String token, String country, String place, String zipCode,
+	public Response updatePlaceOfPerformance(Integer httpRequesterId,String country, String place, String zipCode,
 			int contractId);
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Task in contract
-	public Response saveTask(String token, String description, String type, String subType, int contractId);
+	public Response saveTask(Integer httpRequesterId,String description, String type, String subType, int contractId);
 
-	public Response updateTask(String token, String description, String type, String subType, int contractId,
+	public Response updateTask(Integer httpRequesterId,String description, String type, String subType, int contractId,
 			int taskId);
 
-	public Response deleteTask(String token, int contractId, int taskId);
+	public Response deleteTask(Integer httpRequesterId,int contractId, int taskId);
 
-	public Response getTasks(String token, int contractId);
+	public Response getTasks(Integer httpRequesterId,int contractId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Basic condition in contract
-	public Response saveBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+	public Response saveBasicCondition(Integer httpRequesterId,String startDate, String endDate, boolean teleWorkPossible,
 			int contractId, int estimatedWorkload, double fee);
 
-	public Response deleteBasicCondition(String token, int contractId);
+	public Response deleteBasicCondition(Integer httpRequesterId,int contractId);
 
-	public Response updateBasicCondition(String token, String startDate, String endDate, boolean teleWorkPossible,
+	public Response updateBasicCondition(Integer httpRequesterId,String startDate, String endDate, boolean teleWorkPossible,
 			int contractId, int basicConditionId, int estimatedWorkload, double fee);
 
-	public Response getBasicCondition(String token, int contractId, int basicConditionId);
+	public Response getBasicCondition(Integer httpRequesterId,int contractId, int basicConditionId);
 
-	public List<BasicCondition> getAllBasicConditions(String token); // Might be used for the matching engine
+	public List<BasicCondition> getAllBasicConditions(Integer httpRequesterId); // Might be used for the matching engine
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Requirement in contract
-	public Response saveRequirement(String token, String description, String criteriaType, int contractId);
+	public Response saveRequirement(Integer httpRequesterId,String description, String criteriaType, int contractId);
 
-	public Response deleteRequirement(String token, int contractId, int requirementId);
+	public Response deleteRequirement(Integer httpRequesterId,int contractId, int requirementId);
 
-	public Response updateRequirement(String token, String description, String criteriaType, int contractId,
+	public Response updateRequirement(Integer httpRequesterId,String description, String criteriaType, int contractId,
 			int requirementId);
 
-	public Response getRequirements(String token, int contractId, int requirementId);
+	public Response getRequirements(Integer httpRequesterId,int contractId, int requirementId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Special condition in contract
-	public Response saveTerm(String token, String description, String termType, int contractId);
+	public Response saveTerm(Integer httpRequesterId,String description, String termType, int contractId);
 
-	public Response deleteTerm(String token, int contractId, int specialConditionId);
+	public Response deleteTerm(Integer httpRequesterId,int contractId, int specialConditionId);
 
-	public Response updateTerm(String token, String description, String termType, int contractId,
+	public Response updateTerm(Integer httpRequesterId,String description, String termType, int contractId,
 			int specialConditionId);
 
-	public Response getTerm(String token, int contractId, int specialConditionId);
+	public Response getTerm(Integer httpRequesterId,int contractId, int specialConditionId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Candidate in contract
-	public Response saveCandidate(String token, int contractId);
+	public Response saveCandidate(Integer httpRequesterId,int contractId);
 
-	public Response updateCandidate(String httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
+	public Response updateCandidate(Integer httpRequesterId, Boolean candidateAccepted, Boolean candidateDeclined, int contractId,
 			int candidateId);
 
-	public Response getCandidate(String token, int contractId, int candidateId);
+	public Response getCandidate(Integer httpRequesterId,int contractId, int candidateId);
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Condition offer in contract from candidate or principal
-	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible,
+	public Response saveOffer(Integer httpRequesterId,String startDate, String endDate, String comment, boolean teleWorkPossible,
 			int contractId, int estimatedWorkload, double fee, Integer candidateId);
 
-	public Response acceptOffer(String httpRequesterId, Integer offerId, Integer contractId);
+	public Response acceptOffer(Integer httpRequesterId, Integer offerId, Integer contractId);
 	
-	public Response getOffers(String token, int contractId, int candidateId);
+	public Response getOffers(Integer httpRequesterId,int contractId, int candidateId);
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

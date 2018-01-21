@@ -1,7 +1,5 @@
 package de.mpa.domain;
 
-import java.time.LocalDateTime;
-
 import javax.persistence.Entity;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
