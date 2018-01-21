@@ -121,7 +121,7 @@ public class PersistenceContract {
 
 		Contract c = entitymanager.find(Contract.class, contractId);
 
-		c.getBasicConditions().setPlaceOfPerformance(p_new);
+		c.setPlaceOfPerformance(p_new);
 
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
@@ -403,6 +403,7 @@ public class PersistenceContract {
 		boolean firstRun = true;
 
 		for (UserMatch m : matches) {
+			
 			int newContractId = m.getContractId();
 			if (newContractId != oldContractId) {
 				contractIterator++;
@@ -456,17 +457,18 @@ public class PersistenceContract {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT b.*, c.*, (SELECT u.userId FROM mpa_identitymanagement.user u WHERE CD_DESIREID = c.desireId) userid, "
-					+ "(SELECT con.SUBJECT FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) contractSubject, "
-					+ "(SELECT con.CONTRACTID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) contractId, "
-					+ "(SELECT con.PRINCIPALID FROM mpa_contractmanagement.contract con WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID) principalId, "
-					+ "(SELECT g.LATITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLatitude, "
-					+ "(SELECT g.LONGITUDE FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) gLongitude, "
-					+ "(SELECT g.RADIUS FROM mpa_identitymanagement.geographicalcondition g WHERE g.PLACEID = c.PLACE_PLACEID) radius, "
+			sql = "SELECT b.TELEWORKPOSSIBLE, con.contractId contractId, con.SUBJECT contractSubject, con.principalId principalId, "
+					+ " g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, "
 					+ "(SELECT p.LATITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLatitude,"
 					+ "(SELECT p.LONGITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLongitude "
-					+ "FROM mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c "
-					+ "WHERE b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 " + "AND b.FEE >= c.MINFEE*0.7 "
+					+ "FROM mpa_contractmanagement.contract con, mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c, "
+					+ "mpa_identitymanagement.geographicalcondition g, mpa_identitymanagement.user u "
+					+ "WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID "
+					+ "AND g.PLACEID = c.PLACE_PLACEID "
+					+ "AND u.CD_DESIREID = c.desireId "
+					+ "AND NOT con.principalId = u.userId "
+					+ "AND b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 " 
+					+ "AND b.FEE >= c.MINFEE*0.7 "
 					+ "AND b.ENDDATE <= c.EARLIESTENDDATE " + "AND b.STARTDATE >= c.EARLIESTSTARTDATE ";
 
 			System.out.println(sql);

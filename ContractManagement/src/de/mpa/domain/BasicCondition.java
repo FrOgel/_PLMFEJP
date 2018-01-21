@@ -10,6 +10,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
@@ -20,12 +22,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @NamedQuery(query = "SELECT b FROM BasicCondition b", name = "get all conditions")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlRootElement
 public class BasicCondition {
 
 	// Attribute declaration
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int basicConditionId;
 	private int estimatedWorkload;
 	private double fee;
@@ -33,8 +36,6 @@ public class BasicCondition {
 	private Date startDate;
 	private Date endDate;
 	private LocalDate timestamp;
-	@OneToOne(cascade = CascadeType.ALL)
-	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -115,15 +116,6 @@ public class BasicCondition {
 	@XmlElement
 	public LocalDate getTimestamp() {
 		return timestamp;
-	}
-
-	@XmlElement
-	public PlaceOfPerformance getPlaceOfPerformance() {
-		return placeOfPerformance;
-	}
-	
-	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
-		this.placeOfPerformance = placeOfPerformance;
 	}
 
 	

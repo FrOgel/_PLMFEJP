@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,20 +15,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
 @XmlRootElement
-public class ConditionOffer {
+public class ConditionOffer extends BasicCondition{
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int negotiationConditionId;
 	@OneToOne(cascade = CascadeType.ALL)
 	private BasicCondition condition;
+	private String comment;
 	private int senderId;
 	private int receiverId;
-	private LocalDateTime timestamp;
+	private LocalDateTime offerTimestamp;
 
 	public ConditionOffer() {
 		super();
-		this.timestamp = LocalDateTime.now();
+		this.offerTimestamp = LocalDateTime.now();
 	}
 
 	@XmlElement
@@ -62,17 +57,19 @@ public class ConditionOffer {
 	}
 
 	@XmlElement
-	public int getNegotiationConditionId() {
-		return negotiationConditionId;
+	public LocalDateTime getOfferTimeStamp() {
+		return offerTimestamp;
 	}
 
-	public void setNegotiationConditionId(int negotiationConditionId) {
-		this.negotiationConditionId = negotiationConditionId;
-	}
-
+	
 	@XmlElement
-	public LocalDateTime getTimestamp() {
-		return timestamp;
+	public String getCommentary() {
+		return comment;
+	}
+
+	
+	public void setCommentary(String commentary) {
+		this.comment = commentary;
 	}
 
 

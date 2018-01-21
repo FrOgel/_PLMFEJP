@@ -91,8 +91,7 @@ public interface _ApplicationContractService {
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 	// Condition offer in contract from candidate or principal
-	public Response saveOffer(String token, int contractId, int candidateId, String location, int radius,
-			String startDate, String endDate, int estimatedWorkload, double fee);
+	public Response saveOffer(String token, String startDate, String endDate, String comment, boolean teleWorkPossible, int contractId, int estimatedWorkload, double fee);
 
 	public Response getOffers(String token, int contractId, int candidateId);
 

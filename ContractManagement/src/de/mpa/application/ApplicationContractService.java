@@ -57,7 +57,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@EJB
 	private PersistenceContract pc;
 	private SecurityService ss = new SecurityService();
-
+	
 	// Methods for CRUD operations on the basic contract
 	@Override
 	public Response saveContract(String token, String designation, String contractType, String contractSubject) {
@@ -203,7 +203,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
 			for (Contract c : contractList) {
-				PlaceOfPerformance p_old = c.getBasicConditions().getPlaceOfPerformance();
+				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 
 				if (p_old != null) {
 					if (ls.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
@@ -231,7 +231,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (c.getBasicConditions() == null)
 			return Response.status(Status.BAD_REQUEST).entity("No conditions defined").build();
 
-		if (c.getBasicConditions().getPlaceOfPerformance() != null) {
+		if (c.getPlaceOfPerformance() != null) {
 			return this.updatePlaceOfPerformance(token, country, place, zipCode, contractId);
 		}
 
@@ -279,7 +279,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		PlaceOfPerformance p_old = c.getBasicConditions().getPlaceOfPerformance();
+		PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 		p_new.setPlaceId(p_old.getPlaceId());
 
 		if ((!(p_new.getCountry().equals(p_old.getCountry()))) || (!(p_new.getPlace().equals(p_old.getPlace())))
@@ -950,7 +950,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 					} else {
 						urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
 					}
-					urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
+					urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject().replace(" ", "%20"));
 				}
 
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
@@ -1034,7 +1034,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	@Schedule(hour = "16", minute = "34")
+	@Schedule(hour = "18", minute = "13")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 		Collections.sort(matches, new UserMatchComparator());

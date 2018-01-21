@@ -24,21 +24,30 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 @XmlRootElement
 @NamedQueries({
-	@NamedQuery(query = "SELECT c FROM Contract c, Candidate can WHERE c.clientID = :userId OR can.candidateId = :userCandidateId", name = "user contract relationship"),
+		@NamedQuery(query = "SELECT c FROM Contract c, Candidate can WHERE c.clientID = :userId OR can.candidateId = :userCandidateId", name = "user contract relationship"),
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.principalID = :principalID", name = "find user contracts"),
 		@NamedQuery(query = "SELECT COUNT(c.principalID) FROM Contract c WHERE c.contractID = :contractId AND "
 				+ "c.principalID = :requesterId", name = "check requesterId"),
 		@NamedQuery(query = "SELECT c FROM Contract c WHERE c.searchString LIKE :searchString", name = "search contracts") })
 public class Contract {
-	
-	
-	//Different defined views on the contract based on the user relationship to the contract
-	//Not fully implemented
-	public static class InternalView extends PrincipalView{}
-	public static class PrincipalView extends ContractorView{}
-	public static class ContractorView extends CandidateView{}
-	public static class CandidateView extends Viewer{}
-	public static class Viewer {}
+
+	// Different defined views on the contract based on the user relationship to the
+	// contract
+	// Not fully implemented
+	public static class InternalView extends PrincipalView {
+	}
+
+	public static class PrincipalView extends ContractorView {
+	}
+
+	public static class ContractorView extends CandidateView {
+	}
+
+	public static class CandidateView extends Viewer {
+	}
+
+	public static class Viewer {
+	}
 
 	// Attribute declaration
 	@JsonView(Contract.InternalView.class)
@@ -79,8 +88,8 @@ public class Contract {
 	private List<Requirement> requirementsProfile = new ArrayList<Requirement>();
 	@JsonView(Contract.InternalView.class)
 	private String searchString = "";
-	
-	
+	private PlaceOfPerformance placeOfPerformance;
+
 	// ---------------------
 
 	// Constructor to build a contract object
@@ -248,5 +257,14 @@ public class Contract {
 			System.out.println("ok");
 		}
 	}
-	
+
+	@XmlElement
+	public PlaceOfPerformance getPlaceOfPerformance() {
+		return placeOfPerformance;
+	}
+
+	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
+		this.placeOfPerformance = placeOfPerformance;
+	}
+
 }
