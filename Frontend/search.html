@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Vladislav Lepichin & Jonas Heffner">
+
+    <title>JOBEX</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="css/selfmade.css" rel="stylesheet">
+
+    <!-- Custom JS -->
+    <script src="js/selfmade.js"></script>
+
+    <!-- Bootstrap JS, AJAX and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.min.js"></script>
+
+    <script>
+
+
+<!-- Used for hiding everything except initial content (after all HTML has been loaded)  -->
+$(document).ready(function(){
+  $('#registerGroup').hide();
+  $('#businessOrPrivate').hide();
+  $('#impressum').hide();
+})
+
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function() {
+  'use strict';
+
+  window.addEventListener('load', function() {
+    var form = document.getElementById('loginData');
+    form.addEventListener('submit', function(event) {
+      if (form.checkValidity() === false) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  }, false);
+})();
+
+<!-- used to hide whole content and show impressum-->
+function hideContentShowImpressum() {
+  $('#contentWrapper').hide();
+  $('#impressum').show();
+}
+
+
+<!-- used to hide everything except navbar and footer-->
+function hideEveryContent() {
+  $('#contentWrapper').hide();
+}
+
+<!-- used for display of the business form group (register)-->
+function businessGo() {
+  $('#businessOrPrivate').hide();
+  $('#registerGroup').show();
+  $('#registerGroupPrivate').hide();
+}
+
+<!-- used for display of the private form group (register) -->
+function privateGo() {
+  $('#businessOrPrivate').hide();
+  $('#registerGroup').show();
+  $('#registerGroupBusiness').hide();
+}
+
+<!-- used for display of the private form group (register) -->
+function registerButtonClick() {
+  $('#registerGroup').hide();
+
+}
+        <!-- Used for switching between login and register button group (only oneway)  -->
+        function registerDisplay() {
+          $('#loginGroup').hide();
+          $('#logInButton').hide();
+          $('#businessOrPrivate').show();
+        }
+    </script>
+
+    <!-- Additional fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet">
+  </head>
+
+
+  <body style="background-color:SlateGrey;">
+
+    <!-- Navigation -->
+    <nav class="navbar bg-dark navbar-dark">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/jobex.png" width="120" height="50" max-width="100%" class="d-inline-block align-top" alt="">
+      </a>
+      <form class="form-inline">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" >
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
+      </form>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+              <button type="button" class="btn btn-outline-primary btn-lg" onClick="registerDisplay() " style="display:none;">Registrieren</button>
+        </li>
+      </ul>
+    </nav>
+<!-- //Navigation -->
+
+
+<!-- Content Wrapper -->
+<div id="contentWrapper">
+
+
+<div class="container">
+<div class="input-group input-group-lg search-margin">
+  <input class="form-control form-control-lg" type="search" placeholder="Search" aria-label="Search" >
+</div>
+
+
+<div class="form-group search-margin">
+      <h1>Filter</h1>
+  <label for="sel1">Region:</label>
+  <select class="form-control selectpicker" id="sel1">
+    <option>Bayern</option>
+    <option>Baden-Würtemberg</option>
+    <option>Hamburg</option>
+  </select>
+
+  <label for="sel2">Branche:</label>
+  <select class="form-control" id="sel2">
+    <option>IT</option>
+    <option>Energiewirtschaft</option>
+    <option>Automotive</option>
+    <option>Healthcare</option>
+  </select>
+</div>
+
+
+<h1 class="search-margin">Diese Aufträge könnten passen</h1>
+  <div class="container-fluid">
+    <div class="container-fluid">
+      <div class="row search-margin">
+        <div class="col-sm-6">
+          <div class="card" style="width:400px">
+          <img class="card-img-top" src="img/dhbw_logo.png" alt="Card image" style="width:100%;">
+             <div class="card-body">
+               <h4 class="card-title">Dozent Cloud Services</h4>
+               <p class="card-text">Dieser Text ist reiner Beispieltext, komplett nichtssagen und nur für die Präsentation dieser sexy Card.</p>
+               <a href="#" class="btn btn-primary">Zum Angebot</a>
+             </div>
+           </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="card" style="width:400px">
+          <img class="card-img-top" src="img/bmw_logo.png" alt="Card image" style="width:100%">
+             <div class="card-body">
+               <h4 class="card-title">C Entwickler</h4>
+               <p class="card-text">Dieser Text ist reiner Beispieltext, komplett nichtssagen und nur für die Präsentation dieser sexy Card.</p>
+               <a href="#" class="btn btn-primary">Zum Angebot</a>
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </body>
+  </html>
+
+
+
+</div>
+
+
+
+
+
+</div>
+<!-- //Content Wrapper -->
+
+<!-- Impressum -->
+<div  id="impressum" class="jumbotron jumbotron-fluid" style="background-color:SlateGrey;">
+  <div class="container" style="font-color: white;">
+    <h1 class="display-4">Impressum</h1>
+    <p class="lead">JOBEX GmbH</p>
+    <p class="lead">Lohrtalweg 10</p>
+    <p class="lead">12345 Mosbach</p>
+  </div>
+</div>
+<!-- //Impressum -->
+
+
+<!-- Footer -->
+<div class="footer">
+<div class="container">
+  <div class="border footer-position"></div>
+  <div class="footer-position">
+    <p>© 2017 JOBEX | <a onclick="hideContentShowImpressum() ">Impressum</a></p>
+  </div>
+</div>
+</div>
+<!-- //Footer -->
+
+  </body>
+  </html>

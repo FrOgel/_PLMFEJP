@@ -15,6 +15,10 @@
   margin-top: 2%;
   position:sticky;
 }
+
+.search-margin{
+  margin-top: 5%;
+}
 /* USED FOR MID AND LARGE SCREENS (TABLET AND DESKTOP) */
 @media only screen and (min-width: 576px){
 
