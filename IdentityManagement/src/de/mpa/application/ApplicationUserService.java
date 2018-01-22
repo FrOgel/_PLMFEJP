@@ -610,7 +610,6 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return lng;
 	}
 
-	
 	// Process user based json view for user objects
 	private String processJsonViewForContract(User u, int requesterId) {
 		ObjectMapper mapper = new ObjectMapper();

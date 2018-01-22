@@ -5,37 +5,35 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import com.fasterxml.jackson.annotation.JsonView;
 
 /*The main purpose of this class is to provide an uniform possibility to compare the conditions of a contract with the 
  * condition desire of a possible client.
  */
 @Entity
 @NamedQuery(query = "SELECT b FROM BasicCondition b", name = "get all conditions")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @XmlRootElement
 public class BasicCondition {
 
 	// Attribute declaration
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int basicConditionId;
 	private int estimatedWorkload;
 	private double fee;
+	private boolean teleWorkPossible;
 	private Date startDate;
 	private Date endDate;
 	private LocalDate timestamp;
-	@OneToOne(cascade = CascadeType.ALL)
-	private PlaceOfPerformance placeOfPerformance;
 	// ---------------------
 
 	// Constructor to build a basic condition
@@ -118,13 +116,15 @@ public class BasicCondition {
 		return timestamp;
 	}
 
-	@XmlElement
-	public PlaceOfPerformance getPlaceOfPerformance() {
-		return placeOfPerformance;
-	}
 	
-	public void setPlaceOfPerformance(PlaceOfPerformance placeOfPerformance) {
-		this.placeOfPerformance = placeOfPerformance;
+	@XmlElement
+	public boolean isTeleWorkPossible() {
+		return teleWorkPossible;
+	}
+
+	
+	public void setTeleWorkPossible(boolean teleWorkPossible) {
+		this.teleWorkPossible = teleWorkPossible;
 	}
 
 }

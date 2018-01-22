@@ -11,6 +11,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 /**
  * @author 		frank.vogel
  * created on: 	06.01.2018
@@ -22,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CompanyUser extends User{
 	
 	//Attribute declaration
+	@JsonView(User.PartnerView.class)
 	private String companyName;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<ContactPerson> contactPersons = new ArrayList<ContactPerson>();

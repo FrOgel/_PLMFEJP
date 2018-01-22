@@ -21,6 +21,7 @@ public class ConditionDesire {
 	private int desireId;
 	private int maxWorkload;
 	private double minFee;
+	// contract type filtering comes here
 	private Date earliestStartDate;
 	private Date earliestEndDate;
 	@OneToOne(cascade = CascadeType.ALL)

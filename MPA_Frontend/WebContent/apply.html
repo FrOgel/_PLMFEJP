@@ -64,6 +64,20 @@ function getOffers(){
 		});makeOffer
 	
 }
+function acceptOffer(){
+	document.getElementById("authorized").innerHTML = "";
+	var contractId = $('#contractId').val();
+	var offerId = $('#offerId').val();
+	$.ajax({
+		type: 'PUT',
+		url: "https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/candidate/offers/" + offerId,
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully applied ";
+				}
+		});makeOffer
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -73,7 +87,7 @@ function getOffers(){
 	<button onclick="applyForContract(); return false;">Apply for contract</button>"
 
 	<form name="apply" id="apply">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		Apply to contract: <input type="text" name="contractId" id="contractId" value="1"/>
 	</form>
 	
 	
@@ -88,17 +102,22 @@ function getOffers(){
 	
 	<p>Make your offer</p>
 	<form name="basicCondition" id="basicCondition">
-		<input type="hidden" name="candidateId" id="candidateId" value="1"/>
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		Candidate: <input type="text" name="candidateId" id="candidateId" value="1"/>
+		Contract: <input type="text" name="contractId" id="contractId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
-		<p>location <input type="text" name="location" id="location"/>
-		<p>radius <input type="text" name="radius" id="radius"/>
+		<p>Tele work? <input type="text" name="teleWorkPossible" id="teleWorkPossible"/>
 		<p>Workload <input type="text" name="workload" id="workload"/>
 		<p>Fee <input type="text" name="fee" id="fee"/>
+		<p>Comment <input type="text" name="comment" id="comment"/>
 		<button onclick="makeOffer(); return false;">Offer!</button>
 		<button onclick="getOffers(); return false;">Get offers!</button>
 	</form>
+	<form>
+		OfferId: <input type="text" name="offerId" id="offerId"/>
+		<button onclick="acceptOffer(); return false;">Accept offer!</button>
+	</form>
+	
 </body>
 
 
