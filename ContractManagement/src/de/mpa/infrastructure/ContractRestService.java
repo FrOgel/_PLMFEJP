@@ -3,6 +3,8 @@ package de.mpa.infrastructure;
 import java.util.List;
 
 import javax.ejb.EJB;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -24,7 +26,6 @@ import de.mpa.domain.Contract;
 
 @Path("/contract")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-
 public class ContractRestService implements _ApplicationContractService {
 
 	// Inject ApplicationContractService
@@ -56,7 +57,7 @@ public class ContractRestService implements _ApplicationContractService {
 	 * catch (UnknownHostException e) { // TODO Auto-generated catch block
 	 * e.printStackTrace(); } return builder.toTemplate(); }
 	 */
-
+	
 	/*
 	 * Testring https://localhost:8443/ContractManagement/rest/contract/create
 	 */

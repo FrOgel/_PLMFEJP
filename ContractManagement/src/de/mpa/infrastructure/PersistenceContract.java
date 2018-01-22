@@ -32,6 +32,10 @@ public class PersistenceContract {
 	@EJB
 	LocationService ls;
 
+	final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
+	final String USER = "root";
+	final String PASS = "";
+	
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 
@@ -444,12 +448,6 @@ public class PersistenceContract {
 
 	// DB connection with jdbc ==> reason: JPA is entity bounded
 	public List<UserMatch> getContractUserMatches() {
-
-		final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
-
-		// Database credentials
-		final String USER = "root";
-		final String PASS = "";
 
 		Connection conn = null;
 		Statement stmt = null;

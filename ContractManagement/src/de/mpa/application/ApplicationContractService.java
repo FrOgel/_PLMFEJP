@@ -35,6 +35,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
+import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.CriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
@@ -1162,7 +1163,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	@Schedule(hour = "17", minute = "05")
+	@Schedule(hour = "17", minute = "32")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 		Collections.sort(matches, new UserMatchComparator());
@@ -1184,6 +1185,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 		groupedMatches = matches.stream().collect(Collectors.groupingBy(UserMatch::getUserId));
 		
 		List<List<UserMatch>> clientMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
+		
+		i = 0;
 		
 		for (List<UserMatch> m : clientMatches) {
 			String html = this.getClientSuggestionMail(m);

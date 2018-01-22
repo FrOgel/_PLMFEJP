@@ -203,10 +203,10 @@ public class UserRestService implements _ApplicationUserService {
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/user/conditiondesire")
 	public Response saveConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate, 
-			@FormParam("endDate") String endDate, @FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
+			@FormParam("endDate") String endDate, @FormParam("contractType") String contractType, @FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
 			@FormParam("country") String country, @FormParam("city") String city, @FormParam("zipCode") String zipCode,
 			@FormParam("radius") int radius) {
-		return as.saveConditionDesire(token, startDate, endDate, maxWorkload, fee, country, city, zipCode, radius);
+		return as.saveConditionDesire(token, startDate, endDate, contractType, maxWorkload, fee, country, city, zipCode, radius);
 	}
 
 	@UserAuthentication

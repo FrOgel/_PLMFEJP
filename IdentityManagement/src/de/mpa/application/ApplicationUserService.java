@@ -430,7 +430,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 	}
 
 	@Override
-	public Response saveConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+	public Response saveConditionDesire(String token, String startDate, String endDate, String contractType, int maxWorkload, double fee,
 			String country, String city, String zipCode, int radius) {
 		
 		int userId = Integer.parseInt(ss.authenticateToken(token));
@@ -458,6 +458,13 @@ public class ApplicationUserService implements _ApplicationUserService {
 			cd.setMaxWorkload(maxWorkload);
 		if(fee!=0)
 			cd.setMinFee(fee);
+		if(!(contractType.equals(""))) {
+			if(contractType.toUpperCase().charAt(0)=='D') {
+				cd.setContractType("Development");
+			} else {
+				cd.setContractType("Consulting");
+			}
+		}
 		
 		GeographicalCondition gc;
 		
