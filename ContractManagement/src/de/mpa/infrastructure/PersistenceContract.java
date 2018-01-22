@@ -469,12 +469,12 @@ public class PersistenceContract {
 			stmt = conn.createStatement();
 			String sql;
 			sql = "SELECT b.TELEWORKPOSSIBLE, con.contractId contractId, con.SUBJECT contractSubject, con.principalId principalId, "
-					+ " g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, "
-					+ "(SELECT p.LATITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLatitude,"
-					+ "(SELECT p.LONGITUDE FROM mpa_contractmanagement.placeofperformance p WHERE p.PLACEID = b.PLACEOFPERFORMANCE_PLACEID) pLongitude "
-					+ "FROM mpa_contractmanagement.contract con, mpa_contractmanagement.basiccondition b, mpa_identitymanagement.conditiondesire c, "
+					+ " g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, p.LATITUDE pLatitude, p.LONGITUDE pLongitude "
+					+ "FROM mpa_contractmanagement.contract con, mpa_contractmanagement.basiccondition b, mpa_contractmanagement.placeofperformance p, "
+					+ "mpa_identitymanagement.conditiondesire c, "
 					+ "mpa_identitymanagement.geographicalcondition g, mpa_identitymanagement.user u "
 					+ "WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID "
+					+ "AND p.PLACEID = con.PLACEOFPERFORMANCE_PLACEID "
 					+ "AND g.PLACEID = c.PLACE_PLACEID "
 					+ "AND u.CD_DESIREID = c.desireId "
 					+ "AND NOT con.principalId = u.userId "
