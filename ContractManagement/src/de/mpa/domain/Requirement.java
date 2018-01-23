@@ -18,7 +18,7 @@ public class Requirement {
 	private int requirementID;
 	private String description;
 	@Enumerated(EnumType.STRING)
-	private CriteriaType criteriaType;
+	private RequirementCriteriaType criteriaType;
 
 	// Constructor to build a requirement
 	// ---------------------
@@ -52,11 +52,11 @@ public class Requirement {
 	}
 
 	@XmlElement
-	public CriteriaType getCriteriaType() {
+	public RequirementCriteriaType getCriteriaType() {
 		return criteriaType;
 	}
 
-	public void setCriteriaType(CriteriaType criteriaType) {
+	public void setCriteriaType(RequirementCriteriaType criteriaType) {
 		this.criteriaType = criteriaType;
 	}
 }

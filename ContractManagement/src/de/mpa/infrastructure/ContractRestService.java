@@ -21,6 +21,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import de.mpa.application._ApplicationContractService;
 import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
+import de.mpa.domain.ContractType;
+import de.mpa.domain.RequirementCriteriaType;
+import de.mpa.domain.TaskSubType;
+import de.mpa.domain.TaskType;
+import de.mpa.domain.TermType;
 
 @Path("/contract")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
@@ -393,4 +398,60 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getOffers(httpRequesterId, contractId, candidateId);
 	}
 
+	//Get enums
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/contractstates")
+	public Response getContractStates() {
+		return ac.getContractStates();
+	}
+	
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/contracttypes")
+	public Response getContractType() {
+		return ac.getContractType();
+	}
+
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/requirements/types")
+	public Response getRequirementCriteriaType() {
+		return ac.getRequirementCriteriaType();
+	}
+
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/tasks/types")
+	public Response getTaskType() {
+		return ac.getTaskType();
+	}
+
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/tasks/subtypes")
+	public Response getTaskSubType() {
+		return ac.getTaskSubType();
+	}
+
+	@UserAuthorization
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("contracts/terms/types")
+	public Response getTermType() {
+		return ac.getTermType();
+	}
+
+	
 }

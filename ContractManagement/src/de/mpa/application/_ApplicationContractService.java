@@ -105,4 +105,18 @@ public interface _ApplicationContractService {
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	
+	// Get enums
+	public Response getContractStates();
+	
+	public Response getContractType();
+	
+	public Response getRequirementCriteriaType();
+	
+	public Response getTaskType();
+	
+	public Response getTaskSubType();
+	
+	public Response getTermType();
+	
 }

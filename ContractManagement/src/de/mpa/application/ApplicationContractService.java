@@ -37,7 +37,7 @@ import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
-import de.mpa.domain.CriteriaType;
+import de.mpa.domain.RequirementCriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
@@ -527,7 +527,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 		if (!(criteriaType.equals(""))) {
-			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
+			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("No criteria type").build();
 		}
@@ -575,7 +575,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			r_new.setDescription(description);
 
 		if (!(criteriaType.equals("")))
-			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
+			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
 
 		r_new = (Requirement) pc.updateExistingObject(r_new);
 
@@ -922,6 +922,44 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 	}
 
+	// Methods for retrieving enums
+	public Response getContractStates() {
+		ContractState[] contractTypes = ContractState.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	public Response getContractType() {
+		ContractType[] contractTypes = ContractType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getRequirementCriteriaType() {
+		RequirementCriteriaType[] contractTypes = RequirementCriteriaType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTaskType() {
+		TaskType[] contractTypes = TaskType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTaskSubType() {
+		TaskSubType[] contractTypes = TaskSubType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTermType() {
+		TermType[] contractTypes = TermType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
 	// Private json view processing depending on the user - contract relationship
 	private String processJsonViewForContract(Contract c, int userId) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -951,7 +989,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 		System.out.println(viewClass);
-		
+
 		return result;
 	}
 
@@ -1040,10 +1078,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
 
-				
 				userIterator++;
 			}
-			
+
 			System.out.println(urlStringBuilder);
 
 			String urlString = urlStringBuilder.toString();
@@ -1169,7 +1206,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
-	
+
 	@Schedule(hour = "0", minute = "38", second = "15")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
@@ -1181,20 +1218,19 @@ public class ApplicationContractService implements _ApplicationContractService {
 				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
 
 		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
-		
 
 		int i = 0;
 
 		for (List<UserMatch> m : principalMatches) {
-		
+
 			String html = this.getPrincipalSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getPrincipalId());
-			if(mail==null)
+			if (mail == null)
 				continue;
-			if(!(mail.equals("frankvogel2@web.de")))
+			if (!(mail.equals("frankvogel2@web.de")))
 				continue;
 			this.sendUserSuggestionMail(mail, "Your current matches for your active contracts!", html);
-			
+
 			i++;
 		}
 
@@ -1208,12 +1244,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 			String html = this.getClientSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getUserId());
-			if(mail==null)
+			if (mail == null)
 				continue;
-			if(!(mail.equals("mpadhbw@gmail.com")))
+			if (!(mail.equals("mpadhbw@gmail.com")))
 				continue;
 			this.sendUserSuggestionMail(mail, "Your current contract matches!", html);
-			
+
 			i++;
 		}
 
