@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
-public class Term {
+public class Term{
 
 	// Attribute declaration
 	@Id
@@ -64,4 +64,6 @@ public class Term {
 	public void setTermType(TermType termType) {
 		this.termType = termType;
 	}
+
+	
 }

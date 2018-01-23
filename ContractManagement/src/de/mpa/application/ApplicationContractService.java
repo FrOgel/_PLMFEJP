@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -36,6 +35,7 @@ import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
+import de.mpa.domain.ContractTemplate;
 import de.mpa.domain.ContractType;
 import de.mpa.domain.RequirementCriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
@@ -45,7 +45,6 @@ import de.mpa.domain.Task;
 import de.mpa.domain.Term;
 import de.mpa.domain.TermType;
 import de.mpa.domain.UserMatch;
-import de.mpa.domain.UserMatchComparator;
 import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
@@ -65,7 +64,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic contract
 	@Override
 	public Response saveContract(Integer httpRequesterId, String designation, String contractType,
-			String contractSubject) {
+			String contractSubject, Integer templateId) {
 
 		if (designation.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
@@ -82,6 +81,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
 		c_new.setName(designation);
 		c_new.setPrincipalID(httpRequesterId);
+
+		if (templateId != null) {
+			ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class,
+					templateId);
+			c_new.setContractTerms(ct.getTerms());
+			c_new.setPlaceOfPerformance(ct.getPlaceOfPerformance());
+		}
 
 		c_new = (Contract) pc.addObjectToPersistance(c_new);
 
@@ -920,6 +926,144 @@ public class ApplicationContractService implements _ApplicationContractService {
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("No requirement found").build();
 		}
+	}
+
+	// Contract Template
+
+	@Override
+	public Response createContractTemplate(Integer httpRequesterId, String templateName) {
+		if (httpRequesterId == null || templateName == null)
+			return Response.status(Status.BAD_REQUEST).entity("No templateName, requester Id").build();
+
+		ContractTemplate ct = new ContractTemplate();
+		ct.setTemplateName(templateName);
+		ct.setUserId(httpRequesterId);
+
+		ct = (ContractTemplate) pc.addObjectToPersistance(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+	}
+
+	@Override
+	public Response updateTemplate(Integer httpRequesterId, Integer templateId, String templateName) {
+
+		if (httpRequesterId == null || templateId == null || templateName == null)
+			return Response.status(Status.BAD_REQUEST).entity("No templateName, requester or template Id").build();
+
+		if (templateName.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No tepmlate name handed").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		if (ct.getUserId() != httpRequesterId)
+			return Response.status(Status.UNAUTHORIZED).build();
+
+		ct.setTemplateName(templateName);
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	@Override
+	public Response deleteTemplate(Integer httpRequesterId, Integer templateId) {
+
+		if (httpRequesterId == null || templateId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not requester or template Id").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		if (ct.getUserId() != httpRequesterId)
+			return Response.status(Status.UNAUTHORIZED).build();
+
+		if (pc.deleteObjectFromPersistance(ContractTemplate.class, templateId)) {
+			return Response.ok().build();
+		} else {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+
+	}
+
+	@Override
+	public Response getTemplates(Integer httpRequesterId) {
+
+		if (httpRequesterId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not ids").build();
+
+		List<ContractTemplate> cts = pc.getAllContractTemplates(httpRequesterId);
+
+		return Response.ok(cts, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	// Template terms
+
+	@Override
+	public Response saveTemplateTerm(Integer httpRequesterId, String description, String termType, Integer templateId) {
+		if (httpRequesterId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not requester Id").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		List<Term> terms = ct.getTerms();
+
+		Term t = new Term();
+		t.setDescription(description);
+		t.setTermType(TermType.valueOf(termType.toUpperCase()));
+
+		terms.add(t);
+
+		ct.setTerms(terms);
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	public Response updateTemplateTerm(Integer httpRequesterId, String description, String termType, Integer templateId,
+			Integer termId) {
+		if (httpRequesterId == null || description == null || termType == null || templateId == null || termId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+
+		Term t = (Term) pc.getObjectFromPersistanceById(Term.class, termId);
+
+		t.setDescription(description);
+		t.setTermType(TermType.valueOf(termType.toUpperCase()));
+
+		t = (Term) pc.updateExistingObject(t);
+
+		return Response.ok(t, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response deleteTemplateTerm(Integer httpRequesterId, Integer templateId, Integer termId) {
+
+		if (termId == null || templateId == null)
+			return Response.status(Status.BAD_REQUEST).entity("No ids").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		List<Term> terms = ct.getTerms();
+		Term toBeRemoved = null;
+
+		for (Term t : terms) {
+			if (t.getTermId() == termId)
+				toBeRemoved = t;
+		}
+
+		if (toBeRemoved != null) {
+			terms.remove(toBeRemoved);
+			ct.setTerms(terms);
+		}
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		if (toBeRemoved != null)
+			pc.deleteObjectFromPersistance(Term.class, termId);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
 	}
 
 	// Methods for retrieving enums

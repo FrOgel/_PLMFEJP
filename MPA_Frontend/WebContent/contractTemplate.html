@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+function createTemplate(){
+	var formData = $('#template').serializeArray();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+function createTemplateTerm(){
+	var formData = $('#templateTerm').serializeArray();
+	var templateId = $('#templateId').val();
+	$.ajax({
+		type: 'POST',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates/' + templateId + "/terms",
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+function updateTemplate(){
+	var formData = $('#template').serializeArray();
+	var templateId = $('#templateId').val();
+	$.ajax({
+		type: 'PUT',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates/' + templateId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+function deleteTemplate(){
+	var formData = $('#template').serializeArray();
+	var templateId = $('#templateId').val();
+	$.ajax({
+		type: 'DELETE',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates/' + templateId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+function deleteTemplateTerm(){
+	var formData = $('#template').serializeArray();
+	var templateId = $('#templateId').val();
+	var termId = $('#termId').val();
+	$.ajax({
+		type: 'DELETE',
+		data: formData,
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates/' + templateId + '/terms/' + termId,
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+function getTemplates(){
+	$.ajax({
+		type: 'GET',
+		url: 'https://localhost:8443/ContractManagement/rest/contract/contractTemplates',
+		contentType: 'application/x-www-form-urlencoded',
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				
+				}
+		});
+	
+}
+</script>
+</head>
+<body>
+	<p>Template id (For terms and update): <input type="text" name="templateId" id="templateId" value="1" />
+	<p>Get templates: <button onclick="getTemplates(); return false;">Get templates</button>
+	<p>Create contract template</p>
+		<form name="template" id="template">
+			<p>Description: <input type="text" name="templateName" id="templateName"/>
+			<button onclick="createTemplate(); return false;">Create template</button>
+			<button onclick="updateTemplate(); return false;">Update template</button>
+			<button onclick="deleteTemplate(); return false;">Delete template</button>
+		</form>
+
+	<p>Add your term to template</p>
+	<form name="templateTerm" id="templateTerm" action="">
+		<p>Term id (For term deletion): <input type="text" name="termId" id="termId" value="1"/>
+		<p>Description: <input type="text" name="description" id="description" />
+		<p>Term type: <input type="text" name="termType" id="termType" />
+		<button onclick="createTemplateTerm(); return false;">Create term in template</button>
+		<button onclick="deleteTemplateTerm(); return false;">Delete from contract template</button>
+	</form>
+</body>
+
+
+</html>
