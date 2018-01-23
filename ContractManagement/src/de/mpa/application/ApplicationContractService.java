@@ -101,7 +101,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		if (pc.deleteContract(contractId)) {
+		if(pc.getPrincipalId(contractId)!=httpRequesterId)
+			return Response.status(Status.FORBIDDEN).entity("Not your contract!").build();
+		
+		if (pc.deleteObjectFromPersistance(Contract.class, contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Contract not deleted.").build();
@@ -120,13 +123,16 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		}
 
-		if (!(designation.equals("")))
-			c_new.setName(designation);
-		if (!(contractType.equals("")))
-			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		if (!(contractSubject.equals("")))
-			c_new.setSubject(contractSubject);
-
+		if (designation.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Designation is mandatory").build();
+		if (contractType.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Contract type is mandatory").build();
+		if (contractSubject.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Contract subject is mandatory").build();
+		
+		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		c_new.setSubject(contractSubject);
+		c_new.setName(designation);
 		c_new.setPrincipalID(httpRequesterId);
 
 		c_new = (Contract) pc.updateExistingObject(c_new);
@@ -827,9 +833,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		int senderId;
 		int receiverId;
+		
+		System.out.println(httpRequesterId);
+		System.out.println(candidateId);
+		System.out.println(c.getPrincipalID());
 
-		if (httpRequesterId == candidateId) {
-			senderId = candidateId;
+		if (httpRequesterId.intValue() == candidateId.intValue()) {
+			senderId = httpRequesterId;
 			receiverId = c.getPrincipalID();
 		} else {
 			senderId = c.getPrincipalID();
