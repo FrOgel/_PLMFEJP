@@ -3,8 +3,6 @@ package de.mpa.infrastructure;
 import java.util.List;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;

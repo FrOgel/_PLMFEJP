@@ -1015,11 +1015,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 				return "No match";
 
 			int oldContractId = 0;
-			int userIterator = 1;
+			int userIterator = 0;
 			int contractIterator = 0;
 			boolean firstRun = true;
 
 			for (UserMatch m : matches) {
+				System.out.println("UserId" + m.getUserId());
 				int newContractId = m.getContractId();
 				if (newContractId != oldContractId) {
 					contractIterator++;
@@ -1037,7 +1038,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
 
+				
+				userIterator++;
 			}
+			
+			System.out.println(urlStringBuilder);
 
 			String urlString = urlStringBuilder.toString();
 
@@ -1131,7 +1136,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 	}
-	
+
 	private static String getUserMailAddress(int userId) {
 
 		Client client = ClientBuilder.newClient();
@@ -1162,36 +1167,51 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
-
-	@Schedule(hour = "17", minute = "32")
+	
+	@Schedule(hour = "0", minute = "38", second = "15")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
-		Collections.sort(matches, new UserMatchComparator());
+
+		if (matches.isEmpty())
+			return;
 
 		Map<Integer, List<UserMatch>> groupedMatches = matches.stream()
 				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
 
 		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
+		
 
 		int i = 0;
 
 		for (List<UserMatch> m : principalMatches) {
+		
 			String html = this.getPrincipalSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getPrincipalId());
-			this.sendUserSuggestionMail(mail, "Your current matches for your active contract!", html);
+			if(mail==null)
+				continue;
+			if(!(mail.equals("frankvogel2@web.de")))
+				continue;
+			this.sendUserSuggestionMail(mail, "Your current matches for your active contracts!", html);
+			
 			i++;
 		}
 
 		groupedMatches = matches.stream().collect(Collectors.groupingBy(UserMatch::getUserId));
-		
+
 		List<List<UserMatch>> clientMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
-		
+
 		i = 0;
-		
+
 		for (List<UserMatch> m : clientMatches) {
+
 			String html = this.getClientSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getUserId());
+			if(mail==null)
+				continue;
+			if(!(mail.equals("mpadhbw@gmail.com")))
+				continue;
 			this.sendUserSuggestionMail(mail, "Your current contract matches!", html);
+			
 			i++;
 		}
 

@@ -1,7 +1,14 @@
 package de.mpa.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.xml.bind.annotation.XmlRootElement;
+
+//@Entity
+@XmlRootElement
 public class UserMatch implements Comparable<UserMatch> {
 
+	//@JoinColumn(name = "contractId")
 	private int principalId;
 	private int contractId;
 	private String contractSubject;
