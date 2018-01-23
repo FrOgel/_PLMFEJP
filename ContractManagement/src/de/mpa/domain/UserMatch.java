@@ -1,7 +1,5 @@
 package de.mpa.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.xml.bind.annotation.XmlRootElement;
 
 //@Entity
