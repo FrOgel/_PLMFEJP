@@ -117,7 +117,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c_new = new Contract();
 
-		if (contractId != 0) {
+		if (contractId != null) {
 			c_new.setContractID(contractId);
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
