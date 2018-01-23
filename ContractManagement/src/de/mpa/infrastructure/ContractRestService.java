@@ -24,7 +24,6 @@ import de.mpa.domain.Contract;
 
 @Path("/contract")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
-
 public class ContractRestService implements _ApplicationContractService {
 
 	// Inject ApplicationContractService
@@ -56,7 +55,7 @@ public class ContractRestService implements _ApplicationContractService {
 	 * catch (UnknownHostException e) { // TODO Auto-generated catch block
 	 * e.printStackTrace(); } return builder.toTemplate(); }
 	 */
-
+	
 	/*
 	 * Testring https://localhost:8443/ContractManagement/rest/contract/create
 	 */

@@ -45,7 +45,7 @@ public interface _ApplicationUserService {
 
 	public Response getUserMailAddress(int userId);
 	
-	public Response saveConditionDesire(String token, String startDate, String endDate, int maxWorkload, double fee,
+	public Response saveConditionDesire(String token, String startDate, String endDate, String contractType, int maxWorkload, double fee,
 			String country, String city, String zipCode, int radius);
 
 	public Response saveQualification(String token, String description);

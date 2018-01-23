@@ -21,7 +21,7 @@ public class ConditionDesire {
 	private int desireId;
 	private int maxWorkload;
 	private double minFee;
-	// contract type filtering comes here
+	private String contractType;
 	private Date earliestStartDate;
 	private Date earliestEndDate;
 	@OneToOne(cascade = CascadeType.ALL)
@@ -105,6 +105,16 @@ public class ConditionDesire {
 
 	public void setPlace(GeographicalCondition place) {
 		this.place = place;
+	}
+
+	
+	@XmlElement
+	public String getContractType() {
+		return contractType;
+	}
+
+	public void setContractType(String contractType) {
+		this.contractType = contractType;
 	}
 	
 }

@@ -2,8 +2,10 @@ package de.mpa.infrastructure;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -23,7 +25,6 @@ import de.mpa.domain.Requirement;
 import de.mpa.domain.Task;
 import de.mpa.domain.Term;
 import de.mpa.domain.UserMatch;
-import de.mpa.domain.UserMatchComparator;
 
 @Stateless
 @LocalBean
@@ -32,6 +33,10 @@ public class PersistenceContract {
 	@EJB
 	LocationService ls;
 
+	final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
+	final String USER = "root";
+	final String PASS = "";
+	
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
 
@@ -401,55 +406,25 @@ public class PersistenceContract {
 
 		List<UserMatch> matches = pc.getContractUserMatches();
 
-		Collections.sort(matches, new UserMatchComparator());
+		Map<Integer, List<UserMatch>> groupedMatches = matches.stream()
+				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
 
-		StringBuilder urlStringBuilder = new StringBuilder()
-				.append("https://localhost:8443/ContractManagement/UserSuggestionsMail.jsp?");
-
-		matches.get(0);
-
-		int oldContractId = 0;
-		int userIterator = 1;
-		int contractIterator = 0;
-		boolean firstRun = true;
-
-		for (UserMatch m : matches) {
-			
-			int newContractId = m.getContractId();
-			if (newContractId != oldContractId) {
-				contractIterator++;
-				userIterator = 1;
-				oldContractId = m.getContractId();
-				if (firstRun) {
-					urlStringBuilder.append("contractId" + contractIterator + "=" + m.getContractId());
-					firstRun = false;
-				} else {
-					urlStringBuilder.append("&contractId" + contractIterator + "=" + m.getContractId());
-				}
-				urlStringBuilder.append("&subject" + contractIterator + "=" + m.getContractSubject());
+		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
+		
+		for(List<UserMatch> m : principalMatches) {
+			for(UserMatch um : m) {
+				System.out.println("PrincipalID: " + um.getPrincipalId());
+				System.out.println("UserID: " + um.getUserId());
 			}
-
-			urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
-
+			System.out.println("Next principal");
 		}
 
-		System.out.println(urlStringBuilder);
-
-		for (UserMatch m : matches) {
-			System.out.println("Subject: " + m.getContractSubject() + " PrincipalId: " + m.getPrincipalId()
-					+ " UserId: " + m.getUserId() + " ContractId: " + m.getContractId());
-		}
+		
 
 	}
 
 	// DB connection with jdbc ==> reason: JPA is entity bounded
 	public List<UserMatch> getContractUserMatches() {
-
-		final String DB_URL = "jdbc:mysql://localhost:3306/mpa_contractmanagement";
-
-		// Database credentials
-		final String USER = "root";
-		final String PASS = "";
 
 		Connection conn = null;
 		Statement stmt = null;
@@ -468,31 +443,44 @@ public class PersistenceContract {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT b.TELEWORKPOSSIBLE, con.contractId contractId, con.SUBJECT contractSubject, con.principalId principalId, "
-					+ " g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, p.LATITUDE pLatitude, p.LONGITUDE pLongitude "
+			sql = "SELECT (b.ESTIMATEDWORKLOAD-c.MAXWORKLOAD) workloadDif, (b.FEE - c.MINFEE) feeDif, "
+					+ "b.TELEWORKPOSSIBLE, con.contractId contractId, con.NAME name, con.principalId principalId, "
+					+ "g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, p.LATITUDE pLatitude, p.LONGITUDE pLongitude, "
+					// Start jaro winkler similarit<
+					+ "(SELECT AVG(jaro_winkler_similarity(r.DESCRIPTION, q.DESCRIPTION)) "
+					+ "FROM mpa_contractmanagement.requirement r, mpa_contractmanagement.contract_requirement cr,"
+					+ "mpa_identitymanagement.qualification q, mpa_identitymanagement.user_qualification uq "
+					+ "WHERE r.REQUIREMENTID = cr.requirementsProfile_REQUIREMENTID AND "
+					+ "q.QUALIFICATIONID = uq.qualificationProfile_QUALIFICATIONID AND " 
+					+ "uq.User_USERID = u.USERID AND cr.Contract_CONTRACTID = con.CONTRACTID) jaro "
+					// End jaro winkler similarity
 					+ "FROM mpa_contractmanagement.contract con, mpa_contractmanagement.basiccondition b, mpa_contractmanagement.placeofperformance p, "
 					+ "mpa_identitymanagement.conditiondesire c, "
 					+ "mpa_identitymanagement.geographicalcondition g, mpa_identitymanagement.user u "
-					+ "WHERE con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID "
+					+ "WHERE c.CONTRACTTYPE = con.TYPE "
+					+ "AND con.BASICCONDITIONS_BASICCONDITIONID = b.BASICCONDITIONID "
 					+ "AND p.PLACEID = con.PLACEOFPERFORMANCE_PLACEID "
 					+ "AND g.PLACEID = c.PLACE_PLACEID "
 					+ "AND u.CD_DESIREID = c.desireId "
 					+ "AND NOT con.principalId = u.userId "
 					+ "AND b.ESTIMATEDWORKLOAD <= c.MAXWORKLOAD*1.3 " 
 					+ "AND b.FEE >= c.MINFEE*0.7 "
-					+ "AND b.ENDDATE <= c.EARLIESTENDDATE " + "AND b.STARTDATE >= c.EARLIESTSTARTDATE ";
+					+ "AND b.ENDDATE <= c.EARLIESTENDDATE " 
+					+ "AND b.STARTDATE >= c.EARLIESTSTARTDATE "
+					+ "ORDER BY con.principalId, u.userId, jaro DESC, (b.FEE - c.MINFEE), (b.ESTIMATEDWORKLOAD - c.MAXWORKLOAD)";
 
 			System.out.println(sql);
 
 			ResultSet rs = stmt.executeQuery(sql);
-
+			
 			// STEP 5: Extract data from result set
 			while (rs.next()) {
+				
 				// Retrieve by column name
 				int princiaplId = rs.getInt("principalId");
 				int userId = rs.getInt("userId");
 				int contractId = rs.getInt("contractId");
-				String contractSubject = rs.getString("contractSubject");
+				String contractSubject = rs.getString("name");
 				double lat1 = rs.getDouble("gLatitude");
 				double lng1 = rs.getDouble("gLongitude");
 				double lat2 = rs.getDouble("pLatitude");

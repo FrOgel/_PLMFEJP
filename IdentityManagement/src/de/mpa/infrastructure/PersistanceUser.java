@@ -21,7 +21,7 @@ import de.mpa.domain.User;
 @Stateless
 @LocalBean
 public class PersistanceUser {
-		
+
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 
@@ -60,7 +60,7 @@ public class PersistanceUser {
 			return false;
 		}
 	}
-	
+
 	public Object updateExistingObject(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -71,24 +71,23 @@ public class PersistanceUser {
 		emfactory.close();
 		return attached;
 	}
-	
+
 	public Qualification persistQualificationInContract(int userId, Qualification q_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 		entitymanager.getTransaction().begin();
-		
+
 		User user = entitymanager.find(User.class, userId);
 		List<Qualification> list = (List<Qualification>) user.getQualificationProfile();
 		list.add(q_new);
 		user.setQualificationProfile(list);
-		
-		
+
 		entitymanager.getTransaction().commit();
 		entitymanager.close();
 		emfactory.close();
 		return q_new;
 	}
-	
+
 	public boolean deleteQualificationFromUser(int userId, int qualiId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -103,7 +102,7 @@ public class PersistanceUser {
 		emfactory.close();
 		return true;
 	}
-	
+
 	public User persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -115,7 +114,7 @@ public class PersistanceUser {
 		emfactory.close();
 		return user;
 	}
-	
+
 	public User checkUserCredentials(String mail, String password) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -162,27 +161,28 @@ public class PersistanceUser {
 			return 0;
 		}
 	}
-	
+
 	public String findUserMailById(int userId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
 
 		Query q = entitymanager.createNamedQuery("get mail by userId");
 		q.setParameter("userId", userId);
-		String mail = (String) q.getSingleResult();
+		String mail;
+		try {
+			mail = (String) q.getSingleResult();
+		} catch (Exception e) {
+			return null;
+		}
+
 		return mail;
-		
-		/*List<String> list = (List<String>) q.getResultList();
-		
-		if ((list != null) && (list.size() > 0)) {
-			for (String mail : list) {
-				return mail;
-			}
-			;
-			return "Not found";
-		} else {
-			return "No result";
-		}*/
+
+		/*
+		 * List<String> list = (List<String>) q.getResultList();
+		 * 
+		 * if ((list != null) && (list.size() > 0)) { for (String mail : list) { return
+		 * mail; } ; return "Not found"; } else { return "No result"; }
+		 */
 	}
 
 	public boolean checkIfValidationExists(int userId) {

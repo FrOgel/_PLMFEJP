@@ -354,9 +354,11 @@ function updatePoP(){
 		<p>radius: <input type="text" name="radius" id="radius"/>
 		<button onclick="searchContracts(); return false;">Search</button>
 	</form>
+	<b>MAIN CONTRACT ID COMES HERE</b>
 	<form name="contractId">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
+		ContractId: <input type="text" name="contractId" id="contractId" value="1"/>
 	</form>
+	<b>MAIN CONTRACT ID ENDS HERE</b>
 	<form name="contract" id="contract">
 		<input type="hidden" name="contractId" id="contractId" value="1"/>
 		<p>Type <input type="text" name="contractType" id="contractType" list="contractTypeList">
@@ -410,8 +412,8 @@ function updatePoP(){
 		
 	<p>Make your offer</p>
 	<form name="basicCondition" id="basicCondition">
-		<input type="hidden" name="contractId" id="contractId" value="1"/>
-		<input type="hidden" name="bcId" id="bcId" value="1"/>
+		ContractId: <input type="text" name="contractId" id="contractId" value="1"/>
+		BC ID: <input type="text" name="bcId" id="bcId" value="1"/>
 		<p>startDate <input type="date" name="startDate" id="startDate"/>
  		<p>endDate <input type="date" name="endDate" id="endDate"/>
 		<p>radius <input type="text" name="radius" id="radius"/>
