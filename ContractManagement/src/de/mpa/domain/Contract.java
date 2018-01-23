@@ -51,13 +51,13 @@ public class Contract {
 	}
 
 	// Attribute declaration
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.Viewer.class)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int contractID;
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.ContractorView.class)
 	private int clientID;
-	@JsonView(Contract.InternalView.class)
+	@JsonView(Contract.ContractorView.class)
 	private int principalID;
 	@JsonView(Contract.Viewer.class)
 	private String name;

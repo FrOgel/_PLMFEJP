@@ -950,6 +950,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 			e.printStackTrace();
 		}
 
+		System.out.println(viewClass);
+		
 		return result;
 	}
 
