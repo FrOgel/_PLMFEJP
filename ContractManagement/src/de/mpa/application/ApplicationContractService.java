@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -45,6 +46,7 @@ import de.mpa.domain.Task;
 import de.mpa.domain.Term;
 import de.mpa.domain.TermType;
 import de.mpa.domain.UserMatch;
+import de.mpa.domain.UserMatchComparator;
 import de.mpa.domain.DevelopmentTask;
 import de.mpa.domain.TaskSubType;
 import de.mpa.domain.TaskType;
@@ -1361,7 +1363,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	@Schedule(hour = "0", minute = "38", second = "15")
+	@Schedule(hour = "10", minute = "41", second = "45")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 
@@ -1377,6 +1379,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		for (List<UserMatch> m : principalMatches) {
 
+			Collections.sort(m, new UserMatchComparator());
+			
 			String html = this.getPrincipalSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getPrincipalId());
 			if (mail == null)
