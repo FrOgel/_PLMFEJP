@@ -76,7 +76,6 @@ public class GeographicalCondition {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
-
 	
 	@XmlElement
 	public int getRadius() {

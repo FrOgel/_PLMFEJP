@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author frank.vogel Date: 07.01.2018 Purpose: Represents a applicant for a
+ * @author frank.vogel Date: 07.01.2018 Purpose: Represents an applicant for a
  *         specific contract
  */
 

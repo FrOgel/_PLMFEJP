@@ -19,6 +19,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
+import de.mpa.domain.ContractTemplate;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
@@ -401,6 +402,39 @@ public class PersistenceContract {
 		return list;
 	}
 
+	public List<ContractTemplate> getAllContractTemplates(int httpRequesterId){
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+
+		Query q = entitymanager.createNamedQuery("get principal contract templates");
+		q.setParameter("userId", httpRequesterId);
+		@SuppressWarnings("unchecked")
+		List<ContractTemplate> list = (List<ContractTemplate>) q.getResultList();
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+
+		return list;
+	}
+	
+	public Term persistTermInContractTemplate(ContractTemplate c, Term t) {
+		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("ContractManagement");
+		EntityManager entitymanager = emfactory.createEntityManager();
+		entitymanager.getTransaction().begin();
+		c = entitymanager.merge(c);
+
+		List<Term> list = (List<Term>) c.getTerms();
+		list.add(t);
+		c.setTerms(list);
+
+		entitymanager.getTransaction().commit();
+		entitymanager.close();
+		emfactory.close();
+		return t;
+	}
+	
 	public static void main(String[] args) {
 		PersistenceContract pc = new PersistenceContract();
 

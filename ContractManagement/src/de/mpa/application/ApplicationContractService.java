@@ -36,8 +36,9 @@ import de.mpa.domain.Candidate;
 import de.mpa.domain.CandidateId;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
+import de.mpa.domain.ContractTemplate;
 import de.mpa.domain.ContractType;
-import de.mpa.domain.CriteriaType;
+import de.mpa.domain.RequirementCriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.ConditionOffer;
 import de.mpa.domain.Requirement;
@@ -65,7 +66,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	// Methods for CRUD operations on the basic contract
 	@Override
 	public Response saveContract(Integer httpRequesterId, String designation, String contractType,
-			String contractSubject) {
+			String contractSubject, Integer templateId) {
 
 		if (designation.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No designation").build();
@@ -83,6 +84,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 		c_new.setName(designation);
 		c_new.setPrincipalID(httpRequesterId);
 
+		if (templateId != null) {
+			ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class,
+					templateId);
+			c_new.setContractTerms(ct.getTerms());
+			c_new.setPlaceOfPerformance(ct.getPlaceOfPerformance());
+		}
+
 		c_new = (Contract) pc.addObjectToPersistance(c_new);
 
 		return Response.ok(c_new, MediaType.APPLICATION_JSON).build();
@@ -95,7 +103,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
-		if (pc.deleteContract(contractId)) {
+		if(pc.getPrincipalId(contractId)!=httpRequesterId)
+			return Response.status(Status.FORBIDDEN).entity("Not your contract!").build();
+		
+		if (pc.deleteObjectFromPersistance(Contract.class, contractId)) {
 			return Response.ok(true, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity("Contract not deleted.").build();
@@ -108,19 +119,22 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c_new = new Contract();
 
-		if (contractId != 0) {
+		if (contractId != null) {
 			c_new.setContractID(contractId);
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		}
 
-		if (!(designation.equals("")))
-			c_new.setName(designation);
-		if (!(contractType.equals("")))
-			c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
-		if (!(contractSubject.equals("")))
-			c_new.setSubject(contractSubject);
-
+		if (designation.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Designation is mandatory").build();
+		if (contractType.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Contract type is mandatory").build();
+		if (contractSubject.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("Contract subject is mandatory").build();
+		
+		c_new.setType(ContractType.valueOf(contractType.toUpperCase()));
+		c_new.setSubject(contractSubject);
+		c_new.setName(designation);
 		c_new.setPrincipalID(httpRequesterId);
 
 		c_new = (Contract) pc.updateExistingObject(c_new);
@@ -527,7 +541,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 
 		if (!(criteriaType.equals(""))) {
-			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
+			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("No criteria type").build();
 		}
@@ -575,7 +589,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 			r_new.setDescription(description);
 
 		if (!(criteriaType.equals("")))
-			r_new.setCriteriaType(CriteriaType.valueOf(criteriaType.toUpperCase()));
+			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
 
 		r_new = (Requirement) pc.updateExistingObject(r_new);
 
@@ -821,9 +835,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		int senderId;
 		int receiverId;
+		
+		System.out.println(httpRequesterId);
+		System.out.println(candidateId);
+		System.out.println(c.getPrincipalID());
 
-		if (httpRequesterId == candidateId) {
-			senderId = candidateId;
+		if (httpRequesterId.intValue() == candidateId.intValue()) {
+			senderId = httpRequesterId;
 			receiverId = c.getPrincipalID();
 		} else {
 			senderId = c.getPrincipalID();
@@ -922,6 +940,182 @@ public class ApplicationContractService implements _ApplicationContractService {
 		}
 	}
 
+	// Contract Template
+
+	@Override
+	public Response createContractTemplate(Integer httpRequesterId, String templateName) {
+		if (httpRequesterId == null || templateName == null)
+			return Response.status(Status.BAD_REQUEST).entity("No templateName, requester Id").build();
+
+		ContractTemplate ct = new ContractTemplate();
+		ct.setTemplateName(templateName);
+		ct.setUserId(httpRequesterId);
+
+		ct = (ContractTemplate) pc.addObjectToPersistance(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+	}
+
+	@Override
+	public Response updateTemplate(Integer httpRequesterId, Integer templateId, String templateName) {
+
+		if (httpRequesterId == null || templateId == null || templateName == null)
+			return Response.status(Status.BAD_REQUEST).entity("No templateName, requester or template Id").build();
+
+		if (templateName.equals(""))
+			return Response.status(Status.BAD_REQUEST).entity("No tepmlate name handed").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		if (ct.getUserId() != httpRequesterId)
+			return Response.status(Status.UNAUTHORIZED).build();
+
+		ct.setTemplateName(templateName);
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	@Override
+	public Response deleteTemplate(Integer httpRequesterId, Integer templateId) {
+
+		if (httpRequesterId == null || templateId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not requester or template Id").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		if (ct.getUserId() != httpRequesterId)
+			return Response.status(Status.UNAUTHORIZED).build();
+
+		if (pc.deleteObjectFromPersistance(ContractTemplate.class, templateId)) {
+			return Response.ok().build();
+		} else {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+
+	}
+
+	@Override
+	public Response getTemplates(Integer httpRequesterId) {
+
+		if (httpRequesterId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not ids").build();
+
+		List<ContractTemplate> cts = pc.getAllContractTemplates(httpRequesterId);
+
+		return Response.ok(cts, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	// Template terms
+
+	@Override
+	public Response saveTemplateTerm(Integer httpRequesterId, String description, String termType, Integer templateId) {
+		if (httpRequesterId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Not requester Id").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		List<Term> terms = ct.getTerms();
+
+		Term t = new Term();
+		t.setDescription(description);
+		t.setTermType(TermType.valueOf(termType.toUpperCase()));
+
+		terms.add(t);
+
+		ct.setTerms(terms);
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	public Response updateTemplateTerm(Integer httpRequesterId, String description, String termType, Integer templateId,
+			Integer termId) {
+		if (httpRequesterId == null || description == null || termType == null || templateId == null || termId == null)
+			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
+
+		Term t = (Term) pc.getObjectFromPersistanceById(Term.class, termId);
+
+		t.setDescription(description);
+		t.setTermType(TermType.valueOf(termType.toUpperCase()));
+
+		t = (Term) pc.updateExistingObject(t);
+
+		return Response.ok(t, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response deleteTemplateTerm(Integer httpRequesterId, Integer templateId, Integer termId) {
+
+		if (termId == null || templateId == null)
+			return Response.status(Status.BAD_REQUEST).entity("No ids").build();
+
+		ContractTemplate ct = (ContractTemplate) pc.getObjectFromPersistanceById(ContractTemplate.class, templateId);
+
+		List<Term> terms = ct.getTerms();
+		Term toBeRemoved = null;
+
+		for (Term t : terms) {
+			if (t.getTermId() == termId)
+				toBeRemoved = t;
+		}
+
+		if (toBeRemoved != null) {
+			terms.remove(toBeRemoved);
+			ct.setTerms(terms);
+		}
+
+		ct = (ContractTemplate) pc.updateExistingObject(ct);
+
+		if (toBeRemoved != null)
+			pc.deleteObjectFromPersistance(Term.class, termId);
+
+		return Response.ok(ct, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	// Methods for retrieving enums
+	public Response getContractStates() {
+		ContractState[] contractTypes = ContractState.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+
+	}
+
+	public Response getContractType() {
+		ContractType[] contractTypes = ContractType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getRequirementCriteriaType() {
+		RequirementCriteriaType[] contractTypes = RequirementCriteriaType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTaskType() {
+		TaskType[] contractTypes = TaskType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTaskSubType() {
+		TaskSubType[] contractTypes = TaskSubType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
+	public Response getTermType() {
+		TermType[] contractTypes = TermType.values();
+
+		return Response.ok(contractTypes, MediaType.APPLICATION_JSON).build();
+	}
+
 	// Private json view processing depending on the user - contract relationship
 	private String processJsonViewForContract(Contract c, int userId) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -949,6 +1143,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 			result = "Error in view processing";
 			e.printStackTrace();
 		}
+
+		System.out.println(viewClass);
 
 		return result;
 	}
@@ -1038,10 +1234,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 				urlStringBuilder.append("&userId" + contractIterator + userIterator + "=" + m.getUserId());
 
-				
 				userIterator++;
 			}
-			
+
 			System.out.println(urlStringBuilder);
 
 			String urlString = urlStringBuilder.toString();
@@ -1167,8 +1362,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		return (String) response.readEntity(String.class);
 	}
-	
-	@Schedule(hour = "0", minute = "38", second = "15")
+
+	@Schedule(hour = "10", minute = "41", second = "45")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 
@@ -1179,20 +1374,21 @@ public class ApplicationContractService implements _ApplicationContractService {
 				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
 
 		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
-		
 
 		int i = 0;
 
 		for (List<UserMatch> m : principalMatches) {
-		
+
+			Collections.sort(m, new UserMatchComparator());
+			
 			String html = this.getPrincipalSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getPrincipalId());
-			if(mail==null)
+			if (mail == null)
 				continue;
-			if(!(mail.equals("frankvogel2@web.de")))
+			if (!(mail.equals("frankvogel2@web.de")))
 				continue;
 			this.sendUserSuggestionMail(mail, "Your current matches for your active contracts!", html);
-			
+
 			i++;
 		}
 
@@ -1206,12 +1402,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 			String html = this.getClientSuggestionMail(m);
 			String mail = getUserMailAddress(m.get(i).getUserId());
-			if(mail==null)
+			if (mail == null)
 				continue;
-			if(!(mail.equals("mpadhbw@gmail.com")))
+			if (!(mail.equals("mpadhbw@gmail.com")))
 				continue;
 			this.sendUserSuggestionMail(mail, "Your current contract matches!", html);
-			
+
 			i++;
 		}
 

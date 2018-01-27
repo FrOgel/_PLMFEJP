@@ -10,7 +10,7 @@ import de.mpa.domain.BasicCondition;
 import de.mpa.domain.Contract;
 import de.mpa.domain.ContractState;
 import de.mpa.domain.ContractType;
-import de.mpa.domain.CriteriaType;
+import de.mpa.domain.RequirementCriteriaType;
 import de.mpa.domain.PlaceOfPerformance;
 import de.mpa.domain.Requirement;
 import de.mpa.infrastructure.PersistenceContract;
@@ -84,7 +84,7 @@ public class TestInitClass {
 					break;
 				}
 				
-				r.setCriteriaType(CriteriaType.MANDATORY);
+				r.setCriteriaType(RequirementCriteriaType.MANDATORY);
 				rList.add(r);
 				r = new Requirement();
 			}

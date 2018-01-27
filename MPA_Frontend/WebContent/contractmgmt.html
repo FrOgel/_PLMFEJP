@@ -367,6 +367,7 @@ function updatePoP(){
     			<option value="Development">
 			</datalist>
 		<p>Designation: <input type="text" name="designation" id="designation"/>
+		<p>Use template: <input type="text" name="templateId" id="templateId" value="1"/>
 		<p>Subject: <input type="text" name="contractSubject" id="contractSubject"/>
 		<p>State: <input type="text" name="contractState" id="contractState"/>
 		<button onclick="createContract(); return false;">Save contract</button>
@@ -451,6 +452,21 @@ function updatePoP(){
 		<button onclick="deleteSC(); return false;">Delete condition</button>
 		<button onclick="updateSC(); return false;">Update condition</button>
 		<button onclick="getSC(); return false;">Get condition</button>
+	</form>
+	
+	<p>Create contract template</p>
+	<form name="special" id="special">
+		<input type="hidden" name="templateId" id="templateId" value="1"/>
+		<p>Description: <input type="text" name="description" id="description"/>
+		<p>Term type: <input type="text" name="termType" id="termType"/>
+		<button onclick="createTemplateTerm(); return false;">Add condition</button>
+	</form>
+	<p>Add your term to template</p>
+	<form name="special" id="special">
+		<input type="hidden" name="templateId" id="templateId" value="1"/>
+		<p>Description: <input type="text" name="description" id="description"/>
+		<p>Term type: <input type="text" name="termType" id="termType"/>
+		<button onclick="createTemplateTerm(); return false;">Add condition</button>
 	</form>
 </body>
 

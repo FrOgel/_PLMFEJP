@@ -1,5 +1,5 @@
 package de.mpa.domain;
 
-public enum CriteriaType {
+public enum RequirementCriteriaType {
 	MANDATORY, SHOULD, OPTIONAL
 }

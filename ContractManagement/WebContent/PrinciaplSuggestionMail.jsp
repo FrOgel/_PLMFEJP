@@ -80,27 +80,21 @@
               </td>
             </tr>
           </table>
-          <!--[if (gte mso 9)|(IE)]>
-                </td>
-              </tr>
-          </table>
-          <![endif]-->
         </td>
       </tr>
-      <tr>
-        <td class="innerpadding borderbottom">
-          <table class="col380" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 380px;">  
-            <tr>
-              <td>
-              <%
+       <%
 								int contractIterator = 1;
 								int userIterator = 1;
 								while(request.getParameter("contractId" + contractIterator)!=null){
 									String contractId = request.getParameter("contractId" + contractIterator);
 									String subject = request.getParameter("subject" + contractIterator);
 							%>
-							
-							<p>Client proposals for your contract <b><%= subject %></b> (#Ref <%= contractId %>)</p>
+      <tr>
+        <td class="innerpadding borderbottom">
+          <table class="col380" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 380px;">  
+            <tr>
+              <td>
+							<h3>Client proposals for your contract <b><%= subject %></b> (#Ref <%= contractId %>)</h3>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td style="padding: 20px 0 0 0;">
@@ -127,23 +121,18 @@
                     </td>
                   </tr>
                 </table>
-                <% 										
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <% 										
 										userIterator++;
 									}
 									contractIterator++;
 									userIterator = 1;
 								}
 							%>
-              </td>
-            </tr>
-          </table>
-          <!--[if (gte mso 9)|(IE)]>
-                </td>
-              </tr>
-          </table>
-          <![endif]-->
-        </td>
-      </tr>
       <tr>
         <td class="innerpadding borderbottom">
           <img class="fix" src="images/wide.png" width="100%" border="0" alt="" />
