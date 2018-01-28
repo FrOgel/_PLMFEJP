@@ -76,6 +76,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
+	//updates a company user
 	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName) {
 		
 		if(mail==null || phoneNumber==null || companyName==null)
@@ -126,6 +127,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
 
+	//Update a private user
 	@Override
 	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName, String birthday) {
 		
@@ -151,6 +153,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
+	//updates the address
 	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber) {
 		
 		if(country==null || state==null || zipCode==null || city==null || street==null || houseNumber==null)
@@ -177,6 +180,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
+	//Updates companys main contact person
 	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone, String mailAddress, String department) {
 		
 		if(firstName==null || surName==null || cpPhone==null || mailAddress==null || department==null)
@@ -202,6 +206,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
+	//Delete a user
 	public Response deleteUser(String token, String pw){
 		
 		int userId = Integer.parseInt(ss.authenticateToken(token));
@@ -222,6 +227,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
+	//get a specific user
 	public Response getUser(String token, int userId) {
 				
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
@@ -340,6 +346,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		pu.addObjectToPersistance(av);
 	}
 
+	//Resets the password
 	@Override
 	public Response passwordResetAuthentication(String uuid) {
 		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
@@ -366,6 +373,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
+	//calls the change password service
 	private void callPasswordChangeMailService(String mail, String hash) {
 		try {
 			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail + "/" + hash;
@@ -381,6 +389,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
+	//requests password reset
 	@Override
 	public Response requestPasswordReset(String mail) {
 		PasswordChange pc = new PasswordChange();
@@ -400,6 +409,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok().build();
 	}
 
+	//Changes pw for user
 	@Override
 	public Response changePassword(String uuid, String newPassword) {
 		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
@@ -415,6 +425,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
+	//Gets a mail adress for a user
 	@Override
 	public Response getUserMailAddress(int userId) {
 
@@ -429,6 +440,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
+	//Saves Condition desire
 	@Override
 	public Response saveConditionDesire(String token, String startDate, String endDate, String contractType, int maxWorkload, double fee,
 			String country, String city, String zipCode, int radius) {
@@ -502,6 +514,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(cd, MediaType.APPLICATION_JSON).build();
 	}
 
+	//saves qualification 
 	@Override
 	public Response saveQualification(String token, String description) {
 		
@@ -518,6 +531,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
 	}
 	
+	//Update qualification
 	public Response updateQualification(String token, String description, int qId) {
 			
 		Qualification q_new = new Qualification();
@@ -533,6 +547,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(q_new).build();
 	}
 	
+	//Delete qualification
 	public Response deleteQualification(String token, int qualiId) {
 		
 		System.out.println(qualiId);
@@ -547,6 +562,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		
 	}
 	
+	//Get qualification
 	public Response getQualifications(String token) {
 		
 		int userId = Integer.parseInt(ss.authenticateToken(token));
@@ -581,6 +597,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
+	//Get latitiude from JSOn
 	private double getLatFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -599,6 +616,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return lat;
 	}
 
+	//Get longtitude from json
 	private double getLngFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -651,6 +669,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return result;
 	}
 	
+	//gets the user-contract relation
 	private String getUserContractRelationship(int contractId, int userId) {
 		Client client = ClientBuilder.newClient();
 
