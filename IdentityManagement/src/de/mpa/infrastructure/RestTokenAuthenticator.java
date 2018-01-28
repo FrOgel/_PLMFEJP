@@ -31,7 +31,6 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 		for (Cookie c : requestContext.getCookies().values()) {
 			if (c.getName().equals("token")) {
 				token = c.getValue();
-
 			}
 		}
 

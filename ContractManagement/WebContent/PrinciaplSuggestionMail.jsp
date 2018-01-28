@@ -109,6 +109,7 @@
 										
 							%>
 							
+							<img src="https://localhost:8443/MPA_Frontend/userpictures/image_1.png"/>
 							<p>User No. <%= userId %> <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= userId %>"> Check out user <%= userId %></a></p>
 							
 							

@@ -105,6 +105,7 @@ public class UserRestService implements _ApplicationUserService {
 	}
 
 	// Methods for manipulating / retrieving users
+	@UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -115,6 +116,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.updateAddress(token, country, state, zipCode, city, street, houseNumber);
 	}
 
+	@UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -135,6 +137,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.deleteUser(token, pw);
 	}
 
+	@UserAuthentication
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

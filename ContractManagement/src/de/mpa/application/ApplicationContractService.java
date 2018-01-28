@@ -1363,7 +1363,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		return (String) response.readEntity(String.class);
 	}
 
-	@Schedule(hour = "10", minute = "41", second = "45")
+	@Schedule(hour = "19", minute = "38", second = "30")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 
