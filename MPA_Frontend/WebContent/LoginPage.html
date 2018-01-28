@@ -33,6 +33,25 @@ function resetPassword(){
 		});
 	
 }
+function imageUpload(){
+	document.getElementById("authorized").innerHTML = "";
+	var data = new FormData();
+	jQuery.each(jQuery('#file')[0].files, function(i, file) {
+	    data.append('file-'+i, file);
+	});
+	$.ajax({
+		type: 'POST',
+		data: data,
+		url: 'https://localhost:8443/IdentityManagement/rest/user/user/image',
+		processData: false,
+		contentType: false,
+		success: function(){
+				//window.location.href = "https://localhost:8080/MPA_Frontend/home.jsp";
+				document.getElementById("authorized").innerHTML = "Successfully uploaded";
+				}
+		});
+	
+}
 </script>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -50,7 +69,12 @@ function resetPassword(){
 		<p>Mail: <input type="text" name="mailAddress" id="mailAddress"/>
 		<button onclick="resetPassword(); return false;">Login</button>
 	</form>
-
+	<form action="https://localhost:8443/IdentityManagement/rest/user/user/image" method="POST" enctype="multipart/form-data" name="image" id="image">
+		<p>Upload your image: <input type="file" name="file" id="file"/></p>
+		<p><button onclick="imageUpload(); return false;">Upload</button>
+		<input type="submit" value="Upload File" />  
+	</form>
+	<img src="./userpictures/image_1.png">
 </body>
 
 

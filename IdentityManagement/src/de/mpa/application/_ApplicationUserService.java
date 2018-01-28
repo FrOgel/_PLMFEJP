@@ -1,7 +1,12 @@
 package de.mpa.application;
 
+import java.io.InputStream;
+
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 /**
  * @author 		frank.vogel
@@ -14,7 +19,7 @@ public interface _ApplicationUserService {
 	public Response createCompanyUser(String mail, String pw, String phoneNumber, String companyName,
 			String country, String state, String zipCode, String city, String street, String houseNumber,
 			String firstName, String surName, String cpPhone, String mailAddress, String department);
-	
+		
 	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName);
 	
 	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber);
@@ -30,6 +35,8 @@ public interface _ApplicationUserService {
 	public Response deleteUser(String token, String pw);
 	
 	public Response getUser(String token, int userId);
+	
+	public Response setUserImage( MultipartFormDataInput input, Integer httpRequesterId);
 	
 	public Response verifyAccount(int id, String uuid);
 	

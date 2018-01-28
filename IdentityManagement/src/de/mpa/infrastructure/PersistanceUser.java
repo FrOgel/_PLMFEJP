@@ -1,5 +1,11 @@
 package de.mpa.infrastructure;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -263,4 +269,22 @@ public class PersistanceUser {
 		emfactory.close();
 		return true;
 	}
+
+	// Persists the uploaded user image
+	public boolean saveImage(InputStream in, String name) throws IOException {
+		OutputStream out = null;
+		int read = 0;
+		byte[] bytes = new byte[5120];
+		
+		out = new FileOutputStream(new File("C:\\Users\\Frank.Vogel\\Desktop\\eclipse_project\\wildfly-11.0.0.Final\\standalone\\deployments\\MPA_Frontend.war\\userpictures\\" + name));
+		
+		while((read = in.read(bytes)) != - 1) {
+			out.write(bytes, 0, read);
+		}
+		out.flush();
+		out.close();
+		
+		return true;
+	}
+
 }

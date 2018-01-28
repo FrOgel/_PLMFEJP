@@ -1,11 +1,14 @@
 package de.mpa.infrastructure;
 
+import java.io.InputStream;
+
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -13,6 +16,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import de.mpa.application._ApplicationUserService;
 
@@ -22,7 +29,7 @@ import de.mpa.application._ApplicationUserService;
  *         endpoint from the business logic
  */
 @Path("/user")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
+@Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.MULTIPART_FORM_DATA })
 public class UserRestService implements _ApplicationUserService {
 
 	// Injecting the ApplicationUserService to invoke the appropriate methods at the
@@ -56,11 +63,11 @@ public class UserRestService implements _ApplicationUserService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("companyuser")
-	public Response updateCompanyUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail, 
+	public Response updateCompanyUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail,
 			@FormParam("phoneNumber") String phoneNumber, @FormParam("companyName") String companyName) {
 		return as.updateCompanyUser(token, mail, phoneNumber, companyName);
 	}
-	
+
 	/*
 	 * TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/registerPrivateUser/
@@ -91,42 +98,43 @@ public class UserRestService implements _ApplicationUserService {
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("privateuser")
-	public Response updatePrivateUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail, 
-			@FormParam("phoneNumber") String phoneNumber, @FormParam("firstName") String firstName, @FormParam("surName") String surName, 
-		    @FormParam("birthday") String birthday) {
+	public Response updatePrivateUser(@CookieParam("token") String token, @FormParam("mailAddress") String mail,
+			@FormParam("phoneNumber") String phoneNumber, @FormParam("firstName") String firstName,
+			@FormParam("surName") String surName, @FormParam("birthday") String birthday) {
 		return as.updatePrivateUser(token, mail, phoneNumber, firstName, surName, birthday);
 	}
-	
+
 	// Methods for manipulating / retrieving users
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("user/address")
-	public Response updateAddress(@CookieParam("token") String token, @FormParam("country") String country, @FormParam("state") String state, 
-			@FormParam("zipCode") String zipCode, @FormParam("city") String city, @FormParam("street") String street, 
-			@FormParam("houseNumber") String houseNumber) {
+	public Response updateAddress(@CookieParam("token") String token, @FormParam("country") String country,
+			@FormParam("state") String state, @FormParam("zipCode") String zipCode, @FormParam("city") String city,
+			@FormParam("street") String street, @FormParam("houseNumber") String houseNumber) {
 		return as.updateAddress(token, country, state, zipCode, city, street, houseNumber);
 	}
-	
+
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("user/maincontactperson")
-	public Response updateMainContactPerson(@CookieParam("token") String token, @FormParam("firstName") String firstName, 
-			@FormParam("surName") String surName, @FormParam("cpPhone") String cpPhone, @FormParam("cpMail") String mailAddress, 
+	public Response updateMainContactPerson(@CookieParam("token") String token,
+			@FormParam("firstName") String firstName, @FormParam("surName") String surName,
+			@FormParam("cpPhone") String cpPhone, @FormParam("cpMail") String mailAddress,
 			@FormParam("department") String department) {
 		return as.updateMainContactPerson(token, firstName, surName, cpPhone, mailAddress, department);
 	}
-	
+
 	@UserAuthentication
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("user/delete")
-	public Response deleteUser(@CookieParam("token") String token, @FormParam("pw") String pw){
+	public Response deleteUser(@CookieParam("token") String token, @FormParam("pw") String pw) {
 		return as.deleteUser(token, pw);
 	}
-	
+
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -134,7 +142,7 @@ public class UserRestService implements _ApplicationUserService {
 	public Response getUser(@CookieParam("token") String token, @PathParam("userId") int userId) {
 		return as.getUser(token, userId);
 	}
-	
+
 	/*
 	 * TestString for registering of a private user
 	 * https://localhost:8443/IdentityManagement/rest/user/login/frankvogel2@web.de/
@@ -202,11 +210,13 @@ public class UserRestService implements _ApplicationUserService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("/user/conditiondesire")
-	public Response saveConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate, 
-			@FormParam("endDate") String endDate, @FormParam("contractType") String contractType, @FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
+	public Response saveConditionDesire(@CookieParam("token") String token, @FormParam("startDate") String startDate,
+			@FormParam("endDate") String endDate, @FormParam("contractType") String contractType,
+			@FormParam("maxWorkload") int maxWorkload, @FormParam("fee") double fee,
 			@FormParam("country") String country, @FormParam("city") String city, @FormParam("zipCode") String zipCode,
 			@FormParam("radius") int radius) {
-		return as.saveConditionDesire(token, startDate, endDate, contractType, maxWorkload, fee, country, city, zipCode, radius);
+		return as.saveConditionDesire(token, startDate, endDate, contractType, maxWorkload, fee, country, city, zipCode,
+				radius);
 	}
 
 	@UserAuthentication
@@ -214,10 +224,11 @@ public class UserRestService implements _ApplicationUserService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("user/qualifications")
-	public Response saveQualification(@CookieParam("token") String token, @FormParam("description") String description) {
+	public Response saveQualification(@CookieParam("token") String token,
+			@FormParam("description") String description) {
 		return as.saveQualification(token, description);
 	}
-	
+
 	@UserAuthentication
 	@Override
 	@DELETE
@@ -227,17 +238,17 @@ public class UserRestService implements _ApplicationUserService {
 		System.out.println(qualiId);
 		return as.deleteQualification(token, qualiId);
 	}
-	
+
 	@UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("user/qualifications/{qId}")
-	public Response updateQualification(@CookieParam("token") String token, @FormParam("description") String description, 
-			@PathParam("qId") int qId) {
+	public Response updateQualification(@CookieParam("token") String token,
+			@FormParam("description") String description, @PathParam("qId") int qId) {
 		return as.updateQualification(token, description, qId);
 	}
-	
+
 	@UserAuthentication
 	@Override
 	@GET
@@ -246,4 +257,15 @@ public class UserRestService implements _ApplicationUserService {
 	public Response getQualifications(@CookieParam("token") String token) {
 		return as.getQualifications(token);
 	}
+
+	@Override
+	@UserAuthentication
+	@POST
+	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_FORM_URLENCODED })
+	@Path("user/image")
+	public Response setUserImage(MultipartFormDataInput input,
+			@HeaderParam("httpRequesterId") Integer httpRequesterId) {
+		return as.setUserImage(input, httpRequesterId);
+	}
+
 }
