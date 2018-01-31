@@ -26,18 +26,17 @@ public class RestTokenAuthenticator implements ContainerRequestFilter {
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 
 		String token = null;
-		int requesterId = 0;
+		String requesterId = "";
 
 		for (Cookie c : requestContext.getCookies().values()) {
 			if (c.getName().equals("token")) {
 				token = c.getValue();
-
 			}
 		}
 
 		try {
-			requesterId = Integer.parseInt(ss.authenticateToken(token));
-			
+			requesterId = ss.authenticateToken(token);
+			requestContext.getHeaders().add("httpRequesterId", requesterId);
 		} catch (Exception e) {
 			requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
 		}

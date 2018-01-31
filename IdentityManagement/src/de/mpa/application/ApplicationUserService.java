@@ -1,11 +1,13 @@
 package de.mpa.application;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -16,13 +18,19 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.jboss.resteasy.plugins.providers.multipart.InputPart;
+import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oracle.tools.packager.IOUtils;
 
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
@@ -682,4 +690,63 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		return (String) response.readEntity(String.class);
 	}
+
+	// Saves the image of the user in the web content
+	@Override
+	public Response setUserImage( MultipartFormDataInput input, Integer httpRequesterId) {
+		if(httpRequesterId == null || input == null) {
+			return Response.status(Status.BAD_REQUEST).entity("No content").build();
+		}
+		
+		String fileName = "";
+
+		List<InputPart> inputParts = input.getParts();
+
+		
+		for(InputPart inputPart : inputParts) {
+			
+			try {
+				
+			MultivaluedMap<String, String> header = inputPart.getHeaders();
+			fileName = getFileName(header);
+
+			//convert the uploaded file to inputstream
+			InputStream inputStream = inputPart.getBody(InputStream.class,null);
+			
+			System.out.println(fileName);
+			
+			String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
+			
+			fileName = "image_" + httpRequesterId + "." + fileExtension;
+			System.out.println(fileName);
+			
+			pu.saveImage(inputStream, fileName);
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return Response.ok("https://localhost:8443/IdentityManagemen/userpictures/" + fileName).build();
+		
+	}
+	
+	// Get the file name of the uploaded image
+	private String getFileName(MultivaluedMap<String, String> header) {
+
+		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
+
+		for (String filename : contentDisposition) {
+			if ((filename.trim().startsWith("filename"))) {
+
+				String[] name = filename.split("=");
+
+				String finalFileName = name[1].trim().replaceAll("\"", "");
+				return finalFileName;
+			}
+		}
+		return "unknown";
+	}
+	
 }
