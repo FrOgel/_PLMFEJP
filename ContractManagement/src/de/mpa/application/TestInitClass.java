@@ -17,6 +17,7 @@ import de.mpa.infrastructure.PersistenceContract;
 
 public class TestInitClass {
 
+	//Generates test data
 	public static void main(String[] args) {
 		Contract c = new Contract();
 		BasicCondition b = new BasicCondition();
