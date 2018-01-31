@@ -1,4 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@page import="java.io.File"%>
+<%@page import="java.io.FileInputStream"%>
+<%@page import="java.util.Base64"%>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -109,7 +112,19 @@
 										
 							%>
 							
-							<img src="https://localhost:8443/MPA_Frontend/userpictures/image_1.png"/>
+							<% 	File image = new File("C:\\Users\\Frank.Vogel\\Desktop\\eclipse_project\\wildfly-11.0.0.Final\\standalone\\"
+									+ "deployments\\MPA_Frontend.war\\userpictures\\image_" + userId + ".jpg");
+								FileInputStream fileInputStream = new FileInputStream(image);
+								long byteLength = image.length();
+								byte[] filecontent = new byte[(int) byteLength];
+								fileInputStream.read(filecontent, 0, (int) byteLength);
+								fileInputStream.close();
+								String encoded = Base64.getEncoder().encodeToString(filecontent);
+								
+							%>
+							
+							<img src="data:image/png;base64, <%= encoded %>"/>
+							
 							<p>User No. <%= userId %> <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= userId %>"> Check out user <%= userId %></a></p>
 							
 							
