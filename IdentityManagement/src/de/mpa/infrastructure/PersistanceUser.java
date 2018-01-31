@@ -28,6 +28,7 @@ import de.mpa.domain.User;
 @LocalBean
 public class PersistanceUser {
 
+	//persistances an object
 	public Object addObjectToPersistance(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 
@@ -41,6 +42,7 @@ public class PersistanceUser {
 		return o;
 	}
 
+	//get an object from db
 	public Object getObjectFromPersistanceById(Class<?> c, int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -50,6 +52,7 @@ public class PersistanceUser {
 		return o;
 	}
 
+	//delete persisted object
 	public boolean deleteObjectFromPersistance(Class<?> c, Object id) {
 		try {
 			EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
@@ -67,6 +70,7 @@ public class PersistanceUser {
 		}
 	}
 
+	//update existing object
 	public Object updateExistingObject(Object o) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -78,6 +82,7 @@ public class PersistanceUser {
 		return attached;
 	}
 
+	//persist qualification in contract
 	public Qualification persistQualificationInContract(int userId, Qualification q_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -94,6 +99,7 @@ public class PersistanceUser {
 		return q_new;
 	}
 
+	//delete qualification from user
 	public boolean deleteQualificationFromUser(int userId, int qualiId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -109,6 +115,7 @@ public class PersistanceUser {
 		return true;
 	}
 
+	//persist a verified user
 	public User persistVerifiedUser(User user, AccountVerification av) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -121,6 +128,7 @@ public class PersistanceUser {
 		return user;
 	}
 
+	//check user crendentials and return valid user
 	public User checkUserCredentials(String mail, String password) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -145,6 +153,7 @@ public class PersistanceUser {
 		}
 	}
 
+	//Get a user by mail address and return userid
 	public int findUserIdByMail(String mail) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -168,6 +177,7 @@ public class PersistanceUser {
 		}
 	}
 
+	//Get user mail by userid
 	public String findUserMailById(int userId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -191,6 +201,7 @@ public class PersistanceUser {
 		 */
 	}
 
+	//check if validation exists for userid
 	public boolean checkIfValidationExists(int userId) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -208,6 +219,7 @@ public class PersistanceUser {
 		//
 	}
 
+	//Get password change for a userid
 	public PasswordChange findPasswordChange(String uuid) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -231,6 +243,7 @@ public class PersistanceUser {
 		}
 	}
 
+	//replaces old with new qualification
 	public Qualification updateQualification(Qualification q_old, Qualification q_new) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -248,6 +261,7 @@ public class PersistanceUser {
 		return q_old;
 	}
 
+	//removes security validation for userid
 	public void removceSecurityValidation(int id) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();
@@ -259,6 +273,7 @@ public class PersistanceUser {
 		emfactory.close();
 	}
 
+	//changes the password for a user
 	public boolean changePassword(User u, String newPassword) {
 		EntityManagerFactory emfactory = Persistence.createEntityManagerFactory("IdentityManagement");
 		EntityManager entitymanager = emfactory.createEntityManager();

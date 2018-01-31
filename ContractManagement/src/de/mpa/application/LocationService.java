@@ -41,6 +41,7 @@ public class LocationService {
 
 	}
 
+	//Gets latitude from JSON
 	public double getLatFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -59,6 +60,7 @@ public class LocationService {
 		return lat;
 	}
 
+	//extracts longtitude from JSON
 	public double getLngFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;

@@ -58,6 +58,7 @@ public class UserRestService implements _ApplicationUserService {
 				houseNumber, firstName, surName, cpPhone, mailAddress, department);
 	}
 
+	//Update company user
 	@UserAuthentication
 	@Override
 	@PUT
@@ -92,7 +93,7 @@ public class UserRestService implements _ApplicationUserService {
 				firstName, surName, birthday);
 
 	}
-
+	//Update Private user
 	@UserAuthentication
 	@Override
 	@PUT
@@ -105,7 +106,9 @@ public class UserRestService implements _ApplicationUserService {
 	}
 
 	// Methods for manipulating / retrieving users
-	@UserAuthentication
+  
+	//update address
+  @UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -116,7 +119,8 @@ public class UserRestService implements _ApplicationUserService {
 		return as.updateAddress(token, country, state, zipCode, city, street, houseNumber);
 	}
 
-	@UserAuthentication
+	//update main contact person
+  @UserAuthentication
 	@Override
 	@PUT
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -127,7 +131,8 @@ public class UserRestService implements _ApplicationUserService {
 			@FormParam("department") String department) {
 		return as.updateMainContactPerson(token, firstName, surName, cpPhone, mailAddress, department);
 	}
-
+  
+	//delete user
 	@UserAuthentication
 	@Override
 	@POST
@@ -137,7 +142,8 @@ public class UserRestService implements _ApplicationUserService {
 		return as.deleteUser(token, pw);
 	}
 
-	@UserAuthentication
+	//Get a specific user
+  @UserAuthentication
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -151,6 +157,7 @@ public class UserRestService implements _ApplicationUserService {
 	 * https://localhost:8443/IdentityManagement/rest/user/login/frankvogel2@web.de/
 	 * test
 	 */
+	//Login a user
 	@Override
 	@POST
 	@Produces(MediaType.APPLICATION_FORM_URLENCODED)
@@ -175,6 +182,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.verifyAccount(id, creationTime);
 	}
 
+	//Request password reset handle
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -183,14 +191,15 @@ public class UserRestService implements _ApplicationUserService {
 		System.out.println(mail);
 		return as.requestPasswordReset(mail);
 	}
-
+	
+	//authenticate password reset
 	@Override
 	@GET
 	@Path("passwordResetAuthentication/{uuid}")
 	public Response passwordResetAuthentication(@PathParam("uuid") String uuid) {
 		return as.passwordResetAuthentication(uuid);
 	}
-
+	//change password
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -199,6 +208,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.changePassword(uuid, newPassword);
 	}
 
+	//Get User mail adress
 	@Override
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
@@ -207,6 +217,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.getUserMailAddress(userId);
 	}
 
+	//Save condition desire
 	@UserAuthentication
 	@Override
 	@POST
@@ -222,6 +233,7 @@ public class UserRestService implements _ApplicationUserService {
 				radius);
 	}
 
+	//Save qualification
 	@UserAuthentication
 	@Override
 	@POST
@@ -232,6 +244,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.saveQualification(token, description);
 	}
 
+	//Delete qualification
 	@UserAuthentication
 	@Override
 	@DELETE
@@ -242,6 +255,7 @@ public class UserRestService implements _ApplicationUserService {
 		return as.deleteQualification(token, qualiId);
 	}
 
+	//Update qualification
 	@UserAuthentication
 	@Override
 	@PUT
@@ -251,7 +265,8 @@ public class UserRestService implements _ApplicationUserService {
 			@FormParam("description") String description, @PathParam("qId") int qId) {
 		return as.updateQualification(token, description, qId);
 	}
-
+  
+	//Get qualification
 	@UserAuthentication
 	@Override
 	@GET
