@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.net.ssl.HttpsURLConnection;
@@ -18,20 +17,16 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oracle.tools.packager.IOUtils;
-
 import de.mpa.domain.AccountVerification;
 import de.mpa.domain.Address;
 import de.mpa.domain.CompanyUser;
@@ -53,8 +48,9 @@ import de.mpa.infrastructure.ToBeEncrypted;
 @Stateless
 public class ApplicationUserService implements _ApplicationUserService {
 
-	//private PersistanceUser pu = new PersistanceUser();
-	@EJB private PersistanceUser pu;
+	// private PersistanceUser pu = new PersistanceUser();
+	@EJB
+	private PersistanceUser pu;
 	private SecurityService ss = new SecurityService();
 
 	// Persists the company user for registration purposes
@@ -84,32 +80,31 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
-	//updates a company user
+	// updates a company user
 	public Response updateCompanyUser(String token, String mail, String phoneNumber, String companyName) {
-		
-		if(mail==null || phoneNumber==null || companyName==null)
+
+		if (mail == null || phoneNumber == null || companyName == null)
 			return Response.status(Status.BAD_REQUEST).entity("Missing parameter").build();
-		
-		if(mail.equals("") || phoneNumber.equals("") || companyName.equals(""))
+
+		if (mail.equals("") || phoneNumber.equals("") || companyName.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		System.out.println(userId);
-		
+
 		CompanyUser user = (CompanyUser) pu.getObjectFromPersistanceById(CompanyUser.class, userId);
-		
+
 		user.setCompanyName(companyName);
 		user.setPhoneNumber(phoneNumber);
 		user.setMailAddress(mail);
-		
+
 		user = (CompanyUser) pu.updateExistingObject(user);
-		
+
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 
-		
 	}
-	
+
 	// Persists the private user for registration purposes
 	@Override
 	public Response createPrivateUser(String mail, String pw, String phoneNumber, String country, String state,
@@ -135,45 +130,49 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 	}
 
-	//Update a private user
+	// Update a private user
 	@Override
-	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName, String birthday) {
-		
-		if(mail==null || phoneNumber==null)
+	public Response updatePrivateUser(String token, String mail, String phoneNumber, String firstName, String surName,
+			String birthday) {
+
+		if (mail == null || phoneNumber == null)
 			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
-		
-		if(mail.equals("") || phoneNumber.equals(""))
+
+		if (mail.equals("") || phoneNumber.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		PrivateUser user = (PrivateUser) pu.getObjectFromPersistanceById(PrivateUser.class, userId);
-		
+
 		user.setBirthday(birthday);
 		user.setFirstName(firstName);
 		user.setPhoneNumber(phoneNumber);
 		user.setSurName(surName);
 		user.setMailAddress(mail);
-		
+
 		user = (PrivateUser) pu.updateExistingObject(user);
-		
+
 		return Response.ok(user, MediaType.APPLICATION_JSON).build();
-		
+
 	}
-	
-	//updates the address
-	public Response updateAddress(String token, String country, String state, String zipCode, String city, String street, String houseNumber) {
-		
-		if(country==null || state==null || zipCode==null || city==null || street==null || houseNumber==null)
+
+	// updates the address
+	public Response updateAddress(String token, String country, String state, String zipCode, String city,
+			String street, String houseNumber) {
+
+		if (country == null || state == null || zipCode == null || city == null || street == null
+				|| houseNumber == null)
 			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
-		
-		if(country.equals("") || state.equals("") || zipCode.equals("") || city.equals("") || street.equals("") || houseNumber.equals(""))
+
+		if (country.equals("") || state.equals("") || zipCode.equals("") || city.equals("") || street.equals("")
+				|| houseNumber.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("Empty parameter").build();
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
-		
+
 		Address userAddress = user.getUserAddress();
 		userAddress.setCountry(country);
 		userAddress.setState(state);
@@ -181,73 +180,75 @@ public class ApplicationUserService implements _ApplicationUserService {
 		userAddress.setCity(city);
 		userAddress.setStreet(street);
 		userAddress.setHouseNumber(houseNumber);
-		
+
 		userAddress = (Address) pu.updateExistingObject(userAddress);
-		
+
 		return Response.ok(userAddress, MediaType.APPLICATION_JSON).build();
-		
+
 	}
-	
-	//Updates companys main contact person
-	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone, String mailAddress, String department) {
-		
-		if(firstName==null || surName==null || cpPhone==null || mailAddress==null || department==null)
+
+	// Updates companys main contact person
+	public Response updateMainContactPerson(String token, String firstName, String surName, String cpPhone,
+			String mailAddress, String department) {
+
+		if (firstName == null || surName == null || cpPhone == null || mailAddress == null || department == null)
 			return Response.status(Status.BAD_REQUEST).entity("Incomplete parameter").build();
-		
-		if(firstName.equals("") || surName.equals("") || cpPhone.equals("") || mailAddress.equals("") || department.equals(""))
+
+		if (firstName.equals("") || surName.equals("") || cpPhone.equals("") || mailAddress.equals("")
+				|| department.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("Incomplete parameter").build();
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		CompanyUser user = (CompanyUser) pu.getObjectFromPersistanceById(CompanyUser.class, userId);
-		
+
 		ContactPerson cp = user.getMainContactPerson();
 		cp.setDepartment(department);
 		cp.setFirstName(firstName);
 		cp.setMailAddress(mailAddress);
 		cp.setPhoneNumber(cpPhone);
 		cp.setSurName(surName);
-		
+
 		cp = (ContactPerson) pu.updateExistingObject(cp);
-		
+
 		return Response.ok(cp, MediaType.APPLICATION_JSON).build();
-		
+
 	}
-	
-	//Delete a user
-	public Response deleteUser(String token, String pw){
-		
+
+	// Delete a user
+	public Response deleteUser(String token, String pw) {
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
-		
-		if(user.getPassword().equals(ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD))) {
-			
-			if(pu.deleteObjectFromPersistance(User.class, userId)) {
+
+		if (user.getPassword().equals(ss.getEncryptedKey(pw, ToBeEncrypted.PASSWORD))) {
+
+			if (pu.deleteObjectFromPersistance(User.class, userId)) {
 				return Response.ok("Deleted").build();
 			} else {
 				return Response.status(Status.BAD_REQUEST).entity("Not deleted - PW valid").build();
 			}
 
 		}
-		
+
 		return Response.status(Status.FORBIDDEN).entity("Invalid pw").build();
-		
+
 	}
-	
-	//get a specific user
+
+	// get a specific user
 	public Response getUser(String token, int userId) {
-				
+
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
-		
+
 		int requesterId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		String userJson = this.processJsonViewForContract(user, requesterId);
-		
+
 		return Response.ok(userJson, MediaType.APPLICATION_JSON).build();
-		
+
 	}
-	
+
 	/*
 	 * Handles the mail and password based user authentication After successful
 	 * authentication a token for state transfer purposes is returned to the client
@@ -354,7 +355,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		pu.addObjectToPersistance(av);
 	}
 
-	//Resets the password
+	// Resets the password
 	@Override
 	public Response passwordResetAuthentication(String uuid) {
 		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
@@ -381,7 +382,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	//calls the change password service
+	// calls the change password service
 	private void callPasswordChangeMailService(String mail, String hash) {
 		try {
 			String link = "https://localhost:8443/MailingService/rest/mailing/passwordChangeMail/" + mail + "/" + hash;
@@ -397,7 +398,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	//requests password reset
+	// requests password reset
 	@Override
 	public Response requestPasswordReset(String mail) {
 		PasswordChange pc = new PasswordChange();
@@ -417,7 +418,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return Response.ok().build();
 	}
 
-	//Changes pw for user
+	// Changes pw for user
 	@Override
 	public Response changePassword(String uuid, String newPassword) {
 		PasswordChange pc = pu.findPasswordChange(ss.getEncryptedKey(uuid, ToBeEncrypted.PASSWORD_RESET));
@@ -433,7 +434,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		}
 	}
 
-	//Gets a mail adress for a user
+	// Gets a mail adress for a user
 	@Override
 	public Response getUserMailAddress(int userId) {
 
@@ -448,140 +449,141 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
-	//Saves Condition desire
+	// Saves Condition desire
 	@Override
-	public Response saveConditionDesire(String token, String startDate, String endDate, String contractType, int maxWorkload, double fee,
-			String country, String city, String zipCode, int radius) {
-		
+	public Response saveConditionDesire(String token, String startDate, String endDate, String contractType,
+			int maxWorkload, double fee, String country, String city, String zipCode, int radius) {
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-			
+
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
-		
-		if(user==null)
+
+		if (user == null)
 			return Response.status(Status.BAD_REQUEST).entity("No user found").build();
-		
+
 		ConditionDesire cd = null;
-		
-		if(user.getCd()==null) {
+
+		if (user.getCd() == null) {
 			cd = new ConditionDesire();
 		} else {
 			cd = user.getCd();
 		}
-		
+
 		System.out.println(cd);
-		
-		if(!(startDate.equals("")))
+
+		if (!(startDate.equals("")))
 			cd.setStartDate(startDate);
-		if(!(endDate.equals("")))
+		if (!(endDate.equals("")))
 			cd.setEndDate(endDate);
-		if(maxWorkload!=0)
+		if (maxWorkload != 0)
 			cd.setMaxWorkload(maxWorkload);
-		if(fee!=0)
+		if (fee != 0)
 			cd.setMinFee(fee);
-		if(!(contractType.equals(""))) {
-			if(contractType.toUpperCase().charAt(0)=='D') {
+		if (!(contractType.equals(""))) {
+			if (contractType.toUpperCase().charAt(0) == 'D') {
 				cd.setContractType("Development");
 			} else {
 				cd.setContractType("Consulting");
 			}
 		}
-		
+
 		GeographicalCondition gc;
-		
-		if(cd.getPlace()==null) {
+
+		if (cd.getPlace() == null) {
 			gc = new GeographicalCondition();
 		} else {
 			gc = cd.getPlace();
 		}
-		
-		if(!(country.equals("")))
+
+		if (!(country.equals("")))
 			gc.setCountry(country);
-		if(!(city.equals("")))
+		if (!(city.equals("")))
 			gc.setPlace(city);
-		if(!(zipCode.equals("")))
+		if (!(zipCode.equals("")))
 			gc.setZipCode(zipCode);
-		
+
 		gc.setRadius(radius);
-		
+
 		String location = this.getLocationGeometryData(country, city, zipCode);
-		
+
 		gc.setLatitude(this.getLatFromJson(location));
-		gc.setLongitude(this.getLngFromJson(location));	
-		
+		gc.setLongitude(this.getLngFromJson(location));
+
 		cd.setPlace(gc);
-		
-		if(user.getCd()==null) {
+
+		if (user.getCd() == null) {
 			user.setCd(cd);
 			user = (User) pu.updateExistingObject(user);
 			cd = user.getCd();
 		} else {
 			cd = (ConditionDesire) pu.updateExistingObject(cd);
 		}
-		
-		
+
 		return Response.ok(cd, MediaType.APPLICATION_JSON).build();
 	}
 
-	//saves qualification 
+	// saves qualification
 	@Override
 	public Response saveQualification(String token, String description) {
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
-		if(description.equals(""))
+
+		if (description.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
-		
+
 		Qualification q_new = new Qualification();
 		q_new.setDescription(description);
-		
+
 		q_new = pu.persistQualificationInContract(userId, q_new);
-		
+
 		return Response.ok(q_new, MediaType.APPLICATION_JSON).build();
 	}
-	
-	//Update qualification
+
+	// Update qualification
 	public Response updateQualification(String token, String description, int qId) {
-			
+
 		Qualification q_new = new Qualification();
-		
-		if(qId!=0)
+
+		if (qId != 0)
 			q_new.setQualificationId(qId);
-		
-		if(description!=null)
+
+		if (description != null)
 			q_new.setDescription(description);
-		
+
 		pu.updateExistingObject(q_new);
-		
+
 		return Response.ok(q_new).build();
 	}
-	
-	//Delete qualification
+
+	// Delete qualification
 	public Response deleteQualification(String token, int qualiId) {
-		
+
 		System.out.println(qualiId);
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
-		if(qualiId==0) return Response.status(Status.BAD_REQUEST).entity("No qualification id").build();
-		
+
+		if (qualiId == 0)
+			return Response.status(Status.BAD_REQUEST).entity("No qualification id").build();
+
 		pu.deleteQualificationFromUser(userId, qualiId);
-		
+
 		return Response.ok().build();
-		
+
 	}
-	
-	//Get qualification
+
+	// Get qualification
 	public Response getQualifications(String token) {
-		
+
 		int userId = Integer.parseInt(ss.authenticateToken(token));
-		
+
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
-		
+
 		List<Qualification> list = (List<Qualification>) user.getQualificationProfile();
-		
+
 		return Response.ok(list, MediaType.APPLICATION_JSON).build();
-		
+
 	}
+
 	// Methods for retrieving the longitude and latitude values of a specific
 	// (country, postal code, city)
 	private String getLocationGeometryData(String country, String city, String zipCode) {
@@ -605,7 +607,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 	}
 
-	//Get latitiude from JSOn
+	// Get latitiude from JSOn
 	private double getLatFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -624,7 +626,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return lat;
 	}
 
-	//Get longtitude from json
+	// Get longtitude from json
 	private double getLngFromJson(String json) {
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode geo1 = null;
@@ -646,10 +648,10 @@ public class ApplicationUserService implements _ApplicationUserService {
 	// Process user based json view for user objects
 	private String processJsonViewForContract(User u, int requesterId) {
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		Class<?> viewClass = User.ViewerView.class;
-		
-		if(requesterId == u.getUserID()) {
+
+		if (requesterId == u.getUserID()) {
 			viewClass = User.OwnerView.class;
 		} else {
 			String relationship = this.getUserContractRelationship(requesterId, u.getUserID());
@@ -665,7 +667,7 @@ public class ApplicationUserService implements _ApplicationUserService {
 				viewClass = User.PartnerView.class;
 			}
 		}
-				
+
 		String result;
 		try {
 			result = mapper.writerWithView(viewClass).writeValueAsString(u);
@@ -676,14 +678,14 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		return result;
 	}
-	
-	//gets the user-contract relation
+
+	// gets the user-contract relation
 	private String getUserContractRelationship(int contractId, int userId) {
 		Client client = ClientBuilder.newClient();
 
-		WebTarget webTarget = client
-				.target("https://localhost:8443/ContractManagement/rest/contract/contracts/" + contractId + "/relationship/" + userId);
-		
+		WebTarget webTarget = client.target("https://localhost:8443/ContractManagement/rest/contract/contracts/"
+				+ contractId + "/relationship/" + userId);
+
 		Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
 
 		Response response = invocationBuilder.get();
@@ -691,62 +693,53 @@ public class ApplicationUserService implements _ApplicationUserService {
 		return (String) response.readEntity(String.class);
 	}
 
-	// Saves the image of the user in the web content
+	// Saves the image of the user as base64 String in Database
 	@Override
-	public Response setUserImage( MultipartFormDataInput input, Integer httpRequesterId) {
-		if(httpRequesterId == null || input == null) {
+	public Response setUserImage(MultipartFormDataInput input, Integer httpRequesterId) {
+		if (httpRequesterId == null || input == null) {
 			return Response.status(Status.BAD_REQUEST).entity("No content").build();
 		}
-		
-		String fileName = "";
+
+		User u = (User) pu.getObjectFromPersistanceById(User.class, httpRequesterId);
 
 		List<InputPart> inputParts = input.getParts();
 
-		
-		for(InputPart inputPart : inputParts) {
-			
+		for (InputPart inputPart : inputParts) {
+
 			try {
 				
-			MultivaluedMap<String, String> header = inputPart.getHeaders();
-			fileName = getFileName(header);
+				// convert the uploaded file to inputstream
+				InputStream inputStream = inputPart.getBody(InputStream.class, null);
+				byte[] filecontent = inputStream.readAllBytes();
+				inputStream.read(filecontent);
+				inputStream.close();
+				String encoded = Base64.getEncoder().encodeToString(filecontent);
 
-			//convert the uploaded file to inputstream
-			InputStream inputStream = inputPart.getBody(InputStream.class,null);
-			
-			System.out.println(fileName);
-			
-			String fileExtension = fileName.substring(fileName.lastIndexOf(".")+1);
-			
-			fileName = "image_" + httpRequesterId + "." + fileExtension;
-			System.out.println(fileName);
-			
-			pu.saveImage(inputStream, fileName);
-			
+				System.out.println(encoded);
+				
+				u.setImageBase64(encoded);
+				
+				u = (User) pu.updateExistingObject(u);
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		}
-		
-		return Response.ok("https://localhost:8443/IdentityManagemen/userpictures/" + fileName).build();
-		
+
+		return Response.ok().build();
+
 	}
 	
-	// Get the file name of the uploaded image
-	private String getFileName(MultivaluedMap<String, String> header) {
-
-		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-		for (String filename : contentDisposition) {
-			if ((filename.trim().startsWith("filename"))) {
-
-				String[] name = filename.split("=");
-
-				String finalFileName = name[1].trim().replaceAll("\"", "");
-				return finalFileName;
-			}
-		}
-		return "unknown";
+	// Get the base64 image string from the database
+	@Override
+	public Response getUserImage(Integer httpRequesterId) {
+		if(httpRequesterId == null)
+			return Response.status(Status.BAD_REQUEST).entity("No user id").build();
+		
+		String base64 = pu.getImage(httpRequesterId);
+		
+		return Response.ok(base64, MediaType.TEXT_PLAIN).build();
 	}
-	
+
 }

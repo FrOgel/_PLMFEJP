@@ -741,9 +741,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 			Candidate can = new Candidate();
 			can.setCandidateId(candidateId);
 			can = pc.persistCandidateInContract(c, can);
-			
+
 			this.processCandidateApplicationMail(c.getPrincipalID(), httpRequesterId, contractId);
-			
+
 			return Response.ok(can, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("Already applied").build();
@@ -925,8 +925,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 				for (Candidate can : c.getCandidates()) {
 					if (c.getClientID() != can.getCandidateId().getCandidateId()) {
-						String candidateMail = ac
-								.getUserMailAddress(can.getCandidateId().getCandidateId());
+						String candidateMail = ac.getUserMailAddress(can.getCandidateId().getCandidateId());
 						ApplicationContractService.sendCandidateAcceptMail(candidateMail,
 								"Another users offer was accepted for the contract " + c.getSubject()
 										+ "by the contractor",
@@ -1229,18 +1228,19 @@ public class ApplicationContractService implements _ApplicationContractService {
 		URL url = null;
 
 		try {
-			url = new URL("https://localhost:8443/ContractManagement/CandidateApplicationMail.jsp?applicantId=" + applicantId);
+			url = new URL("https://localhost:8443/ContractManagement/CandidateApplicationMail.jsp?applicantId="
+					+ applicantId);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		String html = this.getMailHTML(url);
-		
+
 		String mail = this.getUserMailAddress(principalId);
-		
+
 		System.out.println(mail);
-		
+
 		this.sendMail(mail, "You have a new applicant for your contract " + contractId, html);
 
 	}
@@ -1443,9 +1443,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return "IO Exception";
 		}
 	}
-	
+
 	// process all contract at a specific time for all users
-	@Schedule(hour = "10", minute = "41", second = "45")
+	@Schedule(hour = "11", minute = "36", second = "45")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 
@@ -1460,37 +1460,26 @@ public class ApplicationContractService implements _ApplicationContractService {
 		int i = 0;
 
 		for (List<UserMatch> m : principalMatches) {
-
 			Collections.sort(m, new UserMatchComparator());
-
 			String html = this.getPrincipalSuggestionMail(m);
-			String mail = getUserMailAddress(m.get(i).getPrincipalId());
+			String mail = getUserMailAddress(m.get(0).getPrincipalId());
 			if (mail == null)
 				continue;
-			if (!(mail.equals("frankvogel2@web.de")))
-				continue;
 			this.sendMail(mail, "Your current matches for your active contracts!", html);
-
-			i++;
 		}
 
 		groupedMatches = matches.stream().collect(Collectors.groupingBy(UserMatch::getUserId));
 
 		List<List<UserMatch>> clientMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
 
-		i = 0;
-
 		for (List<UserMatch> m : clientMatches) {
 
 			String html = this.getClientSuggestionMail(m);
-			String mail = getUserMailAddress(m.get(i).getUserId());
+			String mail = getUserMailAddress(m.get(0).getUserId());
 			if (mail == null)
-				continue;
-			if (!(mail.equals("mpadhbw@gmail.com")))
 				continue;
 			this.sendMail(mail, "Your current contract matches!", html);
 
-			i++;
 		}
 
 	}

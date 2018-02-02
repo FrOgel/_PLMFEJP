@@ -1,7 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@page import="java.io.File"%>
-<%@page import="java.io.FileInputStream"%>
 <%@page import="java.util.Base64"%>
+<%@page import="javax.ws.rs.client.Client" %>
+<%@page import="javax.ws.rs.client.ClientBuilder" %>
+<%@page import="javax.ws.rs.client.Invocation" %>
+<%@page import="javax.ws.rs.client.WebTarget" %>
+<%@page import="javax.ws.rs.core.Response" %>
+<%@page import="javax.ws.rs.core.MediaType" %>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -112,25 +117,23 @@
 										
 							%>
 							
-							<% 	File image = new File("C:\\Users\\Frank.Vogel\\Desktop\\eclipse_project\\wildfly-11.0.0.Final\\standalone\\"
-									+ "deployments\\MPA_Frontend.war\\userpictures\\image_" + userId + ".jpg");
-								FileInputStream fileInputStream = new FileInputStream(image);
-								long byteLength = image.length();
-								byte[] filecontent = new byte[(int) byteLength];
-								fileInputStream.read(filecontent, 0, (int) byteLength);
-								fileInputStream.close();
-								String encoded = Base64.getEncoder().encodeToString(filecontent);
+							<% 	Client client = ClientBuilder.newClient();
+
+							WebTarget webTarget = client
+									.target("https://localhost:8443/IdentityManagement/rest/user/user/image/" + userId);
+
+							Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
+
+							Response resp = invocationBuilder.get();
+							
+							String encoded = resp.readEntity(String.class);
 								
 							%>
 							
-							<img src="data:image/png;base64, <%= encoded %>"/>
+							<img src="data:image/jpg;base64, <%= encoded %>"/>
 							
 							<p>User No. <%= userId %> <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= userId %>"> Check out user <%= userId %></a></p>
 							
-							
-							
-                          	
-                           
                           </td>
                         </tr>
                       </table>

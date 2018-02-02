@@ -286,4 +286,11 @@ public class UserRestService implements _ApplicationUserService {
 		return as.setUserImage(input, httpRequesterId);
 	}
 
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/image/{userId}")
+	public Response getUserImage(@PathParam("userId") Integer httpRequesterId) {
+		return as.getUserImage(httpRequesterId);
+	}
 }

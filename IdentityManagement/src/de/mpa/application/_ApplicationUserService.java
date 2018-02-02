@@ -38,6 +38,8 @@ public interface _ApplicationUserService {
 	
 	public Response setUserImage( MultipartFormDataInput input, Integer httpRequesterId);
 	
+	public Response getUserImage(Integer httpRequesterId);
+	
 	public Response verifyAccount(int id, String uuid);
 	
 	public Response userLogin(String mail, String pw);

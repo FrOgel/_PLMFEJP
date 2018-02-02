@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 	@NamedQuery(query = "SELECT u FROM User u WHERE u.mailAddress = :mail AND u.password = :password", name = "find user by pw and mail"),
 	@NamedQuery(query = "SELECT u.userID FROM User u WHERE u.mailAddress = :mail", name = "get userId by mail"),
 	@NamedQuery(query = "SELECT u.mailAddress FROM User u WHERE u.userID = :userId", name = "get mail by userId"),
+	@NamedQuery(query = "SELECT u.imageBase64 FROM User u WHERE u.userID = :userId", name = "get image by userId"),
 })	
 
 @XmlRootElement
@@ -53,6 +55,8 @@ public class User {
 	private String password;
 	@JsonView(User.PartnerView.class)
 	private String phoneNumber;
+	@Lob
+	private String imageBase64;
 	@JsonView(User.ViewerView.class)
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Qualification> qualificationProfile;
@@ -167,5 +171,12 @@ public class User {
 		this.cd = cd;
 	}
 
-	
+	@XmlElement
+	public String getImageBase64() {
+		return this.imageBase64;
+	}
+
+	public void setImageBase64(String base64) {
+		this.imageBase64 = base64;
+	}
 }
