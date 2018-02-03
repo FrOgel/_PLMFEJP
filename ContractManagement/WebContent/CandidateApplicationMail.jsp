@@ -1,12 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@page import="java.util.Base64"%>
-<%@page import="javax.ws.rs.client.Client" %>
-<%@page import="javax.ws.rs.client.ClientBuilder" %>
-<%@page import="javax.ws.rs.client.Invocation" %>
-<%@page import="javax.ws.rs.client.WebTarget" %>
-<%@page import="javax.ws.rs.core.Response" %>
-<%@page import="javax.ws.rs.core.MediaType" %>
-
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -81,59 +73,33 @@
                   </tr>
                   <tr>
                     <td class="h1" style="padding: 5px 0 0 0;">
-                      Your current client proposals for your active contracts!
+                      You have a new applicant for your contract!
                     </td>
                   </tr>
                 </table>
               </td>
             </tr>
           </table>
+          <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+          </table>
+          <![endif]-->
         </td>
       </tr>
-       <%
-								int contractIterator = 1;
-								int userIterator = 1;
-								while(request.getParameter("contractId" + contractIterator)!=null){
-									String contractId = request.getParameter("contractId" + contractIterator);
-									String subject = request.getParameter("subject" + contractIterator);
-							%>
       <tr>
         <td class="innerpadding borderbottom">
           <table class="col380" align="left" border="0" cellpadding="0" cellspacing="0" style="width: 100%; max-width: 380px;">  
             <tr>
               <td>
-							<h3>Client proposals for your contract <b><%= subject %></b> (#Ref <%= contractId %>)</h3>
                 <table width="100%" border="0" cellspacing="0" cellpadding="0">
                   <tr>
                     <td style="padding: 20px 0 0 0;">
                       <table class="buttonwrapper" bgcolor="#e05443" border="0" cellspacing="0" cellpadding="0">
                         <tr>
+                        User no. <%= request.getParameter("applicantId") %>
                           <td class="button" height="45">
-							
-							
-							<%
-									while(request.getParameter("userId" + contractIterator + userIterator)!=null){
-										String userId = request.getParameter("userId" + contractIterator + userIterator);
-										
-							%>
-							
-							<% 	Client client = ClientBuilder.newClient();
-
-							WebTarget webTarget = client
-									.target("https://localhost:8443/IdentityManagement/rest/user/user/image/" + userId);
-
-							Invocation.Builder invocationBuilder = webTarget.request(MediaType.TEXT_PLAIN);
-
-							Response resp = invocationBuilder.get();
-							
-							String encoded = resp.readEntity(String.class);
-								
-							%>
-							
-							<img src="data:image/png;base64, <%= encoded %>"/>
-							
-							<p>User No. <%= userId %> <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= userId %>"> Check out user <%= userId %></a></p>
-							
+                            <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= request.getParameter("applicantId") %>">Go to contract.</a>
                           </td>
                         </tr>
                       </table>
@@ -143,18 +109,21 @@
               </td>
             </tr>
           </table>
+          <!--[if (gte mso 9)|(IE)]>
+                </td>
+              </tr>
+          </table>
+          <![endif]-->
         </td>
       </tr>
-      <% 										
-										userIterator++;
-									}
-									contractIterator++;
-									userIterator = 1;
-								}
-							%>
       <tr>
         <td class="innerpadding borderbottom">
           <img class="fix" src="images/wide.png" width="100%" border="0" alt="" />
+        </td>
+      </tr>
+      <tr>
+        <td class="innerpadding bodycopy">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. In tempus adipiscing felis, sit amet blandit ipsum volutpat sed. Morbi porttitor, eget accumsan dictum, nisi libero ultricies ipsum, in posuere mauris neque at erat.
         </td>
       </tr>
       <tr>

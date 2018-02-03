@@ -478,10 +478,10 @@ public class PersistenceContract {
 			stmt = conn.createStatement();
 			String sql;
 			sql = "SELECT (b.ESTIMATEDWORKLOAD-c.MAXWORKLOAD) workloadDif, (b.FEE - c.MINFEE) feeDif, "
-					+ "b.TELEWORKPOSSIBLE, con.contractId contractId, con.NAME name, con.principalId principalId, "
+					+ "b.TELEWORKPOSSIBLE, con.contractId contractId, con.NAME name2, con.principalId principalId, "
 					+ "g.LATITUDE gLatitude, g.LONGITUDE gLongitude, g.RADIUS radius, u.userId userId, p.LATITUDE pLatitude, p.LONGITUDE pLongitude, "
 					// Start jaro winkler similarit<
-					+ "(SELECT AVG(jaro_winkler_similarity(r.DESCRIPTION, q.DESCRIPTION)) "
+					+ "(SELECT AVG(mpa_contractmanagement.jaro_winkler_similarity(r.DESCRIPTION, q.DESCRIPTION)) "
 					+ "FROM mpa_contractmanagement.requirement r, mpa_contractmanagement.contract_requirement cr,"
 					+ "mpa_identitymanagement.qualification q, mpa_identitymanagement.user_qualification uq "
 					+ "WHERE r.REQUIREMENTID = cr.requirementsProfile_REQUIREMENTID AND "
@@ -514,7 +514,7 @@ public class PersistenceContract {
 				int princiaplId = rs.getInt("principalId");
 				int userId = rs.getInt("userId");
 				int contractId = rs.getInt("contractId");
-				String contractSubject = rs.getString("name");
+				String contractSubject = rs.getString("name2");
 				double lat1 = rs.getDouble("gLatitude");
 				double lng1 = rs.getDouble("gLongitude");
 				double lat2 = rs.getDouble("pLatitude");

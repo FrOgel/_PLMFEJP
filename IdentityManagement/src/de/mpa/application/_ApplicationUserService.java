@@ -1,11 +1,8 @@
 package de.mpa.application;
 
-import java.io.InputStream;
-
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 /**
@@ -37,6 +34,8 @@ public interface _ApplicationUserService {
 	public Response getUser(String token, int userId);
 	
 	public Response setUserImage( MultipartFormDataInput input, Integer httpRequesterId);
+	
+	public Response getUserImage(Integer httpRequesterId);
 	
 	public Response verifyAccount(int id, String uuid);
 	

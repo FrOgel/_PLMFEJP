@@ -34,13 +34,12 @@ public class MailingRestService implements _ApplicationMailingService {
 		am.sendPasswordChangeMail(to, hash);
 	}
 
-	
 	@Override
 	@POST
 	@Path("candidateAccept/{to}")
-	public void sendCandidateAcceptMail(@PathParam("to") String to, @FormParam("subject") String subject, @FormParam("html") String html) {
+	public void sendMail(@PathParam("to") String to, @FormParam("subject") String subject, @FormParam("html") String html) {
 		System.out.println(html);
-		am.sendCandidateAcceptMail(to, subject, html);
+		am.sendMail(to, subject, html);
 	}
 
 }

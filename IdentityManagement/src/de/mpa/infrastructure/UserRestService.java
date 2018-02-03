@@ -1,7 +1,5 @@
 package de.mpa.infrastructure;
 
-import java.io.InputStream;
-
 import javax.ejb.EJB;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -17,8 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 import de.mpa.application._ApplicationUserService;
@@ -286,4 +282,11 @@ public class UserRestService implements _ApplicationUserService {
 		return as.setUserImage(input, httpRequesterId);
 	}
 
+	@Override
+	@GET
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("user/image/{userId}")
+	public Response getUserImage(@PathParam("userId") Integer httpRequesterId) {
+		return as.getUserImage(httpRequesterId);
+	}
 }
