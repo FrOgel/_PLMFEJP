@@ -130,7 +130,7 @@
 								
 							%>
 							
-							<img src="data:image/jpg;base64, <%= encoded %>"/>
+							<img src="data:image/png;base64, <%= encoded %>"/>
 							
 							<p>User No. <%= userId %> <a href="https://localhost:8443/IdentityManagement/rest/user/user/<%= userId %>"> Check out user <%= userId %></a></p>
 							

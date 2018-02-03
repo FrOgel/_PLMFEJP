@@ -14,6 +14,6 @@ public interface _ApplicationMailingService {
 	
 	public void sendPasswordChangeMail(String to, String hash);
 
-	public void sendCandidateAcceptMail(String to, String subject, String html);
+	public void sendMail(String to, String subject, String html);
 	
 }

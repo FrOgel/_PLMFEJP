@@ -35,7 +35,7 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 
 	}
 
-	private void sendMail(String to, String subject, String html) {
+	public void sendMail(String to, String subject, String html) {
 		// Set properties for the SSL connection to the gmail smtp server
 		// Verification mail recipient is the to variable
 		// Password: Hallo123!
@@ -136,11 +136,6 @@ public class ApplicationMailingService implements _ApplicationMailingService {
 	@Override
 	public void sendPasswordChangeMail(String to, String hash) {
 		this.sendMail(to, "Reset your password.", this.getPasswordChangeMailTemplate(hash));
-	}
-
-	@Override
-	public void sendCandidateAcceptMail(String to, String subject, String html) {
-		this.sendMail(to, subject, html);
 	}
 
 }

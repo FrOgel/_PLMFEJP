@@ -1,11 +1,8 @@
 package de.mpa.application;
 
-import java.io.InputStream;
-
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 
 /**

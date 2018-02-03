@@ -1445,7 +1445,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	}
 
 	// process all contract at a specific time for all users
-	@Schedule(hour = "11", minute = "36", second = "45")
+	@Schedule(hour = "13", minute = "33", second = "30")
 	private void processMatches() {
 		List<UserMatch> matches = pc.getContractUserMatches();
 
@@ -1456,8 +1456,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 				.collect(Collectors.groupingBy(UserMatch::getPrincipalId));
 
 		List<List<UserMatch>> principalMatches = new ArrayList<List<UserMatch>>(groupedMatches.values());
-
-		int i = 0;
 
 		for (List<UserMatch> m : principalMatches) {
 			Collections.sort(m, new UserMatchComparator());
