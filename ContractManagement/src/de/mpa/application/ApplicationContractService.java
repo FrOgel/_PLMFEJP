@@ -152,9 +152,9 @@ public class ApplicationContractService implements _ApplicationContractService {
 		List<Contract> contracts = pc.findUserContracts(httpRequesterId);
 		if (contracts != null) {
 			int userId = httpRequesterId;
-			List<String> contractList = new ArrayList<String>();
+			List<Contract> contractList = new ArrayList<Contract>();
 			for (Contract c : contracts) {
-				contractList.add(this.processJsonViewForContract(c, userId));
+				contractList.add(c);
 			}
 			return Response.ok(contractList, MediaType.APPLICATION_JSON).build();
 		} else {
@@ -172,10 +172,10 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		String result = this.processJsonViewForContract(c, httpRequesterId);
+		//String result = this.processJsonViewForContract(c, httpRequesterId);
 
 		if (c != null) {
-			return Response.ok(result, MediaType.APPLICATION_JSON).build();
+			return Response.ok(c, MediaType.APPLICATION_JSON).build();
 		} else {
 			return Response.status(Status.BAD_REQUEST).entity("Not contract found").build();
 		}
@@ -493,6 +493,8 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		BasicCondition b_new = new BasicCondition();
 
+		b_new.setBasicConditionId(basicConditionId);
+		
 		if (fee != 0)
 			b_new.setFee(fee);
 

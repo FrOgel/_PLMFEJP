@@ -49,6 +49,10 @@ public class BasicCondition {
 		return basicConditionId;
 	}
 	
+	public void setBasicConditionId(int id) {
+		this.basicConditionId = id;
+	}
+	
 	@XmlElement
 	public Date getStartDate() {
 		return startDate;
