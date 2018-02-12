@@ -102,7 +102,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response deleteContract(Integer httpRequesterId, Integer contractId) {
 
-		if (contractId == 0)
+		if (contractId == 0 || contractId == null)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 
 		if (pc.getPrincipalId(contractId) != httpRequesterId)
@@ -120,13 +120,11 @@ public class ApplicationContractService implements _ApplicationContractService {
 	public Response updateContract(Integer httpRequesterId, String designation, String contractType,
 			String contractSubject, String contractState, Integer contractId) {
 
-		Contract c_new = new Contract();
-
-		if (contractId != null) {
-			c_new.setContractID(contractId);
-		} else {
+		if (contractId == null) {
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
 		}
+
+		Contract c_new = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
 		if (designation.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("Designation is mandatory").build();
@@ -172,7 +170,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 
-		//String result = this.processJsonViewForContract(c, httpRequesterId);
+		// String result = this.processJsonViewForContract(c, httpRequesterId);
 
 		if (c != null) {
 			return Response.ok(c, MediaType.APPLICATION_JSON).build();
@@ -223,23 +221,24 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No seaarchString").build();
 
 		List<Contract> contractList = pc.searchContract(searchText);
-		List<String> searchResult = new ArrayList<String>();
+		/*List<String> searchResult = new ArrayList<String>();
+		if (country != null && zipCode != null && city != null) {
+			if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
+				for (Contract c : contractList) {
+					PlaceOfPerformance p_old = c.getPlaceOfPerformance();
 
-		if (!(country.equals("")) && (!(zipCode.equals(""))) && (!(city.equals("")))) {
-			for (Contract c : contractList) {
-				PlaceOfPerformance p_old = c.getPlaceOfPerformance();
-
-				if (p_old != null) {
-					if (ls.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
-							city) <= radius) {
-						searchResult.add(this.processJsonViewForContract(c, httpRequesterId));
+					if (p_old != null) {
+						if (ls.getDistance(p_old.getCountry(), p_old.getZipCode(), p_old.getPlace(), country, zipCode,
+								city) <= radius) {
+							contractList.add(c);
+						}
 					}
+
 				}
-
 			}
-		}
-
-		return Response.ok(searchResult, MediaType.APPLICATION_JSON).build();
+		}*/
+		
+		return Response.ok(contractList, MediaType.APPLICATION_JSON).build();
 	}
 
 	// Methods for CRUD operations on the place of performance for a contract
@@ -338,13 +337,17 @@ public class ApplicationContractService implements _ApplicationContractService {
 			if (type.equals(""))
 				return Response.status(Status.BAD_REQUEST).entity("No type").build();
 
-			if (subType.equals(""))
-				return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
-
 			DevelopmentTask t_new = new DevelopmentTask();
 			t_new.setDescription(description);
 			t_new.setType(TaskType.valueOf(type.toUpperCase()));
-			t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+
+			if (!(t_new.getType().equals(TaskType.FUNCTIONAL))) {
+				if (subType.equals(""))
+					return Response.status(Status.BAD_REQUEST).entity("No sub type").build();
+
+				t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			}
+
 			t_new = (DevelopmentTask) pc.persistTaskInContract(c, t_new);
 			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 		} else {
@@ -389,10 +392,13 @@ public class ApplicationContractService implements _ApplicationContractService {
 				t_new.setDescription(description);
 			if (!(type.equals("")))
 				t_new.setType(TaskType.valueOf(type.toUpperCase()));
-			if (!(subType.equals("")))
-				t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			if (t_new.getType().equals(TaskType.FUNCTIONAL)) {
+				t_new.setSubType(null);
+			} else {
+				if (subType != null && !(subType.equals("")))
+					t_new.setSubType(TaskSubType.valueOf(subType.toUpperCase()));
+			}
 			t_new = (DevelopmentTask) pc.updateExistingObject(t_new);
-
 			return Response.ok(t_new, MediaType.APPLICATION_JSON).build();
 		} else {
 			Task t_new = new Task();
@@ -494,7 +500,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 		BasicCondition b_new = new BasicCondition();
 
 		b_new.setBasicConditionId(basicConditionId);
-		
+
 		if (fee != 0)
 			b_new.setFee(fee);
 
@@ -557,11 +563,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No description").build();
 		}
 
-		if (!(criteriaType.equals(""))) {
-			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
-		} else {
-			return Response.status(Status.BAD_REQUEST).entity("No criteria type").build();
-		}
+		/*
+		 * if (criteriaType != null && !(criteriaType.equals(""))) {
+		 * r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.
+		 * toUpperCase())); } else { return
+		 * Response.status(Status.BAD_REQUEST).entity("No criteria type").build(); }
+		 */
 
 		Contract c = (Contract) pc.getObjectFromPersistanceById(Contract.class, contractId);
 		r_new = pc.persistRequirementInContract(c, r_new);
@@ -573,7 +580,7 @@ public class ApplicationContractService implements _ApplicationContractService {
 	@Override
 	public Response deleteRequirement(Integer httpRequesterId, int contractId, int requirementId) {
 
-		if (!(pc.checkIfContractIdMatchesRequester(contractId, httpRequesterId)))
+		if (pc.checkIfContractIdMatchesRequester(contractId, httpRequesterId))
 			return Response.status(Status.FORBIDDEN).entity("You are not allowed to change this resourcce.").build();
 
 		if (contractId == 0)
@@ -604,10 +611,12 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		Requirement r_new = new Requirement();
 
+		r_new.setRequirementID(requirementId);
+
 		if (!(description.equals("")))
 			r_new.setDescription(description);
 
-		if (!(criteriaType.equals("")))
+		if (criteriaType != null && !(criteriaType.equals("")))
 			r_new.setCriteriaType(RequirementCriteriaType.valueOf(criteriaType.toUpperCase()));
 
 		r_new = (Requirement) pc.updateExistingObject(r_new);
@@ -776,6 +785,18 @@ public class ApplicationContractService implements _ApplicationContractService {
 			return Response.status(Status.BAD_REQUEST).entity("No acceptance retrieved").build();
 
 		c_old.setCandidateAccepted(candidateAccepted);
+		
+		List<ConditionOffer> negList = new ArrayList<ConditionOffer>();
+		ConditionOffer offer = new ConditionOffer();
+		offer.setStartDate(c.getBasicConditions().getStartDate());
+		offer.setEndDate(c.getBasicConditions().getEndDate());
+		offer.setFee(c.getBasicConditions().getFee());
+		offer.setSenderId(httpRequesterId);
+		offer.setReceiverId(candidateId);
+		
+		negList.add(offer);
+		
+		c_old.setNegotiatedConditions(negList);
 
 		Callable<?> sendMail = new Callable<Object>() {
 
@@ -837,12 +858,6 @@ public class ApplicationContractService implements _ApplicationContractService {
 
 		if (contractId == 0)
 			return Response.status(Status.BAD_REQUEST).entity("No contractId").build();
-
-		if (fee == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No fee").build();
-
-		if (estimatedWorkload == 0)
-			return Response.status(Status.BAD_REQUEST).entity("No workload").build();
 
 		if (endDate.equals(""))
 			return Response.status(Status.BAD_REQUEST).entity("No end date").build();

@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,6 +17,7 @@ public class Requirement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int requirementID;
+	@Lob
 	private String description;
 	@Enumerated(EnumType.STRING)
 	private RequirementCriteriaType criteriaType;

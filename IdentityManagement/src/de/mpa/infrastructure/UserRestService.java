@@ -139,7 +139,7 @@ public class UserRestService implements _ApplicationUserService {
 	}
 
 	//Get a specific user
-  @UserAuthentication
+	@UserAuthentication
 	@Override
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

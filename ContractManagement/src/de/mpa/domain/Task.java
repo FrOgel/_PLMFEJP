@@ -6,6 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Lob;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -16,6 +17,7 @@ public class Task {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int taskID;
+	@Lob
 	private String description;
 
 	@XmlElement

@@ -67,7 +67,7 @@ public class Contract {
 	private LocalDateTime creationDate;
 	@OneToOne(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
-	private BasicCondition basicConditions;
+	private BasicCondition basicConditions = new BasicCondition();
 	@OneToMany(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
 	private List<Task> taskDescription = new ArrayList<Task>();
@@ -91,7 +91,7 @@ public class Contract {
 	private String searchString = "";
 	@OneToOne(cascade = CascadeType.ALL)
 	@JsonView(Contract.Viewer.class)
-	private PlaceOfPerformance placeOfPerformance;
+	private PlaceOfPerformance placeOfPerformance = new PlaceOfPerformance();
 
 	// ---------------------
 

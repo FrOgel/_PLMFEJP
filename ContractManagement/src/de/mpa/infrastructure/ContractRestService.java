@@ -126,7 +126,6 @@ public class ContractRestService implements _ApplicationContractService {
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Path("contracts/searches")
-	@JsonView(Contract.Viewer.class)
 	public Response createContractSearch(@HeaderParam("httpRequesterId") Integer httpRequesterId,
 			@FormParam("searchText") String searchText, @FormParam("country") String country,
 			@FormParam("zipCode") String zipCode, @FormParam("city") String city, @FormParam("radius") int radius) {
@@ -375,7 +374,7 @@ public class ContractRestService implements _ApplicationContractService {
 	@Override
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Path("contracts/{contractId}/candidate/{candidateId}/offers")
+	@Path("contracts/{contractId}/candidates/{candidateId}/offers")
 	public Response saveOffer(@HeaderParam("httpRequesterId") Integer httpRequesterId,
 			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
 			@FormParam("comment") String comment, @FormParam("teleWorkPossible") boolean teleWorkPossible,
@@ -475,7 +474,7 @@ public class ContractRestService implements _ApplicationContractService {
 	}
 	
 	// Get enums
-	@UserAuthorization
+	
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -484,7 +483,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getContractStates();
 	}
 
-	@UserAuthorization
+
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -493,7 +492,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getContractType();
 	}
 
-	@UserAuthorization
+	
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -502,7 +501,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getRequirementCriteriaType();
 	}
 
-	@UserAuthorization
+	
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -511,7 +510,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getTaskType();
 	}
 
-	@UserAuthorization
+	
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -520,7 +519,7 @@ public class ContractRestService implements _ApplicationContractService {
 		return ac.getTaskSubType();
 	}
 
-	@UserAuthorization
+	
 	@Override
 	@GET
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -528,7 +527,5 @@ public class ContractRestService implements _ApplicationContractService {
 	public Response getTermType() {
 		return ac.getTermType();
 	}
-
-	
 
 }

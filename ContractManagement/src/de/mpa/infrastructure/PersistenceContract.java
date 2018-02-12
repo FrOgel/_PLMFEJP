@@ -358,7 +358,13 @@ public class PersistenceContract {
 		Candidate can = entitymanager.find(Candidate.class, candidateId);
 
 		List<ConditionOffer> list = (List<ConditionOffer>) can.getNegotiatedConditions();
-		list.add(new_offer);
+		if(list.size()>=2) {
+			list.set(0, list.get(1));
+			list.set(1, new_offer);
+		} else {
+			list.add(new_offer);
+		}
+		
 		can.setNegotiatedConditions(list);
 
 		entitymanager.getTransaction().commit();

@@ -19,6 +19,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
@@ -241,11 +242,11 @@ public class ApplicationUserService implements _ApplicationUserService {
 
 		User user = (User) pu.getObjectFromPersistanceById(User.class, userId);
 
-		int requesterId = Integer.parseInt(ss.authenticateToken(token));
+		//int requesterId = Integer.parseInt(ss.authenticateToken(token));
 
-		String userJson = this.processJsonViewForContract(user, requesterId);
+		//String userJson = this.processJsonViewForContract(user, requesterId);
 
-		return Response.ok(userJson, MediaType.APPLICATION_JSON).build();
+		return Response.ok(user, MediaType.APPLICATION_JSON).build();
 
 	}
 
@@ -283,8 +284,13 @@ public class ApplicationUserService implements _ApplicationUserService {
 		// client
 		String token = ss.getToken(id);
 		NewCookie c = new NewCookie("token", token);
+		NewCookie userId = new NewCookie("userId", String.valueOf(id));
 		System.out.println(c.toString());
-		return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/").build();
+		ResponseBuilder resp = Response.ok();
+		resp.header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/");
+		resp.header("Set-Cookie", userId.toString() + ";domain=localhost;path=/");
+		//return Response.ok().header("Set-Cookie", c.toString() + ";HttpOnly;secure;domain=localhost;path=/").build();
+		return resp.build();
 	}
 
 	// Calls the token authentication method from the security service
